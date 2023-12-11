@@ -129,7 +129,10 @@ dist
 .yarn/install-state.gz
 .pnp.*
 
-# Ignore .vs file and .csproj.user file
+# Ignore .vs .csproj.user file
 .vs
 *.csproj.user
+
+# Ignore bin and obj folders. They are generated when a solution is opened
 bin/
+obj/
