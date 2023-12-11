@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="..\build\SSD-Major-Web-Project.props" />
+</Project>

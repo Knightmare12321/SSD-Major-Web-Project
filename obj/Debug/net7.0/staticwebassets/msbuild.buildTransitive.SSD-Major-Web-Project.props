@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="..\buildMultiTargeting\SSD-Major-Web-Project.props" />
+</Project>
