@@ -129,5 +129,6 @@ dist
 .yarn/install-state.gz
 .pnp.*
 
-# Ignore .vs file
+# Ignore .vs file and .csproj.user file
 .vs
+.csproj.user
