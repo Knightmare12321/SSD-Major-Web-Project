@@ -131,4 +131,5 @@ dist
 
 # Ignore .vs file and .csproj.user file
 .vs
-.csproj.user
+*.csproj.user
+bin/
