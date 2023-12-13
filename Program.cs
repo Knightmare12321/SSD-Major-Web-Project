@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using SSD_Major_Web_Project.Data;
+using SSD_Major_Web_Project.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,9 +11,13 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 	options.UseSqlServer(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false)
 	.AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddDbContext<ClothesDbContext>(options =>
+	options.UseSqlServer(connectionString));
+
 
 var app = builder.Build();
 
