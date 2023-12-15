@@ -4,13 +4,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace SSD_Major_Web_Project.Models;
 
-public partial class ClothesDbContext : DbContext
+public partial class NovaDbContext : DbContext
 {
-    public ClothesDbContext()
+    public NovaDbContext()
     {
     }
 
-    public ClothesDbContext(DbContextOptions<ClothesDbContext> options)
+    public NovaDbContext(DbContextOptions<NovaDbContext> options)
         : base(options)
     {
     }
