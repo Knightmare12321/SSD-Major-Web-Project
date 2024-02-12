@@ -1,3 +1,4 @@
+/*default application stylings*/
 html {
   font-size: 14px;
 }
@@ -19,4 +20,39 @@ html {
 
 body {
   margin-bottom: 60px;
+}
+/*Home Controller Stylings*/
+
+/*SHOP CONTROLLER*/
+
+/*USER CONTROLLER*/
+
+/*ROLE CONTROLLER*/
+
+/*ADMIN CONTROLLER*/
+/*Admin Index Styling*/
+#admin-index-table{
+    min-width:600px;
+    margin-left:20px;
+
+    td {
+        width: 50%;
+        height: 100px;
+    }
+
+
+    button{
+        background-color:transparent;
+        font-weight:500;
+        border-radius:0.2rem;
+        border: solid blue 1px;
+        padding: 0px 25px;
+        margin: 10px auto;
+
+        &:hover{
+                background-color:dodgerblue;
+                border:solid black 1px;
+                color:white;
+               }
+    }
 }
