@@ -31,15 +31,14 @@ body {
 
 /*ADMIN CONTROLLER*/
 /*Admin Index Styling*/
-#admin-index-table{
-    min-width:600px;
-    margin-left:20px;
+#admin-index-grid{
+    display:grid;
+    grid-template-columns: 1fr;
+    padding-left:20px;
 
-    td {
-        width: 50%;
-        height: 100px;
-    }
-
+    .grid-item{
+                min-width:250px;
+              }
 
     button{
         background-color:transparent;
@@ -54,5 +53,11 @@ body {
                 border:solid black 1px;
                 color:white;
                }
+    }
+}
+
+@media(min-width:550px){
+    #admin-index-grid {
+        grid-template-columns: 1fr 1fr;
     }
 }

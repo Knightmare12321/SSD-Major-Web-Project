@@ -1,5 +1,4 @@
-﻿
-@{
+﻿@{
     ViewData["Title"] = "Admin Page";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
@@ -7,21 +6,20 @@
 <div>
     <h1>Admin Page</h1>
     <p>Hello Admin</p>
-    <table id="admin-index-table">
-        <tbody>
-            <tr>
-                <td>
-                    <button>CREATE NEW LISTING</button>
-                    <p>Create a new product listing</p></td>
-                <td><button>ALL ORDERS</button>
-                    <p>Manage open orders and fulfilled orders</p></td>
-            </tr>
-            <tr>
-                <td><button>EDIT/DELETE LISTING</button>
-                    <p>Edit listing detail<br />Activate/deactivate existing listings</p></td>
-            </tr>
-        </tbody>
-    </table>
+    <div id="admin-index-grid">
+        <div class="grid-item">
+            <button>CREATE NEW LISTING</button>
+            <p>Create a new product listing</p>
+        </div>
+        <div class="grid-item">
+            <button>ALL ORDERS</button>
+            <p>Manage open orders and fulfilled orders</p>
+        </div>
+        <div class="grid-item">
+            <button>EDIT/DELETE LISTING</button>
+            <p>Edit listing detail<br />Activate/deactivate existing listings</p>
+        </div>
+    </div>
 
 </div>
 
