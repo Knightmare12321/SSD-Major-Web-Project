@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using SSD_Major_Web_Project.ViewModels;
 
 namespace SSD_Major_Web_Project.Controllers
 {
@@ -8,5 +9,12 @@ namespace SSD_Major_Web_Project.Controllers
         {
             return View();
         }
+
+        public IActionResult CreateProduct()
+        {
+            CreateProductVM vm = new CreateProductVM();
+            return View(vm);
+        }
+
     }
 }
