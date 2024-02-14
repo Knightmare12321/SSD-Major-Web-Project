@@ -61,3 +61,15 @@ body {
         grid-template-columns: 1fr 1fr;
     }
 }
+
+/*Admin CreateProduct*/
+#create-product-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+}
+
+@media(min-width:550px) {
+    #create-product-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+}
