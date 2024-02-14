@@ -23,6 +23,14 @@ body {
 
 }
 
+.navbar {
+    background-color: #FDF0F0;
+    color: white;
+}
+
+
+
+
 .footer-container {
     position: absolute;
     bottom: 0;
