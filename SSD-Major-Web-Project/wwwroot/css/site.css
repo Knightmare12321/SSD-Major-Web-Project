@@ -29,6 +29,12 @@ body {
     width: 100%;
     background-color: #FDF0F0;
     font-size: 0.7rem;
+    padding: 10px;
+}
+
+.footer-container img {
+    width:30px;
+    padding: 5px;
 }
 
 /*Home Controller Stylings*/
