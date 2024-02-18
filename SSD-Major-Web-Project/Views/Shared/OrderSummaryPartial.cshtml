@@ -1,0 +1,35 @@
+﻿@model ICollection<SSD_Major_Web_Project.ViewModels.OrderVM>
+<div class="table-responsive">
+    <table class="table transaction-table">
+        <thead>
+            <tr>
+                <th>Order Id</th>
+                <th>Order Date</th>
+                <th>Status</th>
+                <th>Buyer Name</th>
+                <th>Product</th>
+                <th>Size</th>
+                <th>Unit Price</th>
+                <th>Quantity</th>
+                <th>Discount</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td> @Html.DisplayFor(modelItem => item.OrderId)</td>
+                    <td> @Html.DisplayFor(modelItem => item.OrderDate)</td>
+                    <td> @Html.DisplayFor(modelItem => item.OrderStatus)</td>
+                    <td>@Html.DisplayName($"{item.User.FirstName} {item.User.LastName}")</td>
+                    <td> @Html.DisplayFor(modelItem => item.ProductName)</td>
+                    <td> @Html.DisplayFor(modelItem => item.Size)</td>
+                    <td> @Html.DisplayFor(modelItem => item.UnitPrice)</td>
+                    <td> @Html.DisplayFor(modelItem => item.Quantity)</td>
+                    <td> @Html.DisplayName($"{item.Discount?.PkDiscountCode}")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+

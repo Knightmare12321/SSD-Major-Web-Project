@@ -1,6 +1,7 @@
 /*default application stylings*/
 :root{
     --label-font-size:16px;
+    --theme-color:pink;
 }
 
 html {
@@ -111,5 +112,30 @@ body {
 @media(min-width:550px) {
     #create-product-grid {
         grid-template-columns: 2fr 1fr;
+    }
+}
+
+/*Admin AdminOrder*/
+#admin-orders{
+    display:flex;
+
+    ul{
+          padding:0;
+          width:150px;
+      }
+    li{
+          list-style:none;
+          padding:10px;
+          cursor:pointer;
+      }
+    li:hover, li.active{
+        background-color: var(--theme-color);
+    }
+
+    .summary{
+        display:none
+    }
+    .summary.active{
+        display:block;
     }
 }

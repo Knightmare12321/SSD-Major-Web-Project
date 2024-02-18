@@ -33,15 +33,15 @@ namespace SSD_Major_Web_Project.Controllers
                 productRepository.AddProduct(vm.Name, vm.Price, vm.Description, vm.IsActive, vm.Image, vm.Sizes);
                 return View("Index");
             }
-            CreateProductVM newVM = new CreateProductVM();
-            newVM = vm;
-            return View(newVM);
+            return View(vm);
         }
 
 
         public IActionResult AdminOrder()
         {
-            CreateProductVM vm = new CreateProductVM();
+            AdminRepository adminRepository = new AdminRepository(_context);
+            ICollection<OrderVM> openOrders = adminRepository.GetOrders();
+            AdminOrderVM vm = new AdminOrderVM() { OpenOrders = openOrders };
             return View(vm);
         }
     }

@@ -35,6 +35,7 @@ public partial class NovaDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+
         modelBuilder.Entity<Discount>(entity =>
         {
             entity.HasKey(e => e.PkDiscountCode).HasName("PK__Discount__79BE3D840D7E5502");
