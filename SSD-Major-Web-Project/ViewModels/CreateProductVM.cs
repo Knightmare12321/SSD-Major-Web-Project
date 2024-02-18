@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using SSD_Major_Web_Project.Models;
+using System.ComponentModel.DataAnnotations;
 
 namespace SSD_Major_Web_Project.ViewModels
 {
@@ -7,14 +8,16 @@ namespace SSD_Major_Web_Project.ViewModels
         [Key]
         public int PkProductId { get; set; }
 
-        public string Name { get; set; } = null!;
+        public string Name { get; set; }
 
         public double Price { get; set; }
 
-        public string Description { get; set; } = null!;
+        public string Description { get; set; }
 
-        public string IsActive { get; set; } = null!;
+        public char IsActive { get; set; } = '1';
 
         public byte[]? Image { get; set; }
+
+        public List<string> Sizes { get; set; }
     }
 }
