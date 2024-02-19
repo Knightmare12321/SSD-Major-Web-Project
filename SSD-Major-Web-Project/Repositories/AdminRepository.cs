@@ -14,7 +14,7 @@ namespace SSD_Major_Web_Project.Repositories
             _context = context;
         }
 
-        public List<OrderVM> GetOrders()
+        public IQueryable<OrderVM> GetAllOrders()
         {
             return _context.Orders.Join(
                 _context.OrderDetails,
@@ -94,7 +94,7 @@ namespace SSD_Major_Web_Project.Repositories
                     User = order.User,
                     Discount = order.Discount,
                     OrderStatus = order.OrderStatus.OrderStatus1
-                }).ToList();
+                });
         }
     }
 }

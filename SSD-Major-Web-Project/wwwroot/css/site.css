@@ -118,6 +118,7 @@ body {
 /*Admin AdminOrder*/
 #admin-orders{
     display:flex;
+    grid-column-gap:10px;
 
     ul{
           padding:0;

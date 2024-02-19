@@ -7,20 +7,39 @@
 
 <div id="admin-orders">
     <div class="side-bar">
+        <h4>Order Status</h4>
         <ul>
-            <li class="active" onClick="toggleSummary(this,'open-orders-sheet')">Open Orders</li>
-            <li onClick="toggleSummary(this,'dispatched-orders-sheet')">Dispatched Orders</li>
+            <li onClick="toggleSummary(this,'all-orders-sheet')">All</li>
+            <li onClick="toggleSummary(this,'pending-orders-sheet')">Pending Payment</li>
+            <li class="active" onClick="toggleSummary(this,'open-orders-sheet')">Open</li>
+            <li onClick="toggleSummary(this,'shipped-orders-sheet')">Shipped</li>
+            <li onClick="toggleSummary(this,'delivered-orders-sheet')">Delivered</li>
+
         </ul>
     </div>
     <div>
+        <div id="all-orders-sheet" class="summary">
+            <h1>All Orders</h1>
+            @await Html.PartialAsync("../Shared/OrderSummaryPartial", Model.AllOrders)
+
+        </div>
+        <div id="pending-orders-sheet" class="summary active">
+            <h1>Pending Payment Orders</h1>
+            @await Html.PartialAsync("../Shared/OrderSummaryPartial", Model.PendingOrders)
+
+        </div>
         <div id="open-orders-sheet" class="summary active">
             <h1>Open Orders</h1>
                 @await Html.PartialAsync("../Shared/OrderSummaryPartial", Model.OpenOrders)
 
         </div>
-        <div id="dispatched-orders-sheet" class="summary">
-            <h1>Dispatched Orders</h1>
-        @await Html.PartialAsync("../Shared/OrderSummaryPartial", Model.OpenOrders)
+        <div id="shipped-orders-sheet" class="summary">
+            <h1>Shipped Orders</h1>
+        @await Html.PartialAsync("../Shared/OrderSummaryPartial", Model.ShippedOrders)
+        </div>
+        <div id="delivered-orders-sheet" class="summary">
+            <h1>Delivered Orders</h1>
+            @await Html.PartialAsync("../Shared/OrderSummaryPartial", Model.DeliveredOrders)
         </div>
     </div>
 </div>
