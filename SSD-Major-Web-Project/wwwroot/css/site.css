@@ -48,6 +48,12 @@ main {
     margin:0;
 }
 
+.nav-link img {
+   top:0;
+   height:30px;
+}
+
+
 
 .footer-container {
     position: fixed;
