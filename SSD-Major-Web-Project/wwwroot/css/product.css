@@ -1,0 +1,13 @@
+﻿.product-wrapper {
+    padding: 0px;
+}
+
+.product-title {
+    width: 761.04px;
+    height: 48px; color: #222222;
+    font-size: 39.84px;
+    font-family: Inter;
+    font-weight: 400;
+    line-height: 48px;
+    word-wrap: break-word;
+}

@@ -252,4 +252,6 @@ public partial class NovaDbContext : DbContext
     public DbSet<SSD_Major_Web_Project.ViewModels.CreateProductVM> CreateProductVM { get; set; } = default!;
 
 public DbSet<SSD_Major_Web_Project.ViewModels.ShoppingCartVM> ShoppingCartVM { get; set; } = default!;
+
+public DbSet<SSD_Major_Web_Project.ViewModels.ProductVM> ProductVM { get; set; } = default!;
 }
