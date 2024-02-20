@@ -31,8 +31,8 @@ namespace SSD_Major_Web_Project.Controllers
         {
             if (ModelState.IsValid)
             {
-                ProductRepository productRepository = new ProductRepository(_context);
-                productRepository.AddProduct(vm.Name, vm.Price, vm.Description, vm.IsActive, vm.Image, vm.Sizes);
+                AdminRepo adminRepo = new AdminRepo(_context);
+                adminRepo.AddProduct(vm.Name, vm.Price, vm.Description, vm.IsActive, vm.Image, vm.Sizes);
                 return View("Index");
             }
             return View(vm);
@@ -55,8 +55,8 @@ namespace SSD_Major_Web_Project.Controllers
 
         public IActionResult AdminOrder()
         {
-            AdminRepository adminRepository = new AdminRepository(_context);
-            IQueryable<OrderVM> orders = adminRepository.GetAllOrders();
+            AdminRepo adminRepo = new AdminRepo(_context);
+            IQueryable<OrderVM> orders = adminRepo.GetAllOrders();
 
             //Separate orders based on order status
             List<OrderVM> pendingOrders = orders.Where(o => o.OrderStatus.Equals("Pending")).ToList();

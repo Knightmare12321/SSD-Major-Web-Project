@@ -13,7 +13,7 @@ namespace SSD_Major_Web_Project.ViewModels
         public double UnitPrice { get; set; }
         public byte[]? ProductImage { get; set; }
         public string Size { get; set; }
-        public User User { get; set; }
+        public Customer Customer { get; set; }
         public Discount? Discount { get; set; }
     }
 }
