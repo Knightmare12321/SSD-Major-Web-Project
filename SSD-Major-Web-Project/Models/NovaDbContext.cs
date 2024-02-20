@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
-using SSD_Major_Web_Project.ViewModels;
 
 namespace SSD_Major_Web_Project.Models;
 
@@ -15,6 +14,8 @@ public partial class NovaDbContext : DbContext
         : base(options)
     {
     }
+
+    public virtual DbSet<Address> Addresses { get; set; }
 
     public virtual DbSet<Discount> Discounts { get; set; }
 
@@ -35,9 +36,46 @@ public partial class NovaDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<Address>(entity =>
+        {
+            entity.HasKey(e => e.PkAddressId).HasName("PK__Address__70806256E4670741");
+
+            entity.ToTable("Address");
+
+            entity.Property(e => e.PkAddressId).HasColumnName("pkAddressId");
+            entity.Property(e => e.Address1)
+                .HasMaxLength(30)
+                .IsUnicode(false)
+                .HasColumnName("address");
+            entity.Property(e => e.Address2)
+                .HasMaxLength(30)
+                .IsUnicode(false)
+                .HasColumnName("address2");
+            entity.Property(e => e.City)
+                .HasMaxLength(20)
+                .IsUnicode(false)
+                .HasColumnName("city");
+            entity.Property(e => e.Country)
+                .HasMaxLength(20)
+                .IsUnicode(false)
+                .HasColumnName("country");
+            entity.Property(e => e.PhoneNumber)
+                .HasMaxLength(20)
+                .IsUnicode(false)
+                .HasColumnName("phoneNumber");
+            entity.Property(e => e.PostalCode)
+                .HasMaxLength(10)
+                .IsUnicode(false)
+                .HasColumnName("postalCode");
+            entity.Property(e => e.Province)
+                .HasMaxLength(20)
+                .IsUnicode(false)
+                .HasColumnName("province");
+        });
+
         modelBuilder.Entity<Discount>(entity =>
         {
-            entity.HasKey(e => e.PkDiscountCode).HasName("PK__Discount__79BE3D840D7E5502");
+            entity.HasKey(e => e.PkDiscountCode).HasName("PK__Discount__79BE3D84FDD9992B");
 
             entity.ToTable("Discount");
 
@@ -50,7 +88,7 @@ public partial class NovaDbContext : DbContext
 
         modelBuilder.Entity<Order>(entity =>
         {
-            entity.HasKey(e => e.PkOrderId).HasName("PK__Order__C196130B927BE545");
+            entity.HasKey(e => e.PkOrderId).HasName("PK__Order__C196130B9A8239C9");
 
             entity.ToTable("Order");
 
@@ -61,6 +99,7 @@ public partial class NovaDbContext : DbContext
                 .HasMaxLength(100)
                 .IsUnicode(false)
                 .HasColumnName("buyerNote");
+            entity.Property(e => e.FkAddressId).HasColumnName("fkAddressId");
             entity.Property(e => e.FkDiscountCode)
                 .HasMaxLength(15)
                 .IsUnicode(false)
@@ -75,6 +114,10 @@ public partial class NovaDbContext : DbContext
                 .HasMaxLength(30)
                 .IsUnicode(false)
                 .HasColumnName("transactionId");
+
+            entity.HasOne(d => d.FkAddress).WithMany(p => p.Orders)
+                .HasForeignKey(d => d.FkAddressId)
+                .HasConstraintName("OrderAddressFK");
 
             entity.HasOne(d => d.FkDiscountCodeNavigation).WithMany(p => p.Orders)
                 .HasForeignKey(d => d.FkDiscountCode)
@@ -93,7 +136,7 @@ public partial class NovaDbContext : DbContext
 
         modelBuilder.Entity<OrderDetail>(entity =>
         {
-            entity.HasKey(e => new { e.FkOrderId, e.FkSkuId }).HasName("PK__OrderDet__1F82522D00DE1B48");
+            entity.HasKey(e => new { e.FkOrderId, e.FkSkuId }).HasName("PK__OrderDet__1F82522DBCCCF8B9");
 
             entity.ToTable("OrderDetail");
 
@@ -112,20 +155,20 @@ public partial class NovaDbContext : DbContext
 
         modelBuilder.Entity<OrderStatus>(entity =>
         {
-            entity.HasKey(e => e.PkOrderStatusId).HasName("PK__OrderSta__ABDB68871A1B5F70");
+            entity.HasKey(e => e.PkOrderStatusId).HasName("PK__OrderSta__ABDB6887DE08C7EA");
 
             entity.ToTable("OrderStatus");
 
             entity.Property(e => e.PkOrderStatusId).HasColumnName("pkOrderStatusId");
-            entity.Property(e => e.OrderStatus1)
+            entity.Property(e => e.Status)
                 .HasMaxLength(20)
                 .IsUnicode(false)
-                .HasColumnName("orderStatus");
+                .HasColumnName("status");
         });
 
         modelBuilder.Entity<Product>(entity =>
         {
-            entity.HasKey(e => e.PkProductId).HasName("PK__Product__4492A4B592F629A3");
+            entity.HasKey(e => e.PkProductId).HasName("PK__Product__4492A4B5D9F0F49E");
 
             entity.ToTable("Product");
 
@@ -152,7 +195,7 @@ public partial class NovaDbContext : DbContext
 
         modelBuilder.Entity<ProductSku>(entity =>
         {
-            entity.HasKey(e => e.PkSkuId).HasName("PK__ProductS__B7ADEE3BB01B0291");
+            entity.HasKey(e => e.PkSkuId).HasName("PK__ProductS__B7ADEE3BA88764E1");
 
             entity.ToTable("ProductSku");
 
@@ -171,7 +214,7 @@ public partial class NovaDbContext : DbContext
 
         modelBuilder.Entity<Review>(entity =>
         {
-            entity.HasKey(e => new { e.FkUserId, e.FkProductId }).HasName("PK__Review__465188073B545504");
+            entity.HasKey(e => new { e.FkUserId, e.FkProductId }).HasName("PK__Review__46518807EDF56658");
 
             entity.ToTable("Review");
 
@@ -197,7 +240,7 @@ public partial class NovaDbContext : DbContext
 
         modelBuilder.Entity<User>(entity =>
         {
-            entity.HasKey(e => e.PkUserId).HasName("PK__User__1790FCDFAA5A2562");
+            entity.HasKey(e => e.PkUserId).HasName("PK__User__1790FCDF4ED2BB6C");
 
             entity.ToTable("User");
 
@@ -205,43 +248,21 @@ public partial class NovaDbContext : DbContext
                 .HasMaxLength(30)
                 .IsUnicode(false)
                 .HasColumnName("pkUserId");
-            entity.Property(e => e.Address)
-                .HasMaxLength(20)
-                .IsUnicode(false)
-                .HasColumnName("address");
-            entity.Property(e => e.Address2)
-                .HasMaxLength(20)
-                .IsUnicode(false)
-                .HasColumnName("address2");
-            entity.Property(e => e.City)
-                .HasMaxLength(20)
-                .IsUnicode(false)
-                .HasColumnName("city");
-            entity.Property(e => e.Country)
-                .HasMaxLength(20)
-                .IsUnicode(false)
-                .HasColumnName("country");
             entity.Property(e => e.FirstName)
                 .HasMaxLength(20)
                 .IsUnicode(false)
                 .HasColumnName("firstName");
+            entity.Property(e => e.FkAddressId).HasColumnName("fkAddressId");
             entity.Property(e => e.FkUserTypeId).HasColumnName("fkUserTypeId");
             entity.Property(e => e.LastName)
                 .HasMaxLength(20)
                 .IsUnicode(false)
                 .HasColumnName("lastName");
-            entity.Property(e => e.PhoneNumber)
-                .HasMaxLength(20)
-                .IsUnicode(false)
-                .HasColumnName("phoneNumber");
-            entity.Property(e => e.PostalCode)
-                .HasMaxLength(10)
-                .IsUnicode(false)
-                .HasColumnName("postalCode");
-            entity.Property(e => e.Province)
-                .HasMaxLength(20)
-                .IsUnicode(false)
-                .HasColumnName("province");
+
+            entity.HasOne(d => d.FkAddress).WithMany(p => p.Users)
+                .HasForeignKey(d => d.FkAddressId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("UserAddressFK");
         });
 
         OnModelCreatingPartial(modelBuilder);
@@ -250,6 +271,4 @@ public partial class NovaDbContext : DbContext
     partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
 
     public DbSet<SSD_Major_Web_Project.ViewModels.CreateProductVM> CreateProductVM { get; set; } = default!;
-
-public DbSet<SSD_Major_Web_Project.ViewModels.ShoppingCartVM> ShoppingCartVM { get; set; } = default!;
 }
