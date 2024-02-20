@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
-
+using SSD_Major_Web_Project.ViewModels;
 namespace SSD_Major_Web_Project.Models;
 
 public partial class NovaDbContext : DbContext
@@ -36,43 +36,6 @@ public partial class NovaDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<Address>(entity =>
-        {
-            entity.HasKey(e => e.PkAddressId).HasName("PK__Address__70806256E4670741");
-
-            entity.ToTable("Address");
-
-            entity.Property(e => e.PkAddressId).HasColumnName("pkAddressId");
-            entity.Property(e => e.Address1)
-                .HasMaxLength(30)
-                .IsUnicode(false)
-                .HasColumnName("address");
-            entity.Property(e => e.Address2)
-                .HasMaxLength(30)
-                .IsUnicode(false)
-                .HasColumnName("address2");
-            entity.Property(e => e.City)
-                .HasMaxLength(20)
-                .IsUnicode(false)
-                .HasColumnName("city");
-            entity.Property(e => e.Country)
-                .HasMaxLength(20)
-                .IsUnicode(false)
-                .HasColumnName("country");
-            entity.Property(e => e.PhoneNumber)
-                .HasMaxLength(20)
-                .IsUnicode(false)
-                .HasColumnName("phoneNumber");
-            entity.Property(e => e.PostalCode)
-                .HasMaxLength(10)
-                .IsUnicode(false)
-                .HasColumnName("postalCode");
-            entity.Property(e => e.Province)
-                .HasMaxLength(20)
-                .IsUnicode(false)
-                .HasColumnName("province");
-        });
-
         modelBuilder.Entity<Discount>(entity =>
         {
             entity.HasKey(e => e.PkDiscountCode).HasName("PK__Discount__79BE3D84FDD9992B");

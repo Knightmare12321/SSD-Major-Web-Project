@@ -1,0 +1,73 @@
+﻿@model IEnumerable<SSD_Major_Web_Project.ViewModels.ProductVM>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="product-wrapper">
+
+    <div class="product-title"> MEN'S Clothes</div>
+
+    <div style="width: 186.23px; height: 33px; position: relative">
+        <div style="padding-top: 6px; padding-bottom: 8px; padding-left: 32px; padding-right: 20px; left: 0px; top: 0px; position: absolute; border-bottom: 1px #222222 solid; justify-content: flex-end; align-items: center; display: inline-flex">
+            <div style="width: 191.83px; padding-right: 94.34px; justify-content: flex-start; align-items: center; display: inline-flex">
+                <div style="width: 97.49px; height: 19px; color: #222222; font-size: 12.49px; font-family: Inter; font-weight: 400; word-wrap: break-word">Search products</div>
+            </div>
+        </div>
+        <div style="width: 24px; height: 24px; padding-top: 2px; padding-bottom: 2.05px; padding-left: 2px; padding-right: 2.05px; left: 0px; top: 4.50px; position: absolute; justify-content: center; align-items: center; display: inline-flex">
+            <div style="width: 19.95px; height: 19.95px; background: black"></div>
+        </div>
+    </div>
+
+    <div class="product-container">
+
+    </div>
+
+    @* <p>
+        <a asp-action="Create">Create New</a>
+    </p> *@
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Name)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Price)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Description)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.IsActive)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Price)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Description)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.IsActive)
+                    </td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.PkProductId">Edit</a> |
+                        <a asp-action="Details" asp-route-id="@item.PkProductId">Details</a> |
+                        <a asp-action="Delete" asp-route-id="@item.PkProductId">Delete</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
