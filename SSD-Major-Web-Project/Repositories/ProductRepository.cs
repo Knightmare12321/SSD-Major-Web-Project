@@ -13,7 +13,7 @@ namespace SSD_Major_Web_Project.Repositories
             _context = context;
         }
 
-        public void AddProduct(string name, double price, string description, char isActive, byte[]? image, List<string> sizes)
+        public void AddProduct(string name, double price, string description, string isActive, byte[]? image, List<string> sizes)
         {
             try
             {
@@ -25,7 +25,7 @@ namespace SSD_Major_Web_Project.Repositories
                 }
                 Product product = new Product() { Name = name, Price = price, Description = description, IsActive = isActive, Image = image, ProductSkus = productSkus };
                 _context.Products.Add(product);
-                _context.SaveChanges();
+                //_context.SaveChanges();
             }
             catch (Exception ex)
             {

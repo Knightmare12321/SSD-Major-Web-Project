@@ -14,7 +14,7 @@ namespace SSD_Major_Web_Project.ViewModels
 
         public string Description { get; set; }
 
-        public char IsActive { get; set; } = '1';
+        public string IsActive { get; set; } = "1";
 
         public byte[]? Image { get; set; }
 

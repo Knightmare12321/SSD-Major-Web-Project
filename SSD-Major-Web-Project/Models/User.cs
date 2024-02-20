@@ -9,23 +9,13 @@ public partial class User
 
     public int? FkUserTypeId { get; set; }
 
+    public int? FkAddressId { get; set; }
+
     public string FirstName { get; set; } = null!;
 
     public string LastName { get; set; } = null!;
 
-    public string Address { get; set; } = null!;
-
-    public string? Address2 { get; set; }
-
-    public string City { get; set; } = null!;
-
-    public string Province { get; set; } = null!;
-
-    public string Country { get; set; } = null!;
-
-    public string PostalCode { get; set; } = null!;
-
-    public string PhoneNumber { get; set; } = null!;
+    public virtual Address? FkAddress { get; set; }
 
     public virtual ICollection<Order> Orders { get; set; } = new List<Order>();
 

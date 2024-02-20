@@ -13,7 +13,7 @@ public partial class Product
 
     public string Description { get; set; } = null!;
 
-    public char IsActive { get; set; } = '1';
+    public string IsActive { get; set; } = null!;
 
     public byte[]? Image { get; set; }
 

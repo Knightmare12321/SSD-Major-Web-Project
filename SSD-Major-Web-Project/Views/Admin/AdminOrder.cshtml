@@ -23,7 +23,7 @@
             @await Html.PartialAsync("../Shared/OrderSummaryPartial", Model.AllOrders)
 
         </div>
-        <div id="pending-orders-sheet" class="summary active">
+        <div id="pending-orders-sheet" class="summary">
             <h1>Pending Payment Orders</h1>
             @await Html.PartialAsync("../Shared/OrderSummaryPartial", Model.PendingOrders)
 
