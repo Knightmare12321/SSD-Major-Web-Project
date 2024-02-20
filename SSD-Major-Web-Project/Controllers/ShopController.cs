@@ -1,5 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using SSD_Major_Web_Project.Models;
+using SSD_Major_Web_Project.Repositories;   
+using SSD_Major_Web_Project.ViewModels;
+using System;
 
 namespace SSD_Major_Web_Project.Controllers
 {
@@ -15,20 +19,20 @@ namespace SSD_Major_Web_Project.Controllers
             _context = context;
         }
 
-        public IActionResult Index()
+        public IActionResult Index(ShoppingCartVM shoppingcartVM)
         {
-            //List<Product> products = _context.Products.ToList();
-            //var shoppingcart = new ShoppingCartVM();
+            DbSet<Product> products = _context.Products;
+            shoppingcartVM.Products = products;
 
-            //shoppingcart.Products = products;
+
             //shoppingcart.UserId = "user123";
-            //shoppingcart.CouponCode = "";
-            //shoppingcart.Subtotal = 0;
-            //shoppingcart.ShippingFee = 0;
-            //shoppingcart.Taxes = 0;
-            //shoppingcart.GrandTotal = 0;
+            ShopRepository _shopRepo = new ShopRepository(_context);
+            shoppingcartVM.Subtotal = _shopRepo.CalculateSubtotal(products);
+            shoppingcartVM.ShippingFee = 0;
+            shoppingcartVM.Taxes = _shopRepo.CalculateTaxes(shoppingcartVM.Subtotal) ;
+            shoppingcartVM.GrandTotal = _shopRepo.CalculateGrandTotal(shoppingcartVM.Subtotal, shoppingcartVM.Taxes, shoppingcartVM.ShippingFee);
 
-            return View();
+            return View(shoppingcartVM);
         }
 
         // GET: HomeController1/Create

@@ -100,6 +100,33 @@ main {
 
 /*SHOP CONTROLLER*/
 
+.shoppingcart-container {
+    .btn-primary
+    {
+        color: white;
+        background-color: black;
+        font-weight: 200;
+        font-size: 1rem;
+        border-radius: 0;
+        padding: 0.5rem 1rem;
+        &:hover
+
+    {
+        border: solid black 1px;
+    }
+
+    }
+
+    input {
+        font-size: 1rem;
+        margin: 0;
+        height: 100%;
+    }
+
+}
+
+
+
 /*USER CONTROLLER*/
 
 /*ROLE CONTROLLER*/
