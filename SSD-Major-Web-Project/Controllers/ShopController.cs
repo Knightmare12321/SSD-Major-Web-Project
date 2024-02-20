@@ -1,19 +1,33 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using SSD_Major_Web_Project.Models;
 
 namespace SSD_Major_Web_Project.Controllers
 {
     public class ShopController : Controller
     {
-        // GET: HomeController1
-        public ActionResult Index()
+
+        private readonly ILogger<ShopController> _logger;
+        private readonly NovaDbContext _context;
+
+        public ShopController(ILogger<ShopController> logger, NovaDbContext context)
         {
-            return View();
+            _logger = logger;
+            _context = context;
         }
 
-        // GET: HomeController1/Details/5
-        public ActionResult Details(int id)
+        public IActionResult Index()
         {
+            //List<Product> products = _context.Products.ToList();
+            //var shoppingcart = new ShoppingCartVM();
+
+            //shoppingcart.Products = products;
+            //shoppingcart.UserId = "user123";
+            //shoppingcart.CouponCode = "";
+            //shoppingcart.Subtotal = 0;
+            //shoppingcart.ShippingFee = 0;
+            //shoppingcart.Taxes = 0;
+            //shoppingcart.GrandTotal = 0;
+
             return View();
         }
 
@@ -38,46 +52,5 @@ namespace SSD_Major_Web_Project.Controllers
             }
         }
 
-        // GET: HomeController1/Edit/5
-        public ActionResult Edit(int id)
-        {
-            return View();
-        }
-
-        // POST: HomeController1/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: HomeController1/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        // POST: HomeController1/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
     }
 }

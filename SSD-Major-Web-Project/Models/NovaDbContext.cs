@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using Microsoft.EntityFrameworkCore;
-using SSD_Major_Web_Project.ViewModels;
+﻿using Microsoft.EntityFrameworkCore;
 
 namespace SSD_Major_Web_Project.Models;
 
@@ -31,6 +28,7 @@ public partial class NovaDbContext : DbContext
     public virtual DbSet<Review> Reviews { get; set; }
 
     public virtual DbSet<User> Users { get; set; }
+
 
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -251,5 +249,5 @@ public partial class NovaDbContext : DbContext
 
     public DbSet<SSD_Major_Web_Project.ViewModels.CreateProductVM> CreateProductVM { get; set; } = default!;
 
-public DbSet<SSD_Major_Web_Project.ViewModels.ShoppingCartVM> ShoppingCartVM { get; set; } = default!;
+    public DbSet<SSD_Major_Web_Project.ViewModels.ShoppingCartVM> ShoppingCartVM { get; set; } = default!;
 }

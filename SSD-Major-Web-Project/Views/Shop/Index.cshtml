@@ -5,21 +5,36 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div class="row">
-    <div class="col-md-4">
-        <div class="shopping-cart">
-        <h4>SHOPPING CART</h4>
-            <dt class="col-sm-3">
-                @Html.DisplayNameFor(model => model.Products)
-            </dt>
-        </div>
-        <div class="my-wishlist">
-           <h4>MY WISHLIST </h4>
-        </div>
-    </div>
+<div class="shoppingcart-container">
 
-     <div class="col-md-6 col-md-offset-2">
+    <div class="row">
+        <div class="col-md-4">
+            <div class="shopping-cart">
+            <h4>SHOPPING CART</h4>
+           @*      @foreach (var item in Model.Products)
+                {
+                    <div class="product">
+                        <div class="product-image">
+                            <img src="@item.Image" alt="product image" />
+                        </div>
+                        <div class="product-details">
+                            <h5>@item.Name</h5>
+                            <p>@item.Description</p>
+                            <p>@item.Price</p>
+                        </div>
+                    </div>
+                } *@
+            </div>
+            <div class="my-wishlist">
+               <h4>MY WISHLIST </h4>
+            </div>
+        </div>
 
+         <div class="col-md-6 col-md-offset-2">
+            <div class="coupon-code">
+                <input type="text" placeholder="Coupon Code" />
+                <input type="submit" value="Apply Code" class="btn btn-primary" />
+            </div>
             <dt class="col-sm-3">
                 @Html.DisplayNameFor(model => model.Subtotal)
             </dt>
@@ -43,17 +58,18 @@
             </dt>
             <dd class="col-sm-10">
                 @Html.DisplayFor(model => model.GrandTotal)
+                
             </dd>
             <div>
                 @using (Html.BeginForm("Checkout", "ShoppingCart", FormMethod.Post))
                 {
                     @Html.HiddenFor(model => model.UserId)
-                    @Html.HiddenFor(model => model.TempOrderId)
+          
 
-                    <input type="submit" value="Proceed to Checkout" />
+                    <input type="submit" value="Proceed to Checkout" class="btn btn-primary" />
                 }
             </div>
-    
+        </div>
     </div>
 </div>
 

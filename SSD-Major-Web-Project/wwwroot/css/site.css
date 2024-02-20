@@ -24,11 +24,11 @@ body {
     margin: 0;
     padding: 0;
     height: 100%;
-    overflow: hidden;
+/*    overflow: hidden;*/
 }
 
 .container {
-    padding: 0;
+    padding: 0px;
     margin: 0;
     min-width: 100%;
     width: 100%;
@@ -38,8 +38,6 @@ body {
 main {
     height: 100%;
     width: 100%;
-
-
 }
 
 .navbar {
@@ -52,7 +50,6 @@ main {
    top:0;
    height:30px;
 }
-
 
 
 .footer-container {
@@ -71,27 +68,50 @@ main {
 
 /*Home Controller Stylings*/
 .carousel {
-    width: 100%;
+    width: 100vw;
     height: 100%;
     position: relative;
     overflow: hidden;
+    transform: translateX(-25px)
 }
 
-    .carousel img {
-        width: 100%;
+.carousel img {
+    width: 100%;
 
-        position: absolute;
-        top: 0;
-        left: 0;
-        opacity: 0;
-        transition: opacity 0.5s ease-in-out;
-    }
+    position: absolute;
+    top: 0;
+    left: 0;
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out;
+}
 
-            .carousel img.active {
-                opacity: 1;
-            }
+.carousel img.active {
+    opacity: 1;
+}
 
 /*SHOP CONTROLLER*/
+.shoppingcart-container{
+    padding:2rem;
+
+    .btn-primary{
+        color:white;
+        background-color:black;
+        font-weight:200;
+        font-size:1rem;
+        border-radius:0;
+        padding: 0.5rem 1rem;
+
+        &:hover{
+                border:solid black 1px;
+               }
+    }
+    input {
+        font-size: 1rem;
+        margin: 0;
+        height: 100%;
+    }
+}
+
 
 /*USER CONTROLLER*/
 
