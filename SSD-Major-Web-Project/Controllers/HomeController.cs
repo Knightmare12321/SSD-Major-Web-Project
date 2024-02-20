@@ -23,10 +23,6 @@ namespace SSD_Major_Web_Project.Controllers
             return View(products);
         }
 
-        public IActionResult Privacy()
-        {
-            return View();
-        }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
