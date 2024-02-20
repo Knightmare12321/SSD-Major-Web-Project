@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
-
+using SSD_Major_Web_Project.ViewModels;
 namespace SSD_Major_Web_Project.Models;
 
 public partial class NovaDbContext : DbContext
