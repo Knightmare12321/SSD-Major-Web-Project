@@ -5,7 +5,7 @@ namespace SSD_Major_Web_Project.Models;
 
 public partial class Review
 {
-    public string FkUserId { get; set; } = null!;
+    public string FkCustomerId { get; set; } = null!;
 
     public int FkProductId { get; set; }
 
@@ -13,7 +13,7 @@ public partial class Review
 
     public string? Comment { get; set; }
 
-    public virtual Product FkProduct { get; set; } = null!;
+    public virtual Customer FkCustomer { get; set; } = null!;
 
-    public virtual User FkUser { get; set; } = null!;
+    public virtual Product FkProduct { get; set; } = null!;
 }

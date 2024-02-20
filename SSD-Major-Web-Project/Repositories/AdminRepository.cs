@@ -45,16 +45,16 @@ namespace SSD_Major_Web_Project.Repositories
                     oodp.ProductSku,
                     Product = p
                 })
-                .Join(_context.Users,
-                oodpp => oodpp.Order.FkUserId,
-                u => u.PkUserId,
+                .Join(_context.Customers,
+                oodpp => oodpp.Order.FkCustomerId,
+                u => u.PkCustomerId,
                 (oodpp, u) => new
                 {
                     oodpp.Order,
                     oodpp.OrderDetail,
                     oodpp.ProductSku,
                     oodpp.Product,
-                    User = u
+                    Customer = u
                 })
                 .Join(_context.OrderStatuses,
                 oodppu => oodppu.Order.FkOrderStatusId,
@@ -65,7 +65,7 @@ namespace SSD_Major_Web_Project.Repositories
                     oodppu.OrderDetail,
                     oodppu.ProductSku,
                     oodppu.Product,
-                    oodppu.User,
+                    oodppu.Customer,
                     OrderStatus = os
                 })
                 .Join(_context.Discounts,
@@ -77,7 +77,7 @@ namespace SSD_Major_Web_Project.Repositories
                     oodppuo.OrderDetail,
                     oodppuo.ProductSku,
                     oodppuo.Product,
-                    oodppuo.User,
+                    oodppuo.Customer,
                     oodppuo.OrderStatus,
                     Discount = d
                 })
@@ -91,7 +91,7 @@ namespace SSD_Major_Web_Project.Repositories
                     ProductName = order.Product.Name,
                     ProductImage = order.Product.Image,
                     UnitPrice = order.Product.Price,
-                    User = order.User,
+                    Customer = order.Customer,
                     Discount = order.Discount,
                     OrderStatus = order.OrderStatus.Status
                 });
@@ -124,8 +124,8 @@ namespace SSD_Major_Web_Project.Repositories
                                                 .FirstOrDefault()
                                         }).FirstOrDefault()
                                 }).ToList(),
-                User = _context.Users
-                        .Where(u => u.PkUserId == o.FkUserId)
+                Customer = _context.Customers
+                        .Where(u => u.PkCustomerId == o.FkCustomerId)
                         .FirstOrDefault(),
                 Discount = _context.Discounts
                         .Where(d => d.PkDiscountCode == o.FkDiscountCode)

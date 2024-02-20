@@ -21,7 +21,7 @@ public partial class Address
 
     public string PhoneNumber { get; set; } = null!;
 
-    public virtual ICollection<Order> Orders { get; set; } = new List<Order>();
+    public virtual ICollection<Customer> Customers { get; set; } = new List<Customer>();
 
-    public virtual ICollection<User> Users { get; set; } = new List<User>();
+    public virtual ICollection<Order> Orders { get; set; } = new List<Order>();
 }

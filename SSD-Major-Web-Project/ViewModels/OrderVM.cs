@@ -9,7 +9,7 @@ namespace SSD_Major_Web_Project.ViewModels
         public string OrderStatus { get; set; }
         public string? BuyerNote { get; set; }
         public Discount? Discount { get; set; }
-        public User User { get; set; }
+        public Customer Customer { get; set; }
         public List<OrderDetail> OrderDetails { get; set; }
         public double OrderTotal { get; set; }
     }
