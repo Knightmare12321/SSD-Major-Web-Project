@@ -10,11 +10,15 @@ public partial class Order
 
     public string? FkDiscountCode { get; set; }
 
+    public int? FkAddressId { get; set; }
+
     public string? TransactionId { get; set; }
 
     public string? BuyerNote { get; set; }
 
     public DateOnly OrderDate { get; set; }
+
+    public virtual Address? FkAddress { get; set; }
 
     public virtual Discount? FkDiscountCodeNavigation { get; set; }
 
