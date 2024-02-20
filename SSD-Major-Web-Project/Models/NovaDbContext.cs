@@ -250,4 +250,6 @@ public partial class NovaDbContext : DbContext
     partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
 
     public DbSet<SSD_Major_Web_Project.ViewModels.CreateProductVM> CreateProductVM { get; set; } = default!;
+
+public DbSet<SSD_Major_Web_Project.ViewModels.ShoppingCartVM> ShoppingCartVM { get; set; } = default!;
 }
