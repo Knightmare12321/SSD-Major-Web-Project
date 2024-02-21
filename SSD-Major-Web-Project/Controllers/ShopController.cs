@@ -1,20 +1,38 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using SSD_Major_Web_Project.Models;
+using SSD_Major_Web_Project.Repositories;   
+using SSD_Major_Web_Project.ViewModels;
+using System;
 
 namespace SSD_Major_Web_Project.Controllers
 {
     public class ShopController : Controller
     {
-        // GET: HomeController1
-        public ActionResult Index()
+
+        private readonly ILogger<ShopController> _logger;
+        private readonly NovaDbContext _context;
+
+        public ShopController(ILogger<ShopController> logger, NovaDbContext context)
         {
-            return View();
+            _logger = logger;
+            _context = context;
         }
 
-        // GET: HomeController1/Details/5
-        public ActionResult Details(int id)
+        public IActionResult Index(ShoppingCartVM shoppingcartVM)
         {
-            return View();
+            DbSet<Product> products = _context.Products;
+            shoppingcartVM.Products = products;
+
+
+            //shoppingcart.UserId = "user123";
+            ShopRepository _shopRepo = new ShopRepository(_context);
+            shoppingcartVM.Subtotal = _shopRepo.CalculateSubtotal(products);
+            shoppingcartVM.ShippingFee = 0;
+            shoppingcartVM.Taxes = _shopRepo.CalculateTaxes(shoppingcartVM.Subtotal) ;
+            shoppingcartVM.GrandTotal = _shopRepo.CalculateGrandTotal(shoppingcartVM.Subtotal, shoppingcartVM.Taxes, shoppingcartVM.ShippingFee);
+
+            return View(shoppingcartVM);
         }
 
         // GET: HomeController1/Create
@@ -38,46 +56,5 @@ namespace SSD_Major_Web_Project.Controllers
             }
         }
 
-        // GET: HomeController1/Edit/5
-        public ActionResult Edit(int id)
-        {
-            return View();
-        }
-
-        // POST: HomeController1/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: HomeController1/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        // POST: HomeController1/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
     }
 }

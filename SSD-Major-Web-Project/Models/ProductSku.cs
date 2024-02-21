@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace SSD_Major_Web_Project.Models;
+﻿namespace SSD_Major_Web_Project.Models;
 
 public partial class ProductSku
 {

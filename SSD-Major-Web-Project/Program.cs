@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using SSD_Major_Web_Project.Data;
 using SSD_Major_Web_Project.Models;
 
 var builder = WebApplication.CreateBuilder(args);
