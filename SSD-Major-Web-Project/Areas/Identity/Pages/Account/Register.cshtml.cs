@@ -18,6 +18,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
+using SSD_Major_Web_Project.Data;
+using SSD_Major_Web_Project.Models;
+using static SSD_Major_Web_Project.Services.ReCAPTCHA;
 
 namespace SSD_Major_Web_Project.Areas.Identity.Pages.Account
 {
@@ -29,13 +32,16 @@ namespace SSD_Major_Web_Project.Areas.Identity.Pages.Account
         private readonly IUserEmailStore<IdentityUser> _emailStore;
         private readonly ILogger<RegisterModel> _logger;
         private readonly IEmailSender _emailSender;
-
+        private readonly NovaDbContext _db;
+        private readonly IConfiguration _configuration;
         public RegisterModel(
             UserManager<IdentityUser> userManager,
             IUserStore<IdentityUser> userStore,
             SignInManager<IdentityUser> signInManager,
             ILogger<RegisterModel> logger,
-            IEmailSender emailSender)
+            IEmailSender emailSender,
+            NovaDbContext db,
+            IConfiguration configuration)
         {
             _userManager = userManager;
             _userStore = userStore;
@@ -43,6 +49,9 @@ namespace SSD_Major_Web_Project.Areas.Identity.Pages.Account
             _signInManager = signInManager;
             _logger = logger;
             _emailSender = emailSender;
+            _db = db;
+            _configuration = configuration;
+
         }
 
         /// <summary>
@@ -74,6 +83,14 @@ namespace SSD_Major_Web_Project.Areas.Identity.Pages.Account
             ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
             ///     directly from your code. This API may change or be removed in future releases.
             /// </summary>
+            [Required]
+            [Display(Name = "First Name")]
+            public string FirstName { get; set; }
+
+            [Required]
+            [Display(Name = "Last Name")]
+            public string LastName { get; set; }
+
             [Required]
             [EmailAddress]
             [Display(Name = "Email")]
@@ -110,6 +127,20 @@ namespace SSD_Major_Web_Project.Areas.Identity.Pages.Account
         {
             returnUrl ??= Url.Content("~/");
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
+            string captchaResponse = Request.Form["g-Recaptcha-Response"];
+            string secret = _configuration["Recaptcha:SecretKey"];
+            ReCaptchaValidationResult resultCaptcha =
+                ReCaptchaValidator.IsValid(secret, captchaResponse);
+
+            // Invalidate the form if the captcha is invalid.
+            if (!resultCaptcha.Success)
+            {
+                ViewData["SiteKey"] = _configuration["Recaptcha:SiteKey"];
+                ModelState.AddModelError(string.Empty,
+                    "The ReCaptcha is invalid.");
+            }
+
+
             if (ModelState.IsValid)
             {
                 var user = CreateUser();
@@ -120,6 +151,23 @@ namespace SSD_Major_Web_Project.Areas.Identity.Pages.Account
 
                 if (result.Succeeded)
                 {
+/*                    MyRegisteredUser registerUser = new MyRegisteredUser()
+                    {
+                        Email = Input.Email,
+                        FirstName = Input.FirstName
+                    };
+                    _db.MyRegisteredUsers.Add(registerUser);
+                    _db.SaveChanges();*/
+
+                    Customer customer = new Customer()
+                    {
+                        PkCustomerId = Input.Email,
+                        FirstName = Input.FirstName,
+                        LastName = Input.LastName,
+                    };
+                    _db.Customers.Add(customer);
+                    _db.SaveChanges();
+
                     _logger.LogInformation("User created a new account with password.");
 
                     var userId = await _userManager.GetUserIdAsync(user);
