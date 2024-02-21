@@ -237,3 +237,31 @@ main {
         display:block;
     }
 }
+
+/*Sign in Page*/
+.centered {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-top: 9%;
+}
+
+.form {
+    width: 28rem;
+}
+
+.black-hyperlink {
+    color: black;
+    text-align: center;
+}
+
+.form-rows {
+    display: flex;
+    flex-direction: column;
+    gap:1.5rem;
+}
+
+a.black-hyperlink {
+    margin-top: 0;
+}

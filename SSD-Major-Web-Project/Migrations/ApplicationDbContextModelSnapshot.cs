@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SSD_Major_Web_Project.Data;
+using SSD_Major_Web_Project.Models;
 
 #nullable disable
 

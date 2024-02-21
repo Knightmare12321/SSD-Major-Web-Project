@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using SSD_Major_Web_Project.Models;
 
 namespace SSD_Major_Web_Project.Data
 {
@@ -9,5 +10,6 @@ namespace SSD_Major_Web_Project.Data
             : base(options)
         {
         }
+
     }
 }
