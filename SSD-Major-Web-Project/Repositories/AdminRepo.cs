@@ -2,6 +2,7 @@
 using SSD_Major_Web_Project.Data;
 using SSD_Major_Web_Project.Models;
 using SSD_Major_Web_Project.ViewModels;
+using Microsoft.AspNetCore.Mvc;
 
 namespace SSD_Major_Web_Project.Repositories
 {
@@ -14,26 +15,37 @@ namespace SSD_Major_Web_Project.Repositories
             _context = context;
         }
 
-        public void AddProduct(string name, double price, string description, string isActive, byte[]? image, List<string> sizes)
+        public async Task AddProduct(string name, double price, string description, string isActive, IFormFile image, List<string> sizes)
         {
+
             try
             {
+                byte[] imageData;
+
+                using (var memoryStream = new MemoryStream())
+                {
+                    await image.CopyToAsync(memoryStream);
+                    imageData = memoryStream.ToArray();
+                }
+
+
                 List<ProductSku> productSkus = new List<ProductSku>();
                 for (int i = 0; i < sizes.Count; i++)
                 {
-                    productSkus.Add(new ProductSku() { Size = sizes[i] });
+                    productSkus.Add(new ProductSku { Size = sizes[i] });
 
                 }
-                Product product = new Product() { Name = name, Price = price, Description = description, IsActive = isActive, Image = image, ProductSkus = productSkus };
+                Product product = new Product { Name = name, Price = price, Description = description, IsActive = isActive, Image = imageData, ProductSkus = productSkus };
                 _context.Products.Add(product);
-                //_context.SaveChanges();
+                _context.SaveChanges();
             }
             catch (Exception ex)
             {
                 throw new Exception(ex.ToString());
             }
-
         }
+
+
 
         public IQueryable<OrderItemVM> GetAllOrderItems()
         {
@@ -155,13 +167,7 @@ namespace SSD_Major_Web_Project.Repositories
                 //        .Where(od => od.FkOrderId == o.PkOrderId)
                 //        .Select(od => od.Quantity * od.FkSku.FKproduct.Price * (1 - o.FkDiscountCodeNavigation.DiscountValue))
                 //        .Sum()
-                OrderTotal = 100
-            });
-        }
-
-        public double GetOrderTotal(int orderId)
-        {
-            return _context.Orders
+                OrderTotal = _context.Orders
                     .Join(_context.OrderDetails,
                             o => o.PkOrderId,
                             od => od.FkOrderId,
@@ -200,10 +206,12 @@ namespace SSD_Major_Web_Project.Repositories
                                 oodpp.Product,
                                 Discount = d
                             })
-                    .Where(o => o.OrderDetail.FkOrderId == orderId)
-                    .Select((o) => o.OrderDetail.Quantity * o.Product.Price * (1 - o.Discount.DiscountValue))
-                    .Sum();
-
+                    .Where(order => order.OrderDetail.FkOrderId == o.PkOrderId)
+                    .Select((order) => order.OrderDetail.Quantity * order.Product.Price * (1 - order.Discount.DiscountValue))
+                    .Sum()
+            });
         }
+
+
     }
 }

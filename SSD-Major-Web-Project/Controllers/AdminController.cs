@@ -31,9 +31,23 @@ namespace SSD_Major_Web_Project.Controllers
         {
             if (ModelState.IsValid)
             {
-                AdminRepo adminRepo = new AdminRepo(_context);
-                adminRepo.AddProduct(vm.Name, vm.Price, vm.Description, vm.IsActive, vm.Image, vm.Sizes);
-                return View("Index");
+                string contentType = vm.Image.ContentType;
+
+                if (contentType == "image/png" ||
+                    contentType == "image/jpeg" ||
+                    contentType == "image/jpg")
+                {
+
+                    AdminRepo adminRepo = new AdminRepo(_context);
+                    await adminRepo.AddProduct(vm.Name, vm.Price, vm.Description, vm.IsActive, vm.Image, vm.Sizes);
+                    return View("Index");
+                }
+                else
+                {
+                    ModelState.AddModelError("imageUpload", "Please upload a PNG, " +
+                                                            "JPG, or JPEG file.");
+                }
+
             }
             return View(vm);
         }

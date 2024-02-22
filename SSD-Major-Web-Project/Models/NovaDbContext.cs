@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
-using SSD_Major_Web_Project.ViewModels;
+
 namespace SSD_Major_Web_Project.Models;
 
 public partial class NovaDbContext : DbContext
@@ -37,7 +37,7 @@ public partial class NovaDbContext : DbContext
     {
         modelBuilder.Entity<Address>(entity =>
         {
-            entity.HasKey(e => e.PkAddressId).HasName("PK__Address__7080625672CA7974");
+            entity.HasKey(e => e.PkAddressId).HasName("PK__Address__708062565DAFBE30");
 
             entity.ToTable("Address");
 
@@ -74,7 +74,7 @@ public partial class NovaDbContext : DbContext
 
         modelBuilder.Entity<Customer>(entity =>
         {
-            entity.HasKey(e => e.PkCustomerId).HasName("PK__Customer__1FD9D5A2A8D84C1D");
+            entity.HasKey(e => e.PkCustomerId).HasName("PK__Customer__1FD9D5A2184BDFD8");
 
             entity.ToTable("Customer");
 
@@ -101,7 +101,7 @@ public partial class NovaDbContext : DbContext
 
         modelBuilder.Entity<Discount>(entity =>
         {
-            entity.HasKey(e => e.PkDiscountCode).HasName("PK__Discount__79BE3D84AFA28965");
+            entity.HasKey(e => e.PkDiscountCode).HasName("PK__Discount__79BE3D840D2E81F9");
 
             entity.ToTable("Discount");
 
@@ -114,7 +114,7 @@ public partial class NovaDbContext : DbContext
 
         modelBuilder.Entity<Order>(entity =>
         {
-            entity.HasKey(e => e.PkOrderId).HasName("PK__Order__C196130BC2791062");
+            entity.HasKey(e => e.PkOrderId).HasName("PK__Order__C196130B557469B0");
 
             entity.ToTable("Order");
 
@@ -162,7 +162,7 @@ public partial class NovaDbContext : DbContext
 
         modelBuilder.Entity<OrderDetail>(entity =>
         {
-            entity.HasKey(e => new { e.FkOrderId, e.FkSkuId }).HasName("PK__OrderDet__1F82522DEE24F5F7");
+            entity.HasKey(e => new { e.FkOrderId, e.FkSkuId }).HasName("PK__OrderDet__1F82522D500E5490");
 
             entity.ToTable("OrderDetail");
 
@@ -181,7 +181,7 @@ public partial class NovaDbContext : DbContext
 
         modelBuilder.Entity<OrderStatus>(entity =>
         {
-            entity.HasKey(e => e.PkOrderStatusId).HasName("PK__OrderSta__ABDB6887CF8E1324");
+            entity.HasKey(e => e.PkOrderStatusId).HasName("PK__OrderSta__ABDB68870D7EC4C9");
 
             entity.ToTable("OrderStatus");
 
@@ -194,7 +194,7 @@ public partial class NovaDbContext : DbContext
 
         modelBuilder.Entity<Product>(entity =>
         {
-            entity.HasKey(e => e.PkProductId).HasName("PK__Product__4492A4B5871D4D5D");
+            entity.HasKey(e => e.PkProductId).HasName("PK__Product__4492A4B501F84B1D");
 
             entity.ToTable("Product");
 
@@ -203,10 +203,7 @@ public partial class NovaDbContext : DbContext
                 .HasMaxLength(200)
                 .IsUnicode(false)
                 .HasColumnName("description");
-            entity.Property(e => e.Image)
-                .HasMaxLength(1)
-                .IsFixedLength()
-                .HasColumnName("image");
+            entity.Property(e => e.Image).HasColumnName("image");
             entity.Property(e => e.IsActive)
                 .HasMaxLength(1)
                 .IsUnicode(false)
@@ -221,7 +218,7 @@ public partial class NovaDbContext : DbContext
 
         modelBuilder.Entity<ProductSku>(entity =>
         {
-            entity.HasKey(e => e.PkSkuId).HasName("PK__ProductS__B7ADEE3B9ADE56F4");
+            entity.HasKey(e => e.PkSkuId).HasName("PK__ProductS__B7ADEE3B42626B41");
 
             entity.ToTable("ProductSku");
 
@@ -240,7 +237,7 @@ public partial class NovaDbContext : DbContext
 
         modelBuilder.Entity<Review>(entity =>
         {
-            entity.HasKey(e => new { e.FkCustomerId, e.FkProductId }).HasName("PK__Review__598FD389DBFA58D9");
+            entity.HasKey(e => new { e.FkCustomerId, e.FkProductId }).HasName("PK__Review__598FD38991777580");
 
             entity.ToTable("Review");
 

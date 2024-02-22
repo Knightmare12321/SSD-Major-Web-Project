@@ -8,16 +8,21 @@ namespace SSD_Major_Web_Project.ViewModels
         [Key]
         public int PkProductId { get; set; }
 
+        [Required]
         public string Name { get; set; }
 
+        [Required]
         public double Price { get; set; }
 
+        [Required]
         public string Description { get; set; }
 
         public string IsActive { get; set; } = "1";
 
-        public byte[]? Image { get; set; }
+        [Required]
+        public IFormFile Image { get; set; }
 
+        [Required]
         public List<string> Sizes { get; set; }
     }
 }
