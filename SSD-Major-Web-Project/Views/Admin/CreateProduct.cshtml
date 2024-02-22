@@ -6,67 +6,50 @@
 }
 
 <h1>Create a New Product</h1>
-<div asp-validation-summary="All" class="text-danger"></div>
+<div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-<form id="create-product-grid" asp-action="CreateProduct" method="post">
+<form id="create-product-grid" asp-action="CreateProduct" method="post" enctype="multipart/form-data">
     <div>
-        <label>Product Name: </label>
-        <input asp-validation-for="Name" type="text" name="Name" asp-for="Name" />
-        <label>Image</label>
-        <input type="file" onChange="addImage(this)"/>
-        <input id="image" asp-validation-for="Image" name="Image" hidden />
-    </div>
-    <div>
-        <label>Sizes</label>
-        <div class="size-grid">
-            <span>S</span><input asp-validation-for="Sizes" type="checkbox" name="Sizes" value="S" />
-            <span>M</span><input asp-validation-for="Sizes" type="checkbox" name="Sizes" value="M" />
-            <span>L</span><input asp-validation-for="Sizes" type="checkbox" name="Sizes" value="L" />
+        <div class="form-group">
+            <label asp-for="Name">Product Name: </label>
+            <input asp-for="Name" type="text" asp-for="Name" />
+            <span asp-validation-for="Name" class="text-danger"></span>
         </div>
-        <label>Price</label>
-        <div class="price">
-            <input asp-validation-for="Price" asp-for="Price" name="price" type="number" step="0.01" /> <span> CAD</span>
+        <div class="form-group">
+            <label asp-for="Image">Image</label>
+            <input type="file" asp-for="Image" accept="image/*" class="form-control" />
+            <span asp-validation-for="Image" class="text-danger"></span>
         </div>
     </div>
     <div>
-        <label>Description</label>
-        <textarea asp-validation-for="Description" asp-for="Description" name="Description"></textarea>
+        <div class="form-group">
+            <div>
+            <label asp-for="Sizes">Sizes</label>
+            <div class="size-grid">
+                <span>S</span><input name="Sizes" type="checkbox" value="S" />
+                    <span>M</span><input name="Sizes" type="checkbox" value="M" />
+                    <span>L</span><input name="Sizes" type="checkbox" value="L" />
+            </div>
+            </div>
+            <span asp-validation-for="Sizes" class="text-danger"></span>
+
+        </div>
+        <div class="form-group">
+            <label asp-for="Price">Price</label>
+            <div class="price">
+                <input asp-for="Price" type="number" step="0.01"  /> <span> CAD</span>
+            </div>
+            <span asp-validation-for="Price" class="text-danger"></span>
+        </div>
+    </div>
+    <div>
+        <div class="form-group">
+            <label asp-for="Description">Description</label>
+            <textarea asp-for="Description"></textarea>
+            <span asp-validation-for="Description" class="text-danger"></span>
+        </div>
         <div>
             <button type="submit">Submit</button> <button asp-action="Index">Cancel</button>
         </div>
     </div>
 </form>
-
-<script>
-    const addImage = async (fileElement) => {
-        // const blob = new Blob([fileElement.files[0]], {type:"image/jpeg"});
-        // $("#image")[0].value = blob;
-
-        $("#image")[0].value = await fileToByteArray(fileElement.files[0]);
-        console.log('byte[]:', $("#image")[0].value)
-
-        function fileToByteArray(file) {
-            return new Promise((resolve, reject) => {
-                try {
-                    let reader = new FileReader();
-                    let fileByteArray = [];
-                    reader.readAsArrayBuffer(file);
-                    reader.onloadend = (evt) => {
-                        if (evt.target.readyState == FileReader.DONE) {
-                            let arrayBuffer = evt.target.result,
-                                array = new Uint8Array(arrayBuffer);
-                            for (byte of array) {
-                                fileByteArray.push(byte);
-                            }
-                        }
-                        resolve(fileByteArray);
-                    }
-                }
-                catch (e) {
-                    reject(e);
-                }
-            })
-        }
-
-    }
-</script>
