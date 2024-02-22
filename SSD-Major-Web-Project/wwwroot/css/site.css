@@ -107,6 +107,33 @@ main {
 
 /*SHOP CONTROLLER*/
 
+.shoppingcart-container {
+    .btn-primary
+    {
+        color: white;
+        background-color: black;
+        font-weight: 200;
+        font-size: 1rem;
+        border-radius: 0;
+        padding: 0.5rem 1rem;
+        &:hover
+
+    {
+        border: solid black 1px;
+    }
+
+    }
+
+    input {
+        font-size: 1rem;
+        margin: 0;
+        height: 100%;
+    }
+
+}
+
+
+
 /*USER CONTROLLER*/
 
 /*ROLE CONTROLLER*/
@@ -216,4 +243,32 @@ main {
     .summary.active{
         display:block;
     }
+}
+
+/*Sign in Page*/
+.centered {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-top: 9%;
+}
+
+.form {
+    width: 28rem;
+}
+
+.black-hyperlink {
+    color: black;
+    text-align: center;
+}
+
+.form-rows {
+    display: flex;
+    flex-direction: column;
+    gap:1.5rem;
+}
+
+a.black-hyperlink {
+    margin-top: 0;
 }
