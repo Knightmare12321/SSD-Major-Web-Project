@@ -31,7 +31,7 @@ namespace SSD_Major_Web_Project.Repositories
         //}
 
         // calculate taxes
-        public double CalculateSubtotal(DbSet<Product> products)
+        public double CalculateSubtotal(List<Product> products)
         {
             double subtotal = 0;
 
