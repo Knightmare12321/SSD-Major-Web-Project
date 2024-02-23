@@ -135,7 +135,33 @@ main {
 
 
 /*USER CONTROLLER*/
+/*Sign in Page*/
+.centered {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-top: 9%;
+}
 
+.user-form {
+    width: 28rem;
+}
+
+.black-hyperlink {
+    color: black;
+    text-align: center;
+}
+
+.form-rows {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+a.black-hyperlink {
+    margin-top: 0;
+}
 /*ROLE CONTROLLER*/
 
 /*ADMIN CONTROLLER*/
@@ -245,30 +271,3 @@ main {
     }
 }
 
-/*Sign in Page*/
-.centered {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    margin-top: 9%;
-}
-
-.form {
-    width: 28rem;
-}
-
-.black-hyperlink {
-    color: black;
-    text-align: center;
-}
-
-.form-rows {
-    display: flex;
-    flex-direction: column;
-    gap:1.5rem;
-}
-
-a.black-hyperlink {
-    margin-top: 0;
-}
