@@ -4,6 +4,8 @@
     ViewData["Title"] = "Create an Account";
 }
 
+<!-- A reference is required to the Google API -->
+<script src='https://www.google.com/recaptcha/api.js'></script>
 
 
 <div class="centered">
@@ -41,7 +43,9 @@
                 <label asp-for="Input.ConfirmPassword">Confirm Password</label>
                 <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
             </div>
-            <button id="registerSubmit" type="submit" class="w-100 btn btn-lg btn-dark">Create Account</button>
+                    <!-- This must be placed inside the form. -->
+                    <div class="g-recaptcha" data-sitekey='@ViewData["SiteKey"]'></div><br />
+                    <button id="registerSubmit" type="submit" class="w-100 btn btn-lg btn-dark">Create Account</button>
             </div>
         </form>
     </div>
