@@ -15,6 +15,7 @@ using System.Text.Encodings.Web;
 using static SSD_Major_Web_Project.Services.ReCAPTCHA;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
+using SSD_Major_Web_Project.Data.Services;
 
 namespace SSD_Major_Web_Project.Areas.Identity.Pages.Account
 {
@@ -28,6 +29,7 @@ namespace SSD_Major_Web_Project.Areas.Identity.Pages.Account
         private readonly IEmailSender _emailSender;
         private readonly NovaDbContext _db;
         private readonly IConfiguration _configuration;
+        private readonly IEmailService _emailService;
         public RegisterModel(
             UserManager<IdentityUser> userManager,
             IUserStore<IdentityUser> userStore,
@@ -35,7 +37,8 @@ namespace SSD_Major_Web_Project.Areas.Identity.Pages.Account
             ILogger<RegisterModel> logger,
             IEmailSender emailSender,
             NovaDbContext db,
-            IConfiguration configuration)
+            IConfiguration configuration,
+            IEmailService emailService)
         {
             _userManager = userManager;
             _userStore = userStore;
@@ -45,6 +48,7 @@ namespace SSD_Major_Web_Project.Areas.Identity.Pages.Account
             _emailSender = emailSender;
             _db = db;
             _configuration = configuration;
+            _emailService = emailService;
 
         }
 
@@ -114,6 +118,7 @@ namespace SSD_Major_Web_Project.Areas.Identity.Pages.Account
         public async Task OnGetAsync(string returnUrl = null)
         {
             ReturnUrl = returnUrl;
+            ViewData["SiteKey"] = _configuration["Recaptcha:SiteKey"];
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
         }
 
@@ -129,7 +134,6 @@ namespace SSD_Major_Web_Project.Areas.Identity.Pages.Account
             // Invalidate the form if the captcha is invalid.
             if (!resultCaptcha.Success)
             {
-                ViewData["SiteKey"] = _configuration["Recaptcha:SiteKey"];
                 ModelState.AddModelError(string.Empty,
                     "The ReCaptcha is invalid.");
             }
@@ -173,12 +177,30 @@ namespace SSD_Major_Web_Project.Areas.Identity.Pages.Account
                         values: new { area = "Identity", userId = userId, code = code, returnUrl = returnUrl },
                         protocol: Request.Scheme);
 
-                    await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
-                        $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+                    //await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
+                    //    $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+
+
+
+                    var response = await _emailService.SendSingleEmail(new Models.ComposeEmailModel
+                    {
+                        FirstName = "Nova",
+                        LastName = "Clothing",
+                        Subject = "Confirm your email",
+                        Email = Input.Email,
+                        Body = $"Please confirm your account by " +
+           $"<a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>."
+                    });
+
 
                     if (_userManager.Options.SignIn.RequireConfirmedAccount)
                     {
-                        return RedirectToPage("RegisterConfirmation", new { email = Input.Email, returnUrl = returnUrl });
+                        return RedirectToPage("RegisterConfirmation", new
+                        {
+                            email = Input.Email,
+                            returnUrl = returnUrl,
+                            DisplayConfirmAccountLink = false
+                        });
                     }
                     else
                     {

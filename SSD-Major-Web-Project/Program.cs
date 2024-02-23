@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using SSD_Major_Web_Project.Data;
+using SSD_Major_Web_Project.Data.Services;
 using SSD_Major_Web_Project.Models;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -7,13 +9,24 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 var connectionString = builder.Configuration["ConnectionStrings:DefaultConnection"];
-builder.Services.AddDbContext<NovaDbContext>(options =>
+
+builder.Services.AddDbContext<NovaDbContext>(options => 
+    options.UseSqlServer(connectionString));
+
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
-    .AddEntityFrameworkStores<NovaDbContext>();
+    .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromSeconds(1200);
+});
+
+builder.Services.AddTransient<IEmailService, EmailService>();
 
 var app = builder.Build();
 
