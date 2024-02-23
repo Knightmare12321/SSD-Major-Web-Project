@@ -3,6 +3,7 @@ using SSD_Major_Web_Project.Data;
 using SSD_Major_Web_Project.Models;
 using SSD_Major_Web_Project.ViewModels;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Internal;
 
 namespace SSD_Major_Web_Project.Repositories
 {
@@ -163,11 +164,8 @@ namespace SSD_Major_Web_Project.Repositories
                 Discount = _context.Discounts
                         .Where(d => d.PkDiscountCode == o.FkDiscountCode)
                         .FirstOrDefault(),
-                //OrderTotal = o.OrderDetails
-                //        .Where(od => od.FkOrderId == o.PkOrderId)
-                //        .Select(od => od.Quantity * od.FkSku.FKproduct.Price * (1 - o.FkDiscountCodeNavigation.DiscountValue))
-                //        .Sum()
-                OrderTotal = _context.Orders
+
+                OrderTotal = Math.Round(_context.Orders
                     .Join(_context.OrderDetails,
                             o => o.PkOrderId,
                             od => od.FkOrderId,
@@ -195,7 +193,7 @@ namespace SSD_Major_Web_Project.Repositories
                                 oodp.ProductSku,
                                 Product = p
                             })
-                    .Join(_context.Discounts,
+                    .LeftJoin(_context.Discounts,
                             oodpp => oodpp.Order.FkDiscountCode,
                             d => d.PkDiscountCode,
                             (oodpp, d) => new
@@ -207,8 +205,8 @@ namespace SSD_Major_Web_Project.Repositories
                                 Discount = d
                             })
                     .Where(order => order.OrderDetail.FkOrderId == o.PkOrderId)
-                    .Select((order) => order.OrderDetail.Quantity * order.Product.Price * (1 - order.Discount.DiscountValue))
-                    .Sum()
+                    .Select((order) => order.OrderDetail.Quantity * order.Product.Price * (order.Discount != null ? (1 - order.Discount.DiscountValue) : 1))
+                    .Sum(), 2)
             });
         }
 
