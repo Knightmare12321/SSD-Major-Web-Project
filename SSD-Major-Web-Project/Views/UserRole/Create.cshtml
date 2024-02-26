@@ -1,0 +1,45 @@
+﻿@model SSD_Major_Web_Project.ViewModels.UserRoleVM
+
+<h4 style="color:darkred;">User Role</h4>
+<hr />
+<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <input type="hidden" asp-antiforgery="true" />
+            <div class="form-group">
+                <label asp-for="Email" class="control-label"></label>
+                @Html.DropDownList("Email",
+                         new SelectList(ViewBag.UserSelectList, "Value", "Text",
+                         ViewBag.SelectedUser),
+                         "Select User", new { @id = "email", @class = "form-control" })
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="RoleName" class="control-label"></label>
+                @Html.DropDownList("RoleName",
+                         new SelectList(ViewBag.RoleSelectList, "Value", "Text"),
+                         "Select Role", new { @id = "roleName", @class = "form-control" })
+                <span asp-validation-for="RoleName" class="text-danger"></span>
+            </div><br />
+            <div class="form-group">
+                <input type="hidden" asp-for-"Email" value="Email" />
+                <input type="hidden" asp-for-"RoleName" value="RoleName" />
+                <div class="form-group">
+                    <input type="submit" value="Create" class="btn btn-primary"
+                           style="border-color:#6E0B14; background-color: #6E0B14; margin-top: 20px;" />
+                </div>
+            </div>
+        </form>
+        <div>
+            <a style="color:darkred;" href="/UserRole">Back to Users</a>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
