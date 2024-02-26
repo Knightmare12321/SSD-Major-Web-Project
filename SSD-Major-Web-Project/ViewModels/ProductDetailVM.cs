@@ -2,7 +2,7 @@
 
 namespace SSD_Major_Web_Project.ViewModels
 {
-    public class ProductVM
+    public class ProductDetailVM
     {
         [Key]
         [Display(Name = "ID")]
@@ -19,6 +19,9 @@ namespace SSD_Major_Web_Project.ViewModels
         [Display(Name = "Is Active")]
         [Required]
         public string IsActive { get; set; } = null!;
+
         public byte[]? ImageByteArray { get; set; }
+
+        public List<String>? Sizes { get; set; }
     }
 }

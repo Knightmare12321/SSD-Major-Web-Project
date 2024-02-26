@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SSD_Major_Web_Project.Models;
 using SSD_Major_Web_Project.Repositories;
+using SSD_Major_Web_Project.ViewModels;
 
 namespace SSD_Major_Web_Project.Controllers
 {
@@ -19,6 +20,13 @@ namespace SSD_Major_Web_Project.Controllers
         {
             ProductRepo temp = new ProductRepo(_context);
             return View(temp.GetAll());
+        }
+
+        public IActionResult Details(int id)
+        {
+            ProductRepo temp = new ProductRepo(_context);
+            ProductDetailVM? vm = temp.GetById(id);
+            return View(vm);
         }
     }
 }
