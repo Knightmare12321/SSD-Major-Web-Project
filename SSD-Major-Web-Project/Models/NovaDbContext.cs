@@ -33,6 +33,8 @@ public partial class NovaDbContext : DbContext
 
     public virtual DbSet<Review> Reviews { get; set; }
 
+    public virtual DbSet<UserType> UserTypes { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Address>(entity =>
@@ -97,6 +99,11 @@ public partial class NovaDbContext : DbContext
                 .HasForeignKey(d => d.FkAddressId)
                 .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("CustomerAddressFK");
+
+            entity.HasOne(d => d.FkUserType).WithMany(p => p.Customers)
+                .HasForeignKey(d => d.FkUserTypeId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("CustomerUserTypeFK");
         });
 
         modelBuilder.Entity<Discount>(entity =>
@@ -259,6 +266,19 @@ public partial class NovaDbContext : DbContext
             entity.HasOne(d => d.FkProduct).WithMany(p => p.Reviews)
                 .HasForeignKey(d => d.FkProductId)
                 .HasConstraintName("ReviewProductFK");
+        });
+
+        modelBuilder.Entity<UserType>(entity =>
+        {
+            entity.HasKey(e => e.PkUserTypeId).HasName("PK__UserType__F1FCA1425B4C0DFF");
+
+            entity.ToTable("UserType");
+
+            entity.Property(e => e.PkUserTypeId).HasColumnName("pkUserTypeId");
+            entity.Property(e => e.UserType1)
+                .HasMaxLength(10)
+                .IsUnicode(false)
+                .HasColumnName("userType");
         });
 
         OnModelCreatingPartial(modelBuilder);

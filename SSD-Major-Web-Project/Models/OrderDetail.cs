@@ -1,4 +1,7 @@
-﻿namespace SSD_Major_Web_Project.Models;
+﻿using System;
+using System.Collections.Generic;
+
+namespace SSD_Major_Web_Project.Models;
 
 public partial class OrderDetail
 {
