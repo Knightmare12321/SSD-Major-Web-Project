@@ -25,7 +25,12 @@ namespace SSD_Major_Web_Project.Repositories
             return products;
         }
 
-        public ProductDetailVM? GetById(int pkProductId) {
+        public Product? GetById(int pkProductId)
+        {
+            return _context.Products.Where(p => p.PkProductId == pkProductId).FirstOrDefault();
+        }
+
+        public ProductDetailVM? GetByIdVM(int pkProductId) {
             ProductVM? productVM = _context.Products
                 .Where(u => u.PkProductId == pkProductId)
                 .Select(u => new ProductVM
