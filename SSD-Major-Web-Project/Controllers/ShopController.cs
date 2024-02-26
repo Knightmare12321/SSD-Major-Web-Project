@@ -1,7 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore;
 using SSD_Major_Web_Project.Models;
-using SSD_Major_Web_Project.Repositories;   
+using SSD_Major_Web_Project.Repositories;
 using SSD_Major_Web_Project.ViewModels;
 using System;
 
@@ -21,44 +22,140 @@ namespace SSD_Major_Web_Project.Controllers
 
         public IActionResult Index()
         {
-            List<Product> products = _context.Products.ToList();
+            try
+            {
+                // catch error, if no products found, show error message " There is no product available now, please come back later"
+                if (_context.Products.Count() == 0)
+                {
+                    return View("Error", new ErrorViewModel { RequestId = "Your shopping cart is empty" });
+                }
+                else
+                {
 
+                    //List<Product> products = _context.Products.ToList();
+
+                    // assign products to shoppingcartVM using a product array harcoded
+                    List<Product> products = new List<Product>
+                    {
+                        new Product { PkProductId = 1, Name = "Product 1", Price = 100 },
+                        new Product { PkProductId = 2, Name = "Product 2", Price = 200 },
+                        new Product { PkProductId = 3, Name = "Product 3", Price = 300 }
+                    };
+
+                    ShoppingCartVM shoppingcartVM = new ShoppingCartVM();
+                    //shoppingcart.UserId = "user123";
+                    ShopRepo _shopRepo = new ShopRepo(_context);
+                    shoppingcartVM.Subtotal = _shopRepo.CalculateSubtotal(products);
+                    shoppingcartVM.ShippingFee = 0;
+                    shoppingcartVM.Taxes = _shopRepo.CalculateTaxes(shoppingcartVM.Subtotal);
+                    shoppingcartVM.GrandTotal = _shopRepo.CalculateGrandTotal(shoppingcartVM.Subtotal, shoppingcartVM.Taxes, shoppingcartVM.ShippingFee);
+
+                    shoppingcartVM.Products = products;
+
+                    return View(shoppingcartVM);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error in ShopController");
+                return View("Error", new ErrorViewModel { RequestId = "Your shopping cart is empty" });
+            }
+            
+        }
+
+        // GET: ShopController/Checkout
+        [HttpPost]
+        public IActionResult Checkout(CheckoutVM vm)
+        {
+            List<Product> products = _context.Products.ToList();
 
             ShoppingCartVM shoppingcartVM = new ShoppingCartVM();
 
-            //shoppingcart.UserId = "user123";
-            //for each product in product, assign ImageByteArray to product.Image
-            ShopRepository _shopRepo = new ShopRepository(_context);
+            ShopRepo _shopRepo = new ShopRepo(_context);
             shoppingcartVM.Subtotal = _shopRepo.CalculateSubtotal(products);
             shoppingcartVM.ShippingFee = 0;
-            shoppingcartVM.Taxes = _shopRepo.CalculateTaxes(shoppingcartVM.Subtotal) ;
+            shoppingcartVM.Taxes = _shopRepo.CalculateTaxes(shoppingcartVM.Subtotal);
             shoppingcartVM.GrandTotal = _shopRepo.CalculateGrandTotal(shoppingcartVM.Subtotal, shoppingcartVM.Taxes, shoppingcartVM.ShippingFee);
 
             shoppingcartVM.Products = products;
 
-            return View(shoppingcartVM);
+            //pass the shoppingcart data to Checkout view model
+            vm.ShoppingCart = shoppingcartVM;
+            
+            
+
+
+
+            // if user is not logged in, ask user to enter address
+
+            
+
+            // if user logged in, then we can get the user's default address
+            // and show it to the user
+  
+
+            return View("Checkout", vm);
         }
 
-        // GET: ShopController/Create
-        public ActionResult Checkout()
+
+        public IActionResult OrderConfirmation(OrderConfirmationVM orderConfirmationModel)
         {
-            return View();
+            return View(orderConfirmationModel);
         }
 
-        //// POST: HomeController1/Create
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public ActionResult Create(IFormCollection collection)
+
+
+
+
+        //// GET: ShopController/CreateOrder
+        //public IActionResult CreateOrder()
         //{
-        //    try
-        //    {
-        //        return RedirectToAction(nameof(Index));
-        //    }
-        //    catch
-        //    {
-        //        return View();
-        //    }
+        //    return View();
         //}
+
+        // POST: ShopController/CreateOrder
+        //[HttpPost]
+        //public async Task<IActionResult> CreateOrder(Order order)
+        //{
+        //    // check if data valid
+        //    if (ModelState.IsValid)
+        //    {
+        //        // create order
+        //        order = new Order();
+        //        order.OrderDate = DateOnly;
+        //        order.FkAddress = vm.ShippingAddress;
+        //        order.ShippingCity = vm.ShippingCity;
+        //        order.ShippingCountry = vm.ShippingCountry;
+        //        order.ShippingPostalCode = vm.ShippingPostalCode;
+        //        order.ShippingState = vm.ShippingState;
+        //        order.UserId = "user123";
+        //        order.OrderItems = new List<OrderItem>();
+
+        //        // create order items
+        //        foreach (Product product in vm.Products)
+        //        {
+        //            OrderItem orderItem = new OrderItem();
+        //            orderItem.ProductId = product.Id;
+        //            orderItem.Quantity = product.Quantity;
+        //            orderItem.Price = product.Price;
+        //            order.OrderItems.Add(orderItem);
+        //        }
+
+        //        // save order to database
+        //        _context.Orders.Add(order);
+        //        await _context.SaveChangesAsync();
+
+        //        // redirect to order confirmation page
+        //        return RedirectToAction("OrderConfirmation", new { orderId = order.Id });
+        //    }
+        //    else
+        //    {
+        //        return View(vm);
+        //    }
+
+
+        //}
+
 
     }
 }

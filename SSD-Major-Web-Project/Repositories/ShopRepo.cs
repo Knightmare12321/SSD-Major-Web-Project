@@ -6,29 +6,14 @@ using SSD_Major_Web_Project.ViewModels;
 
 namespace SSD_Major_Web_Project.Repositories
 {
-    public class ShopRepository
+    public class ShopRepo
     {
         private readonly NovaDbContext _context;
 
-        public ShopRepository(NovaDbContext context)
+        public ShopRepo(NovaDbContext context)
         {
             _context = context;
         }
-
-        //public void AddOrder(int pkOrderId, string fkUserId, int fkORderStatusId, string fkDiscountCode, int fkAdressId, string transactionId, string buyerNote, DateOnly orderDate)
-        //{
-        //    try
-        //    {
-        //        List<ProductSku> productSkus = new List<ProductSku>(){ SkuId = skuId};
-        //        _context.Order.Add(order);
-        //        _context.SaveChanges();
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        throw new Exception(ex.ToString());
-        //    }
-
-        //}
 
         // calculate taxes
         public double CalculateSubtotal(List<Product> products)
@@ -39,7 +24,6 @@ namespace SSD_Major_Web_Project.Repositories
             {
                 subtotal += product.Price;
             }
-
             return subtotal;
         }
 
@@ -65,6 +49,11 @@ namespace SSD_Major_Web_Project.Repositories
 
             return grandTotal;
         }
+
+
+        
+
+
 
     }
 }

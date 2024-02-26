@@ -41,9 +41,9 @@
 
             </dd>
             <div>
-                <form action="@Url.Action("Checkout", "Shop", new { area = "" })" method="post">
-                    @Html.HiddenFor(model => model.Order.Customer.PkCustomerId)
-                    <input type="submit" value="Proceed to Checkout" class="btn btn-primary" />
+                <form asp-action="Paypal" asp-controller="Shop" method="post">
+                    <input type="hidden" asp-for="@Model.Order.Customer.PkCustomerId" />
+                    <div id="paypal-button-container"></div>
                 </form>
             </div>
         </div>

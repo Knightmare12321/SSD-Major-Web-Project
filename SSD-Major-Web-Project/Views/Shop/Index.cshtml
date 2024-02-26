@@ -66,12 +66,14 @@
                 
             </dd>
             <div>
-                @using (Html.BeginForm("Checkout", "ShoppingCart", FormMethod.Post))
-                {
-                    @Html.HiddenFor(model => model.UserId)
-          
-                    <input type="submit" value="Proceed to Checkout" class="btn btn-primary" />
-                }
+                <form asp-action="Checkout" asp-controller="Shop" method="post">
+                    <input type="hidden" asp-for="@Model.UserId" />
+                    @foreach (var item in Model.Products)
+                    {
+                        <input type="hidden" name="Products" value="@item" />
+                    }
+                    <button type="submit" class="btn btn-primary">Proceed to Checkout</button>
+                </form>
             </div>
         </div>
     </div>
