@@ -1,0 +1,58 @@
+﻿@model SSD_Major_Web_Project.ViewModels.ProductDetailVM
+
+@{
+    ViewData["Title"] = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@* @Html.DisplayFor(model => model.IsActive) *@
+<div class="return-menu-btn">
+    <a asp-action="Index">Back to List</a>
+</div>
+
+<h1>@Html.DisplayFor(model => model.Name)</h1>
+
+<div class="product-details-container">
+    <div class="product-details-left">
+        <div class="product-image-container">
+            @if (Model.ImageByteArray != null && Model.ImageByteArray.Length > 0)
+            {
+                <img src="data:image/jpeg;base64,
+                     @Convert.ToBase64String(Model.ImageByteArray)"
+                     alt="Model.Name"
+                     class="product-image" />
+            }
+
+        </div>
+    </div>
+    <div class="product-details-right">
+        <div class="info-container">
+            <div>
+                <h4>Select Size</h4>
+            </div>
+            <div class="size-container">
+                @Html.DisplayFor(model => model.Sizes)
+            </div>
+            <hr />
+            <div class="product-description">
+                @Html.DisplayFor(model => model.Description)
+            </div>
+            <div class="product-price">
+                $@Html.DisplayFor(model => model.Price)
+            </div>
+            <div class="product-buttons-container">
+                <button id="product-add-to-bag">
+                    ADD TO BAG
+                </button>
+                <button id="product-add-to-wishlist">
+                    Add to wishlist
+                </button>
+            </div>
+        </div>
+
+
+    </div>
+</div>
+
+
+

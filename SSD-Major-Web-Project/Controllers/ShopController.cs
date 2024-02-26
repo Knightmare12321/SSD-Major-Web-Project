@@ -19,11 +19,14 @@ namespace SSD_Major_Web_Project.Controllers
             _context = context;
         }
 
-        public IActionResult Index(ShoppingCartVM shoppingcartVM)
+        public IActionResult Index()
         {
-            DbSet<Product> products = _context.Products;
-            shoppingcartVM.Products = products;
+            List<Product> products = _context.Products.ToList();
+            //for each product in product, assign ImageByteArray to product.Image
 
+
+
+            ShoppingCartVM shoppingcartVM = new ShoppingCartVM();
 
             //shoppingcart.UserId = "user123";
             ShopRepository _shopRepo = new ShopRepository(_context);
@@ -31,6 +34,8 @@ namespace SSD_Major_Web_Project.Controllers
             shoppingcartVM.ShippingFee = 0;
             shoppingcartVM.Taxes = _shopRepo.CalculateTaxes(shoppingcartVM.Subtotal) ;
             shoppingcartVM.GrandTotal = _shopRepo.CalculateGrandTotal(shoppingcartVM.Subtotal, shoppingcartVM.Taxes, shoppingcartVM.ShippingFee);
+
+            shoppingcartVM.Products = products;
 
             return View(shoppingcartVM);
         }
