@@ -4,6 +4,7 @@ using SSD_Major_Web_Project.Models;
 using SSD_Major_Web_Project.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Internal;
+using Newtonsoft.Json;
 
 namespace SSD_Major_Web_Project.Repositories
 {
@@ -208,6 +209,42 @@ namespace SSD_Major_Web_Project.Repositories
                     .Select((order) => order.OrderDetail.Quantity * order.Product.Price * (order.Discount != null ? (1 - order.Discount.DiscountValue) : 1))
                     .Sum(), 2)
             });
+        }
+
+        public string dispatchOrder(int orderId)
+        {
+            try
+            {
+                Order order = _context.Orders.Where(o => o.PkOrderId == orderId).FirstOrDefault();
+                string status = _context.OrderStatuses.Where(os => os.PkOrderStatusId == order.FkOrderStatusId).Select(os => os.Status).FirstOrDefault();
+
+                //check if order has an open order status
+                if (status != "Paid")
+                {
+                    return JsonConvert.SerializeObject(
+                   new
+                   {
+                       Success = false,
+                       Error = "Order does not have an open status"
+                   });
+                }
+
+                //set order status id to shipped
+                OrderStatus shippedStatus = _context.OrderStatuses.Where(od => od.Status == "Shipped").FirstOrDefault();
+                order.FkOrderStatusId = shippedStatus.PkOrderStatusId;
+                //_context.SaveChanges();
+
+                return JsonConvert.SerializeObject(new { Success = true, Error = "" });
+            }
+            catch (Exception ex)
+            {
+                return JsonConvert.SerializeObject(
+                    new
+                    {
+                        Success = false,
+                        Error = $"An unexpected error occured while dispatching order"
+                    });
+            }
         }
 
 

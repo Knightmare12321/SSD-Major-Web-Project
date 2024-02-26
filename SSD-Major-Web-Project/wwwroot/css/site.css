@@ -224,6 +224,8 @@ main {
     display:flex;
     grid-column-gap:10px;
 
+
+
     ul{
           padding:0;
           width:150px;
@@ -242,6 +244,19 @@ main {
     }
     .summary.active{
         display:block;
+    }
+
+    button {
+        white-space: nowrap;
+        background-color: royalblue;
+        color: white;      
+    }
+    button.dispatched {
+        background-color: grey;
+    }
+
+    tr.dispatched {
+        background-color: orange;
     }
 }
 
