@@ -61,7 +61,7 @@ main {
 
 
 
-.footer-container. .footer-container * {
+.footer-container{
     position: fixed;
     bottom: 0;
     width: 100%;
