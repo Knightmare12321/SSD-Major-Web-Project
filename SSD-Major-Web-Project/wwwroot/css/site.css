@@ -3,6 +3,7 @@
     --label-font-size: 16px;
     --theme-color: pink;
     --page-padding:25px;
+    --shopping-cart-font-size: 1rem;
 }
 
 html {
@@ -87,47 +88,73 @@ main {
     margin:0;
 }
 
-    .carousel img {
-        width: 100%;
-        position: absolute;
-        top: 0;
-        left: 0;
-        opacity: 0;
-        transition: opacity 0.5s ease-in-out;
-
-    }
-
-            .carousel img.active {
-                opacity: 1;
-            }
-
-/*SHOP CONTROLLER*/
-
-.shoppingcart-container {
-    .btn-primary
-    {
-        color: white;
-        background-color: black;
-        font-weight: 200;
-        font-size: 1rem;
-        border-radius: 0;
-        padding: 0.5rem 1rem;
-        &:hover
-
-    {
-        border: solid black 1px;
-    }
-
-    }
-
-    input {
-        font-size: 1rem;
-        margin: 0;
-        height: 100%;
-    }
+.carousel img {
+    width: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out;
 
 }
 
+.carousel img.active {
+    opacity: 1;
+}
+
+/*SHOP CONTROLLER*/
+
+.shoppingcart-container h2 {
+    font-size: calc(#{$shopping-cart-font-size} * 2.5);
+    margin: var(--shopping-cart-font-size);
+    margin-top: 0;
+}
+
+.shoppingcart-container .btn-primary {
+    color: white;
+    background-color: black;
+    font-weight: 500;
+    font-size: var(--shopping-cart-font-size);
+    border-radius: 0;
+    border: 3px solid black;
+    padding: 0.1rem 1rem;
+    height: 2.5rem;
+    
+}
+
+.btn-primary:hover {
+    background-color: yellow;
+    color:black;
+}
+
+.shoppingcart-container input {
+    font-size: 1.2rem;
+    margin: 0;
+    height: 100%;
+}
+
+.coupon-code{
+    display:flex;
+    flex-direction:row;
+    height: 2.5rem;
+    gap:10px;
+}
+
+.shopping-cart .product img {
+    min-height: 100px;
+    max-height: 300px;
+    max-width: 300px;
+    min-width: 100px;
+}
+.shopping-cart .product {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    margin-bottom: 10px;
+    padding: 10px;
+    border: 1px solid lightgray;
+    border-radius: 5px;
+}
 
 
 /*USER CONTROLLER*/

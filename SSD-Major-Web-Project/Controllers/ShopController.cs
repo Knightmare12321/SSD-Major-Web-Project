@@ -22,13 +22,12 @@ namespace SSD_Major_Web_Project.Controllers
         public IActionResult Index()
         {
             List<Product> products = _context.Products.ToList();
-            //for each product in product, assign ImageByteArray to product.Image
-
 
 
             ShoppingCartVM shoppingcartVM = new ShoppingCartVM();
 
             //shoppingcart.UserId = "user123";
+            //for each product in product, assign ImageByteArray to product.Image
             ShopRepository _shopRepo = new ShopRepository(_context);
             shoppingcartVM.Subtotal = _shopRepo.CalculateSubtotal(products);
             shoppingcartVM.ShippingFee = 0;
