@@ -39,26 +39,26 @@ namespace SSD_Major_Web_Project.Controllers
             return View(shoppingcartVM);
         }
 
-        // GET: HomeController1/Create
-        public ActionResult Create()
+        // GET: ShopController/Create
+        public ActionResult Checkout()
         {
             return View();
         }
 
-        // POST: HomeController1/Create
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
+        //// POST: HomeController1/Create
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public ActionResult Create(IFormCollection collection)
+        //{
+        //    try
+        //    {
+        //        return RedirectToAction(nameof(Index));
+        //    }
+        //    catch
+        //    {
+        //        return View();
+        //    }
+        //}
 
     }
 }
