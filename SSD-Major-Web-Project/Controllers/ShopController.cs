@@ -5,6 +5,7 @@ using SSD_Major_Web_Project.Models;
 using SSD_Major_Web_Project.Repositories;
 using SSD_Major_Web_Project.ViewModels;
 using System;
+using System.Net;
 
 namespace SSD_Major_Web_Project.Controllers
 {
@@ -67,7 +68,13 @@ namespace SSD_Major_Web_Project.Controllers
         [HttpPost]
         public IActionResult Checkout(CheckoutVM vm)
         {
-            List<Product> products = _context.Products.ToList();
+            //List<Product> products = _context.Products.ToList();
+            List<Product> products = new List<Product>
+            {
+                new Product { PkProductId = 1, Name = "Product 1", Price = 100 },
+                new Product { PkProductId = 2, Name = "Product 2", Price = 200 },
+                new Product { PkProductId = 3, Name = "Product 3", Price = 300 }
+            };
 
             ShoppingCartVM shoppingcartVM = new ShoppingCartVM();
 
@@ -76,24 +83,26 @@ namespace SSD_Major_Web_Project.Controllers
             shoppingcartVM.ShippingFee = 0;
             shoppingcartVM.Taxes = _shopRepo.CalculateTaxes(shoppingcartVM.Subtotal);
             shoppingcartVM.GrandTotal = _shopRepo.CalculateGrandTotal(shoppingcartVM.Subtotal, shoppingcartVM.Taxes, shoppingcartVM.ShippingFee);
-
+            shoppingcartVM.Currency = "CAD";
+            shoppingcartVM.CurrencySymbol = "$";
             shoppingcartVM.Products = products;
 
             //pass the shoppingcart data to Checkout view model
             vm.ShoppingCart = shoppingcartVM;
-            
-            
-
-
 
             // if user is not logged in, ask user to enter address
+            //shoppingcartVM.Order.Contact.FirstName = FirstName;
+            //shoppingcartVM.Order.Contact.LastName = LastName;
+            //shoppingcartVM.Order.Contact.Address = address;
+            //shoppingcartVM.Order.Contact.Address2 = address2;
+            //shoppingcartVM.Order.Contact.City = city;
+            //shoppingcartVM.Order.Contact.province = province;
+            //shoppingcartVM.Order.Contact.Country = country;
+            //shoppingcartVM.Order.Contact.PostalCode = postalCode;
+            //shoppingcartVM.Order.Contact.Phone = phone;
 
-            
-
-            // if user logged in, then we can get the user's default address
-            // and show it to the user
+            // if user logged in, display user's default adress as shipping option
   
-
             return View("Checkout", vm);
         }
 

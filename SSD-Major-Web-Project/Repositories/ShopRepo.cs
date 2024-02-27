@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SSD_Major_Web_Project.Data;
+using SSD_Major_Web_Project.Interface;
 using SSD_Major_Web_Project.Models;
 using SSD_Major_Web_Project.Repositories;
 using SSD_Major_Web_Project.ViewModels;
@@ -15,6 +16,24 @@ namespace SSD_Major_Web_Project.Repositories
             _context = context;
         }
 
+        public string AddOrder(CheckoutVM checkoutEntity)
+        {
+            // place holder to return message
+            string message = string.Empty;
+            try {
+                _context.Add(checkoutEntity);
+                _context.SaveChanges();
+                message = "Order has been placed, you will get an email confirmation";
+    
+            }
+            catch (Exception ex)
+            {
+                message = $" Error placeing new order: {checkoutEntity.Order.OrderId}";
+            }
+            return message;
+
+          
+        }
         // calculate taxes
         public double CalculateSubtotal(List<Product> products)
         {

@@ -3,17 +3,25 @@
 @{
     ViewData["Title"] = "Checkout";
     Layout = "~/Views/Shared/_Layout.cshtml";
+
 }
 
+<script src="https://www.paypal.com/sdk/js?client-id=AT43uF9QHEyOHayLY0lnVVwiD6VfjG2o2NH8Ob6mo9iod3G7VftCAWwy9r8jQHLY6jizC_vHkmQCbfW8"></script>
 <div class="checkout-container">
-
     <div class="row">
         <h2>checkout</h2>
         <div class="col-md-4">
-            <div class="checkout">
+            <div class="shipping">
                 <h3>Shipping Address</h3>
             </div>
-        </div>
+            <div class="shipping-address">
+                @* ask user to input firstname *@
+                <input type="text" placeholder="First Name" asp-for="Order.Customer.FirstName" />
+                <span asp-validation-for="Order.Customer.FirstName" class="text-danger"></span>
+              @* ask user to input lastname *@
+                <input type="text" placeholder="Last Name" asp-for="Order.Customer.LastName" />
+                <span asp-validation-for="Order.Customer.LastName" class="text-danger"></span>
+            </div>
         <div class="col-md-6 col-md-offset-2">
             <dt class="col-sm-3">
                 @Html.DisplayNameFor(model => model.ShoppingCart.Subtotal)
@@ -36,13 +44,14 @@
             <dt class="col-sm-2">
                 @Html.DisplayNameFor(model => model.ShoppingCart.GrandTotal)
             </dt>
-            <dd class="col-sm-10">
-                @Html.DisplayFor(model => model.ShoppingCart.GrandTotal)
-
-            </dd>
+                <dd class="col-sm-10">
+                    @Html.DisplayFor(model => model.ShoppingCart.CurrencySymbol)@Model.ShoppingCart.GrandTotal
+                </dd>
             <div>
                 <form asp-action="Paypal" asp-controller="Shop" method="post">
-                    <input type="hidden" asp-for="@Model.Order.Customer.PkCustomerId" />
+                    <dd class="col-sm-10">
+                    <input type="hidden" id="itemPrice" value="@Model.ShoppingCart.GrandTotal" />
+                    </dd>
                     <div id="paypal-button-container"></div>
                 </form>
             </div>
@@ -50,3 +59,48 @@
     </div>
 </div>
 
+
+    <script>
+        paypal.Buttons({
+            // Set up the transaction
+            createOrder: function (data, actions) {
+                return actions.order.create({
+                    purchase_units: [{
+                        amount: {
+                            value: document.getElementById('itemPrice').value,
+                            currency:'USD'
+                        }
+                    }]
+                });
+            },
+
+            // Finalize the transaction
+            onApprove: function (data, actions) {
+                return actions.order.capture().then(function (details) {
+
+
+                    // Redirect to the PayPalConfirmation action method
+                    window.location.href =
+                        '/Home/PayPalConfirmation?TransactionId=' +
+                        encodeURIComponent(details.id) + '&Amount=' +
+                        encodeURIComponent(details.purchase_units[0]
+                            .amount.value) + '&PayerName=' +
+                        encodeURIComponent(details.payer.name.given_name);
+                });
+            },
+
+
+            onCancel: function (data) {
+                alert('Transaction was cancelled.');
+            },
+            onError: function (err) {
+                alert('An error occurred during the transaction. Error ==> ' + err);
+            },
+            style: {
+                layout: 'vertical', // 'vertical', 'horizontal'
+                color: 'blue',      // 'gold', 'blue', 'silver', 'black'
+                shape: 'rect',      // 'rect', 'pill'
+                label: 'paypal'     // 'checkout', 'pay', 'buynow', 'paypal'
+            }
+        }).render('#paypal-button-container');
+    </script>

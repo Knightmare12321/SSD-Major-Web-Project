@@ -16,8 +16,11 @@ namespace SSD_Major_Web_Project.ViewModels
         public double ShippingFee { get; set; }
         [DisplayFormat(DataFormatString = "{0:C}")]
         public double Taxes { get; set; }
-        [DisplayFormat(DataFormatString = "{0:C}")]
+        // [DisplayFormat(DataFormatString = "{0:C}")]
+
         public double GrandTotal { get; set; }
+        public string Currency { get; set; }
+        public string CurrencySymbol { get; set; }
         //public byte[]? ImageByteArray { get; set; }
 
     }
