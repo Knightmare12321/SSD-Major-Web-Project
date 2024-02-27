@@ -160,8 +160,8 @@ namespace SSD_Major_Web_Project.Areas.Identity.Pages.Account
                     Customer customer = new Customer()
                     {
                         PkCustomerId = Input.Email,
-                        FirstName = Input.FirstName,
-                        LastName = Input.LastName,
+                        FkUserTypeId = null,
+                        FkContactId = null,
                     };
                     _db.Customers.Add(customer);
                     _db.SaveChanges();

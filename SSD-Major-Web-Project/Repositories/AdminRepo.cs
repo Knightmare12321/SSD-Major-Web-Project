@@ -37,7 +37,7 @@ namespace SSD_Major_Web_Project.Repositories
                     productSkus.Add(new ProductSku { Size = sizes[i] });
 
                 }
-                Product product = new Product { Name = name, Price = price, Description = description, IsActive = isActive, Image = imageData, ProductSkus = productSkus };
+                Product product = new Product { Name = name, Price = price, Description = description, IsActive = isActive, /*Image = imageData,*/ ProductSkus = productSkus };
                 _context.Products.Add(product);
                 _context.SaveChanges();
             }
@@ -124,7 +124,7 @@ namespace SSD_Major_Web_Project.Repositories
                     Quantity = order.OrderDetail.Quantity,
                     Size = order.ProductSku.Size,
                     ProductName = order.Product.Name,
-                    ProductImage = order.Product.Image,
+                    //ProductImage = order.Product.Image,
                     UnitPrice = order.Product.Price,
                     Customer = order.Customer,
                     Discount = order.Discount,
