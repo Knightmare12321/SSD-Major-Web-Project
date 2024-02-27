@@ -12,7 +12,7 @@ namespace SSD_Major_Web_Project.Repositories
             this._db = context;
         }
 
-        public Customer RegisterUser(string lastName, string firstName, string email)
+        public Customer RegisterUser(string email)
         {
             Customer customer = new Customer
             {
