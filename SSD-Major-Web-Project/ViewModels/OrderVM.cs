@@ -21,7 +21,7 @@ namespace SSD_Major_Web_Project.ViewModels
         public Discount? Discount { get; set; }
 
         [Required]
-        public Customer Customer { get; set; }
+        public Contact Contact { get; set; }
 
         [Required]
         public List<OrderDetail> OrderDetails { get; set; }

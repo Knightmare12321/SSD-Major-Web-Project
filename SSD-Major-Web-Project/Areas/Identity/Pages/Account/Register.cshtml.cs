@@ -81,13 +81,6 @@ namespace SSD_Major_Web_Project.Areas.Identity.Pages.Account
             ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
             ///     directly from your code. This API may change or be removed in future releases.
             /// </summary>
-            [Required]
-            [Display(Name = "First Name")]
-            public string FirstName { get; set; }
-
-            [Required]
-            [Display(Name = "Last Name")]
-            public string LastName { get; set; }
 
             [Required]
             [EmailAddress]
@@ -138,6 +131,7 @@ namespace SSD_Major_Web_Project.Areas.Identity.Pages.Account
                     "The ReCaptcha is invalid.");
             }
 
+            var state = ModelState;
 
             if (ModelState.IsValid)
             {
@@ -160,8 +154,8 @@ namespace SSD_Major_Web_Project.Areas.Identity.Pages.Account
                     Customer customer = new Customer()
                     {
                         PkCustomerId = Input.Email,
-                        FirstName = Input.FirstName,
-                        LastName = Input.LastName,
+                        FkUserTypeId = null,
+                        FkContactId = null,
                     };
                     _db.Customers.Add(customer);
                     _db.SaveChanges();

@@ -1,4 +1,7 @@
-﻿namespace SSD_Major_Web_Project.Models;
+﻿using System;
+using System.Collections.Generic;
+
+namespace SSD_Major_Web_Project.Models;
 
 public partial class Product
 {
@@ -12,7 +15,7 @@ public partial class Product
 
     public string IsActive { get; set; } = null!;
 
-    public byte[]? Image { get; set; }
+    public virtual ICollection<Image> Images { get; set; } = new List<Image>();
 
     public virtual ICollection<ProductSku> ProductSkus { get; set; } = new List<ProductSku>();
 
