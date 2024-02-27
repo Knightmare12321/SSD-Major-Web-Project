@@ -3,11 +3,15 @@ using System.Collections.Generic;
 
 namespace SSD_Major_Web_Project.Models;
 
-public partial class Address
+public partial class Contact
 {
-    public int PkAddressId { get; set; }
+    public int PkContactId { get; set; }
 
-    public string Address1 { get; set; } = null!;
+    public string FirstName { get; set; } = null!;
+
+    public string LastName { get; set; } = null!;
+
+    public string Address { get; set; } = null!;
 
     public string? Address2 { get; set; }
 
