@@ -16,53 +16,11 @@
             </div>
             <div class="shipping-address">
                 @* ask user to input firstname *@
-                <input type="text" placeholder="First Name" asp-for="Order.Customer.FirstName" />
-                <span asp-validation-for="Order.Customer.FirstName" class="text-danger"></span>
-<<<<<<< Updated upstream
-              @* ask user to input lastname *@
-                <input type="text" placeholder="Last Name" asp-for="Order.Customer.LastName" />
-                <span asp-validation-for="Order.Customer.LastName" class="text-danger"></span>
-            </div>
-        <div class="col-md-6 col-md-offset-2">
-            <dt class="col-sm-3">
-                @Html.DisplayNameFor(model => model.ShoppingCart.Subtotal)
-            </dt>
-            <dd class="col-sm-10">
-                @Html.DisplayFor(model => model.ShoppingCart.Subtotal)
-            </dd>
-            <dt class="col-sm-2">
-                @Html.DisplayNameFor(model => model.ShoppingCart.ShippingFee)
-            </dt>
-            <dd class="col-sm-10">
-                @Html.DisplayFor(model => model.ShoppingCart.ShippingFee)
-            </dd>
-            <dt class="col-sm-2">
-                @Html.DisplayNameFor(model => model.ShoppingCart.Taxes)
-            </dt>
-            <dd class="col-sm-10">
-                @Html.DisplayFor(model => model.ShoppingCart.Taxes)
-            </dd>
-            <dt class="col-sm-2">
-                @Html.DisplayNameFor(model => model.ShoppingCart.GrandTotal)
-            </dt>
-                <dd class="col-sm-10">
-                    @Html.DisplayFor(model => model.ShoppingCart.CurrencySymbol)@Model.ShoppingCart.GrandTotal
-                </dd>
-            <div>
-                <form asp-action="Paypal" asp-controller="Shop" method="post">
-                    <dd class="col-sm-10">
-                    <input type="hidden" id="itemPrice" value="@Model.ShoppingCart.GrandTotal" />
-                    </dd>
-                    <div id="paypal-button-container"></div>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-=======
+                <input type="text" placeholder="First Name" asp-for="Order.Contact.FirstName" />
+                <span asp-validation-for="Order.Contact.FirstName" class="text-danger"></span>
                 @* ask user to input lastname *@
-                <input type="text" placeholder="Last Name" asp-for="Order.Customer.LastName" />
-                <span asp-validation-for="Order.Customer.LastName" class="text-danger"></span>
+                <input type="text" placeholder="Last Name" asp-for="Order.Contact.LastName" />
+                <span asp-validation-for="Order.Contact.LastName" class="text-danger"></span>
             </div>
             <div class="col-md-6 col-md-offset-2">
                 <dt class="col-sm-3">
@@ -100,7 +58,7 @@
             </div>
         </div>
     </div>
->>>>>>> Stashed changes
+
 
 
     <script>
@@ -111,11 +69,7 @@
                     purchase_units: [{
                         amount: {
                             value: document.getElementById('itemPrice').value,
-<<<<<<< Updated upstream
                             currency:'USD'
-=======
-                            currency: 'USD'
->>>>>>> Stashed changes
                         }
                     }]
                 });
