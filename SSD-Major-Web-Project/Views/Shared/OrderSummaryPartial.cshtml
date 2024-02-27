@@ -30,8 +30,8 @@
                 <tr id="@ViewBag.SheetName-@item.OrderId-0">
                     <td> @Html.DisplayFor(modelItem => item.OrderId)</td>
                     <td> @Html.DisplayFor(modelItem => item.OrderDate)</td>
-                    <td> @Html.DisplayFor(modelItem => item.OrderStatus)</td>@* 
-                    <td>@Html.DisplayName($"{item.Customer.FirstName} {item.Customer.LastName}")</td> *@
+                    <td> @Html.DisplayFor(modelItem => item.OrderStatus)</td>
+                    <td>@Html.DisplayName($"{item.Contact.FirstName} {item.Contact.LastName}")</td>
                     <td> @Html.DisplayFor(modelItem => item.OrderDetails[0].FkSku.FKproduct.Name)</td>
                     <td> @Html.DisplayFor(modelItem => item.OrderDetails[0].FkSku.Size)</td>
                     <td> @Html.DisplayFor(modelItem => item.OrderDetails[0].FkSku.FKproduct.Price)</td>
