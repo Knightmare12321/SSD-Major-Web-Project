@@ -20,7 +20,7 @@ namespace SSD_Major_Web_Project.Repositories
                 Price = u.Price,
                 Description = u.Description,
                 IsActive = u.IsActive,
-                ImageByteArray = u.Image
+                //ImageByteArray = u.Image
             });
             return products;
         }
@@ -40,7 +40,7 @@ namespace SSD_Major_Web_Project.Repositories
                     Price = u.Price,
                     Description = u.Description,
                     IsActive = u.IsActive,
-                    ImageByteArray = u.Image
+                    //ImageByteArray = u.Image
                 })
                 .FirstOrDefault();
             if (productVM == null) { return null; }
