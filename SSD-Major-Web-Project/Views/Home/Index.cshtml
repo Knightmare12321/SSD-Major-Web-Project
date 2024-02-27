@@ -7,22 +7,24 @@
 
 
 
-    <div class="carousel">
-        <img src="./images/banner/banner-1.jpg" alt="Banner-1">
-        <img src="./images/banner/banner-2.jpg" alt="Banner-2">
-        <img src="./images/banner/banner-3.jpg" alt="Banner-3">
-    </div>
+<div class="carousel">
+    <img src="./images/banner/banner-1.jpg" alt="Banner-1">
+    <img src="./images/banner/banner-2.jpg" alt="Banner-2">
+    <img src="./images/banner/banner-3.jpg" alt="Banner-3">
+</div>
 
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        var carouselImages = document.querySelectorAll(".carousel img");
+    $(document).ready(function () {
+        var carouselImages = $(".carousel img");
         var currentImage = 0;
 
         function showImage(n) {
-            carouselImages[currentImage].classList.remove("active");
+            $(carouselImages[currentImage]).removeClass("active");
             currentImage = (n + carouselImages.length) % carouselImages.length;
-            carouselImages[currentImage].classList.add("active");
+            $(carouselImages[currentImage]).addClass("active");
         }
 
         function nextImage() {
@@ -30,6 +32,8 @@
         }
 
         setInterval(nextImage, 8000); // Change image every 8 seconds
+
+        nextImage();
+
     });
 </script>
-
