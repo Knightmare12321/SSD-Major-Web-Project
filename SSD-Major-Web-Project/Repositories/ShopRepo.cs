@@ -20,11 +20,20 @@ namespace SSD_Major_Web_Project.Repositories
         {
             // place holder to return message
             string message = string.Empty;
+<<<<<<< Updated upstream
             try {
                 _context.Add(checkoutEntity);
                 _context.SaveChanges();
                 message = "Order has been placed, you will get an email confirmation";
     
+=======
+            try
+            {
+                _context.Add(checkoutEntity);
+                _context.SaveChanges();
+                message = "Order has been placed, you will get an email confirmation";
+
+>>>>>>> Stashed changes
             }
             catch (Exception ex)
             {
@@ -32,7 +41,11 @@ namespace SSD_Major_Web_Project.Repositories
             }
             return message;
 
+<<<<<<< Updated upstream
           
+=======
+
+>>>>>>> Stashed changes
         }
         // calculate taxes
         public double CalculateSubtotal(List<Product> products)
@@ -55,7 +68,7 @@ namespace SSD_Major_Web_Project.Repositories
             const double TAX_RATES = 0.12;
             // only save 2 decimal places and add zero if needed
             taxes = System.Math.Round(subtotal * TAX_RATES, 2);
-            
+
             return taxes;
         }
 
@@ -70,8 +83,13 @@ namespace SSD_Major_Web_Project.Repositories
         }
 
 
+<<<<<<< Updated upstream
         
 
+=======
+
+
+>>>>>>> Stashed changes
 
 
     }

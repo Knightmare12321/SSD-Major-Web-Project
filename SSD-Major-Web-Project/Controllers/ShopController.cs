@@ -61,7 +61,11 @@ namespace SSD_Major_Web_Project.Controllers
                 _logger.LogError(ex, "Error in ShopController");
                 return View("Error", new ErrorViewModel { RequestId = "Your shopping cart is empty" });
             }
+<<<<<<< Updated upstream
             
+=======
+
+>>>>>>> Stashed changes
         }
 
         // GET: ShopController/Checkout
@@ -102,7 +106,11 @@ namespace SSD_Major_Web_Project.Controllers
             //shoppingcartVM.Order.Contact.Phone = phone;
 
             // if user logged in, display user's default adress as shipping option
+<<<<<<< Updated upstream
   
+=======
+
+>>>>>>> Stashed changes
             return View("Checkout", vm);
         }
 
