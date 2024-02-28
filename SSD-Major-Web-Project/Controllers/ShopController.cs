@@ -32,16 +32,16 @@ namespace SSD_Major_Web_Project.Controllers
                 }
                 else
                 {
+                    //populates the Images property of each Product object
+                    List<Product> products = _context.Products.Include(p => p.Images).ToList();
 
-                    //List<Product> products = _context.Products.ToList();
-
-                    // assign products to shoppingcartVM using a product array harcoded
-                    List<Product> products = new List<Product>
-                    {
-                        new Product { PkProductId = 1, Name = "Product 1", Price = 100 },
-                        new Product { PkProductId = 2, Name = "Product 2", Price = 200 },
-                        new Product { PkProductId = 3, Name = "Product 3", Price = 300 }
-                    };
+                    // assign products to shoppingcartVM using a product array hard coded
+                    //List<Product> products = new List<Product>
+                    //{
+                    //    new Product { PkProductId = 1, Name = "Product 1", Price = 100 },
+                    //    new Product { PkProductId = 2, Name = "Product 2", Price = 200 },
+                    //    new Product { PkProductId = 3, Name = "Product 3", Price = 300 }
+                    //};
 
                     ShoppingCartVM shoppingcartVM = new ShoppingCartVM();
                     //shoppingcart.UserId = "user123";
