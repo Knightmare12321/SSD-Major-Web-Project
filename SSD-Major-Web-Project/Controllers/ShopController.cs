@@ -35,13 +35,6 @@ namespace SSD_Major_Web_Project.Controllers
                     //populates the Images property of each Product object
                     List<Product> products = _context.Products.Include(p => p.Images).ToList();
 
-                    // assign products to shoppingcartVM using a product array hard coded
-                    //List<Product> products = new List<Product>
-                    //{
-                    //    new Product { PkProductId = 1, Name = "Product 1", Price = 100 },
-                    //    new Product { PkProductId = 2, Name = "Product 2", Price = 200 },
-                    //    new Product { PkProductId = 3, Name = "Product 3", Price = 300 }
-                    //};
 
                     ShoppingCartVM shoppingcartVM = new ShoppingCartVM();
                     //shoppingcart.UserId = "user123";
@@ -67,13 +60,7 @@ namespace SSD_Major_Web_Project.Controllers
         [HttpPost]
         public IActionResult Checkout(CheckoutVM vm)
         {
-            //List<Product> products = _context.Products.ToList();
-            List<Product> products = new List<Product>
-            {
-                new Product { PkProductId = 1, Name = "Product 1", Price = 100 },
-                new Product { PkProductId = 2, Name = "Product 2", Price = 200 },
-                new Product { PkProductId = 3, Name = "Product 3", Price = 300 }
-            };
+            List<Product> products = _context.Products.Include(p => p.Images).ToList();
 
             ShoppingCartVM shoppingcartVM = new ShoppingCartVM();
 
