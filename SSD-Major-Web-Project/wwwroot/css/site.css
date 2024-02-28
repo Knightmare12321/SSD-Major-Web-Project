@@ -295,12 +295,9 @@ li {
     }
 
 .summary {
-    display: none
+    display: block
 }
 
-    .summary.active {
-        display: block;
-    }
 
 button {
     white-space: nowrap;
