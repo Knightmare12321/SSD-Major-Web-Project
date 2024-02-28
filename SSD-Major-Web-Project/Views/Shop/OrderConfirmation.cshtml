@@ -1,0 +1,13 @@
+﻿@model SSD_Major_Web_Project.ViewModels.OrderConfirmationVM
+
+@{
+    ViewData["Title"] = "Payment Confirmation";
+}
+
+<h2>Payment Confirmation</h2>
+<div>
+    <p>Thank you for your payment!</p>
+    <p>Transaction ID: @Model.TransactionId</p>
+    <p>Amount Paid: @Model.Amount</p>
+    <p>Payer Name: @Model.PayerName</p>
+</div>

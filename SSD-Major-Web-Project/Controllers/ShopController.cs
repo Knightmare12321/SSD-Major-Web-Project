@@ -98,9 +98,6 @@ namespace SSD_Major_Web_Project.Controllers
         }
 
 
-
-
-
         //// GET: ShopController/CreateOrder
         //public IActionResult CreateOrder()
         //{

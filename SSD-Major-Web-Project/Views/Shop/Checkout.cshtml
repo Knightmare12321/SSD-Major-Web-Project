@@ -7,6 +7,7 @@
 }
 
 <script src="https://www.paypal.com/sdk/js?client-id=AT43uF9QHEyOHayLY0lnVVwiD6VfjG2o2NH8Ob6mo9iod3G7VftCAWwy9r8jQHLY6jizC_vHkmQCbfW8"></script>
+
 <div class="checkout-container">
     <div class="row">
         <h2>checkout</h2>
@@ -82,7 +83,7 @@
 
                     // Redirect to the PayPalConfirmation action method
                     window.location.href =
-                        '/Home/PayPalConfirmation?TransactionId=' +
+                        '/Shop/OrderConfirmation?TransactionId=' +
                         encodeURIComponent(details.id) + '&Amount=' +
                         encodeURIComponent(details.purchase_units[0]
                             .amount.value) + '&PayerName=' +
