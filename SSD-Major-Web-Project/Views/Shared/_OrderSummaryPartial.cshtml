@@ -15,7 +15,7 @@
                 <th>Order Total</th>
                 <th></th>
                 @{
-                    if (ViewBag.SheetName == "open-orders")
+                    if (ViewBag.OrderStatus == "Paid")
                     {
 
                         <th></th>
@@ -41,7 +41,7 @@
                     <td><button class="btn">Detail</button></td>
 
                     @{
-                        if (ViewBag.SheetName == "open-orders")
+                        if (ViewBag.OrderStatus == "Paid")
                         {
 
                             string rowGroupId = $"{@ViewBag.SheetName}-{@item.OrderId}";
@@ -55,19 +55,19 @@
                 @for (var i = 1; i < item.OrderDetails.Count; i++)
                 {
                     <tr id="@ViewBag.SheetName-@item.OrderId-@i">
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
                         <td> @Html.DisplayFor(modelItem => item.OrderDetails[i].FkSku.FKproduct.Name)</td>
                         <td> @Html.DisplayFor(modelItem => item.OrderDetails[i].FkSku.Size)</td>
                         <td> @Html.DisplayFor(modelItem => item.OrderDetails[i].FkSku.FKproduct.Price)</td>
                         <td> @Html.DisplayFor(modelItem => item.OrderDetails[i].Quantity)</td>
-                        <td></td>
-                        <td></td>
+                        <td>-</td>
+                        <td>-</td>
                         <td></td>
                         @{
-                            if (ViewBag.SheetName == "open-orders")
+                            if (ViewBag.OrderStatus == "Paid")
                             {
 
                                 <td></td>

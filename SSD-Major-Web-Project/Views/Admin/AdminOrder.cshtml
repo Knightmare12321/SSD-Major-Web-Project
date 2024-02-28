@@ -9,74 +9,86 @@
     <div class="side-bar">
         <h4>Order Status</h4>
         <ul>
-            <li onClick="toggleSummary(this,'all-orders-sheet')">All</li>
-            <li onClick="toggleSummary(this,'pending-orders-sheet')">Pending Payment</li>
-            <li class="active" onClick="toggleSummary(this,'open-orders-sheet')">Open</li>
-            <li onClick="toggleSummary(this,'shipped-orders-sheet')">Shipped</li>
-            <li onClick="toggleSummary(this,'delivered-orders-sheet')">Delivered</li>
+            <li onClick="toggleSummary(this,null)">All</li>
+            <li onClick="toggleSummary(this,'Pending')">Pending Payment</li>
+            <li class="active" onClick="toggleSummary(this,'Paid')">Open</li>
+            <li onClick="toggleSummary(this,'Shipped')">Shipped</li>
+            <li onClick="toggleSummary(this,'Delivered')">Delivered</li>
 
         </ul>
     </div>
     <div>
-        <div id="all-orders-sheet" class="summary">
-            <h1>All Orders</h1>
-            @await Html.PartialAsync("../Shared/OrderSummaryPartial", Model.AllOrders)
-
-        </div>
-        <div id="pending-orders-sheet" class="summary">
-            <h1>Pending Payment Orders</h1>
-            @await Html.PartialAsync("../Shared/OrderSummaryPartial", Model.PendingOrders)
-
-        </div>
-        <div id="open-orders-sheet" class="summary active">
-            <h1>Open Orders</h1>
-            @await Html.PartialAsync("../Shared/OrderSummaryPartial", Model.OpenOrders, new ViewDataDictionary(ViewData)
+        <div id="order-sheet" class="summary">
+            <h1 id="orders-title">Open Orders</h1>
+            <span id="message"></span>
+            <div id="orders-data">
+            @await Html.PartialAsync("../Shared/_OrderSummaryPartial", Model.OpenOrders, new ViewDataDictionary(ViewData)
             {
             { "SheetName", "open-orders" }
             })
-
-        </div>
-        <div id="shipped-orders-sheet" class="summary">
-            <h1>Shipped Orders</h1>
-        @await Html.PartialAsync("../Shared/OrderSummaryPartial", Model.ShippedOrders)
-        </div>
-        <div id="delivered-orders-sheet" class="summary">
-            <h1>Delivered Orders</h1>
-            @await Html.PartialAsync("../Shared/OrderSummaryPartial", Model.DeliveredOrders)
+            </div>
         </div>
     </div>
 </div>
 
 <script>
-    const toggleSummary = (tabClicked,sheetName) => {
+    const toggleSummary = (tabClicked, sheetType) => {
         //toggle tabs
         $("#admin-orders li").removeClass("active");
         $(tabClicked).addClass("active");
 
         //toggle order summary sheet
-        $("[id$=orders-sheet]").removeClass("active");
-        $("#" + sheetName).addClass("active");
-    }
+        const url = '@Url.Action("GetOrdersByStatus", "Admin")';
+        $.ajax({
+            type: "GET",
+            url: url,
+            data: { "orderStatus": sheetType },
+            success: function (data) {
+                $("#orders-title").html("Pending Orders")
+                $("#orders-data").html(data);
+            }
+        });
+
+        }
 
     const dispatchOrder = async (orderId, rowGroupId) => {
+        // const url = '@Url.Action("DispatchOrder", "Admin")';
+        // const response = await fetch(url, {
+        //     headers: {
+        //         'Content-Type': 'application/json'
+        //     },
+        //     method: "POST",
+        //     body: orderId
+        // });
+        // const result = await response.json();
+        // const data = JSON.parse(result);
+        // if (data.Success) {
+        //     //update order color
+        //     $("[id^=" + rowGroupId + "]").addClass('dispatched')
+        //     console.log($("[id^=" + rowGroupId + "]"))
+
+        //     //update button class and text
+        //     $("[id^=" + rowGroupId + "] button:contains(Dispatch)").addClass('dispatched').html('Dispatched')
+        // }
         const url = '@Url.Action("DispatchOrder", "Admin")';
-        const response = await fetch(url, {
+        $.ajax({
+            type: "POST",
             headers: {
-                'Content-Type': 'application/json'
+                        'Content-Type': 'application/json'
+                    },
+            url: url,
+            data: { "orderId": orderId },
+            success: function (data) {
+                $("[id^=" + rowGroupId + "]").addClass('dispatched')
+
+                //update button class and text
+                $("[id^=" + rowGroupId + "] button:contains(Dispatch)").addClass('dispatched').html('Dispatched')
+
             },
-            method: "POST",
-            body: orderId
+            error: function (request, status, error) {
+                    $("#message").html(error)
+            }
         });
-        const result = await response.json();
-        const data =  JSON.parse(result);
-        if (data.Success) {
-            //update order color
-            $("[id^="+rowGroupId+"]").addClass('dispatched')
-            console.log($("[id^=" + rowGroupId + "]"))
-            
-            //update button class and text
-            $("[id^=" + rowGroupId + "] button:contains(Dispatch)").addClass('dispatched').html('Dispatched')
-        }
     }
 </script>
 

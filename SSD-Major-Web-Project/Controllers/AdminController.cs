@@ -81,6 +81,15 @@ namespace SSD_Major_Web_Project.Controllers
             return View(vm);
         }
 
+        public IActionResult GetOrdersByStatus(string orderStatus)
+        {
+            ViewData["OrderStatus"] = orderStatus;
+            AdminRepo adminRepo = new AdminRepo(_context);
+            IQueryable<OrderVM> orders = adminRepo.GetOrdersByStatus(orderStatus);
+            List<OrderVM> vm = orders.ToList();
+            return PartialView("_OrderSummaryPartial", vm);
+        }
+
         [HttpPost]
         public JsonResult DispatchOrder([FromBody] int orderId)
         {
