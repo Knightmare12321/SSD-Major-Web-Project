@@ -43,7 +43,7 @@ public partial class NovaDbContext : DbContext
     {
         modelBuilder.Entity<Contact>(entity =>
         {
-            entity.HasKey(e => e.PkContactId).HasName("PK__Contact__5D8CD4C0192C02CC");
+            entity.HasKey(e => e.PkContactId).HasName("PK__Contact__5D8CD4C0E7C08FC1");
 
             entity.ToTable("Contact");
 
@@ -88,7 +88,7 @@ public partial class NovaDbContext : DbContext
 
         modelBuilder.Entity<Customer>(entity =>
         {
-            entity.HasKey(e => e.PkCustomerId).HasName("PK__Customer__1FD9D5A22D3FEDF3");
+            entity.HasKey(e => e.PkCustomerId).HasName("PK__Customer__1FD9D5A27C25E9AC");
 
             entity.ToTable("Customer");
 
@@ -106,7 +106,7 @@ public partial class NovaDbContext : DbContext
 
         modelBuilder.Entity<Discount>(entity =>
         {
-            entity.HasKey(e => e.PkDiscountCode).HasName("PK__Discount__79BE3D84C3D2FF65");
+            entity.HasKey(e => e.PkDiscountCode).HasName("PK__Discount__79BE3D845A5EDE5E");
 
             entity.ToTable("Discount");
 
@@ -118,7 +118,9 @@ public partial class NovaDbContext : DbContext
                 .HasMaxLength(10)
                 .IsUnicode(false)
                 .HasColumnName("discountType");
-            entity.Property(e => e.DiscountValue).HasColumnName("discountValue");
+            entity.Property(e => e.DiscountValue)
+                .HasColumnType("decimal(10, 2)")
+                .HasColumnName("discountValue");
             entity.Property(e => e.EndDate).HasColumnName("endDate");
             entity.Property(e => e.IsActive)
                 .HasMaxLength(1)
@@ -130,7 +132,7 @@ public partial class NovaDbContext : DbContext
 
         modelBuilder.Entity<Image>(entity =>
         {
-            entity.HasKey(e => e.PkImageId).HasName("PK__Image__03FC437608AD5BE8");
+            entity.HasKey(e => e.PkImageId).HasName("PK__Image__03FC4376CEE56E08");
 
             entity.ToTable("Image");
 
@@ -154,7 +156,7 @@ public partial class NovaDbContext : DbContext
 
         modelBuilder.Entity<Order>(entity =>
         {
-            entity.HasKey(e => e.PkOrderId).HasName("PK__Order__C196130B6EF14668");
+            entity.HasKey(e => e.PkOrderId).HasName("PK__Order__C196130B298EFB7D");
 
             entity.ToTable("Order");
 
@@ -202,14 +204,16 @@ public partial class NovaDbContext : DbContext
 
         modelBuilder.Entity<OrderDetail>(entity =>
         {
-            entity.HasKey(e => new { e.FkOrderId, e.FkSkuId }).HasName("PK__OrderDet__1F82522D490396E8");
+            entity.HasKey(e => new { e.FkOrderId, e.FkSkuId }).HasName("PK__OrderDet__1F82522D89F22BE9");
 
             entity.ToTable("OrderDetail");
 
             entity.Property(e => e.FkOrderId).HasColumnName("fkOrderId");
             entity.Property(e => e.FkSkuId).HasColumnName("fkSkuId");
             entity.Property(e => e.Quantity).HasColumnName("quantity");
-            entity.Property(e => e.UnitPrice).HasColumnName("unitPrice");
+            entity.Property(e => e.UnitPrice)
+                .HasColumnType("decimal(10, 2)")
+                .HasColumnName("unitPrice");
 
             entity.HasOne(d => d.FkOrder).WithMany(p => p.OrderDetails)
                 .HasForeignKey(d => d.FkOrderId)
@@ -222,7 +226,7 @@ public partial class NovaDbContext : DbContext
 
         modelBuilder.Entity<OrderStatus>(entity =>
         {
-            entity.HasKey(e => e.PkOrderStatusId).HasName("PK__OrderSta__ABDB688715C3162B");
+            entity.HasKey(e => e.PkOrderStatusId).HasName("PK__OrderSta__ABDB688778EB7F48");
 
             entity.ToTable("OrderStatus");
 
@@ -235,7 +239,7 @@ public partial class NovaDbContext : DbContext
 
         modelBuilder.Entity<Product>(entity =>
         {
-            entity.HasKey(e => e.PkProductId).HasName("PK__Product__4492A4B5496678C4");
+            entity.HasKey(e => e.PkProductId).HasName("PK__Product__4492A4B5AFCAE493");
 
             entity.ToTable("Product");
 
@@ -253,12 +257,14 @@ public partial class NovaDbContext : DbContext
                 .HasMaxLength(30)
                 .IsUnicode(false)
                 .HasColumnName("name");
-            entity.Property(e => e.Price).HasColumnName("price");
+            entity.Property(e => e.Price)
+                .HasColumnType("decimal(10, 2)")
+                .HasColumnName("price");
         });
 
         modelBuilder.Entity<ProductSku>(entity =>
         {
-            entity.HasKey(e => e.PkSkuId).HasName("PK__ProductS__B7ADEE3B3B12BFED");
+            entity.HasKey(e => e.PkSkuId).HasName("PK__ProductS__B7ADEE3B8B428762");
 
             entity.ToTable("ProductSku");
 
@@ -277,7 +283,7 @@ public partial class NovaDbContext : DbContext
 
         modelBuilder.Entity<Review>(entity =>
         {
-            entity.HasKey(e => new { e.FkCustomerId, e.FkProductId }).HasName("PK__Review__598FD3898B0251BA");
+            entity.HasKey(e => new { e.FkCustomerId, e.FkProductId }).HasName("PK__Review__598FD389A14A8E04");
 
             entity.ToTable("Review");
 

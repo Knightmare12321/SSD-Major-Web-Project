@@ -12,7 +12,7 @@ namespace SSD_Major_Web_Project.ViewModels
         public string Name { get; set; } = null!;
 
         [Required]
-        public double Price { get; set; }
+        public decimal Price { get; set; }
 
         public string Description { get; set; } = null!;
 

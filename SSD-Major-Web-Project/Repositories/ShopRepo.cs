@@ -36,9 +36,9 @@ namespace SSD_Major_Web_Project.Repositories
 
         //}
         // calculate taxes
-        public double CalculateSubtotal(List<Product> products)
+        public decimal CalculateSubtotal(List<Product> products)
         {
-            double subtotal = 0;
+            decimal subtotal = 0;
 
             foreach (var product in products)
             {
@@ -48,12 +48,12 @@ namespace SSD_Major_Web_Project.Repositories
         }
 
         // calculate taxes
-        public double CalculateTaxes(double subtotal)
+        public decimal CalculateTaxes(decimal subtotal)
         {
-            double taxes = 0;
+            decimal taxes = 0;
 
             // change tax rates
-            const double TAX_RATES = 0.12;
+            const decimal TAX_RATES = 0.12m;
             // only save 2 decimal places and add zero if needed
             taxes = System.Math.Round(subtotal * TAX_RATES, 2);
 
@@ -61,9 +61,9 @@ namespace SSD_Major_Web_Project.Repositories
         }
 
         // calculate grand total
-        public double CalculateGrandTotal(double subtotal, double taxes, double shippingFee)
+        public decimal CalculateGrandTotal(decimal subtotal, decimal taxes, decimal shippingFee)
         {
-            double grandTotal = 0;
+            decimal grandTotal = 0;
 
             grandTotal = subtotal + taxes + shippingFee;
 
