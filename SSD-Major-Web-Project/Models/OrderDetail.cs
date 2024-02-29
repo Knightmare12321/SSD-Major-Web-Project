@@ -11,6 +11,8 @@ public partial class OrderDetail
 
     public int Quantity { get; set; }
 
+    public double UnitPrice { get; set; }
+
     public virtual Order FkOrder { get; set; } = null!;
 
     public virtual ProductSku FkSku { get; set; } = null!;

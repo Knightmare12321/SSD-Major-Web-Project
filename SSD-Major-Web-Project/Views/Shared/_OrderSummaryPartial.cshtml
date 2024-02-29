@@ -9,9 +9,9 @@
                 <th>Buyer</th>
                 <th>Product</th>
                 <th>Size</th>
-                <th>Unit Price</th>
                 <th>Qty</th>
                 <th>Order Total</th>
+                <th>Buyer Note</th>
                 <th></th>
                 @{
                     if (ViewBag.OrderStatus == "Paid")
@@ -31,19 +31,19 @@
                     <td> @Html.DisplayFor(modelItem => item.OrderDate)</td>
                     <td class="order-status"> @Html.DisplayFor(modelItem => item.OrderStatus)</td>
                     <td>@Html.DisplayName($"{item.Contact.FirstName} {item.Contact.LastName}")</td>
-                    <td> @Html.DisplayFor(modelItem => item.OrderDetails[0].FkSku.FKproduct.Name)</td>
+                    <td> @Html.DisplayFor(modelItem => item.OrderDetails[0].FkSku.FkProduct.Name)</td>
                     <td> @Html.DisplayFor(modelItem => item.OrderDetails[0].FkSku.Size)</td>
-                    <td> @Html.DisplayFor(modelItem => item.OrderDetails[0].FkSku.FKproduct.Price)</td>
                     <td> @Html.DisplayFor(modelItem => item.OrderDetails[0].Quantity)</td>
                     <td> @Html.DisplayFor(modelItem => item.OrderTotal)</td>
-                    <td><button class="btn" onClick="getOrderDetail(@Json.Serialize(@item).ToString())">Detail</button></td>
-
+                    <td> @Html.DisplayName(item.BuyerNote!=""? "Yes":"No")</td>
                     @{
                         if (ViewBag.OrderStatus == "Paid")
                         {
                                         <td><button class="btn" onclick="dispatchOrder(@item.OrderId)">Dispatch</button></td>
                         }
                     }
+                    <td><button class="btn" onClick="getOrderDetail(@Json.Serialize(@item).ToString())">Detail</button></td>
+                    <td><button class="btn" onclick="refundOrder(@item.OrderId.ToString())">Refund</button></td>
 
                 </tr>
 
@@ -55,10 +55,10 @@
                         <td>-</td>
                         <td>-</td>
                         <td>-</td>
-                        <td> @Html.DisplayFor(modelItem => item.OrderDetails[i].FkSku.FKproduct.Name)</td>
+                        <td> @Html.DisplayFor(modelItem => item.OrderDetails[i].FkSku.FkProduct.Name)</td>
                         <td> @Html.DisplayFor(modelItem => item.OrderDetails[i].FkSku.Size)</td>
-                        <td> @Html.DisplayFor(modelItem => item.OrderDetails[i].FkSku.FKproduct.Price)</td>
                         <td> @Html.DisplayFor(modelItem => item.OrderDetails[i].Quantity)</td>
+                        <td>-</td>
                         <td>-</td>
                         <td></td>
                         <td></td>

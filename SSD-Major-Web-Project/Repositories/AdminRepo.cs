@@ -183,8 +183,8 @@ namespace SSD_Major_Web_Project.Repositories
                                         .Select(fsku => new ProductSku
                                         {
                                             Size = fsku.Size,
-                                            FKproduct = _context.Products
-                                                .Where(p => p.PkProductId == fsku.FKproductId)
+                                            FkProduct = _context.Products
+                                                .Where(p => p.PkProductId == fsku.FkProductId)
                                                 .FirstOrDefault()
                                         }).FirstOrDefault()
                                 }).ToList(),
@@ -214,7 +214,7 @@ namespace SSD_Major_Web_Project.Repositories
                                 ProductSku = psku
                             })
                     .Join(_context.Products,
-                            oodp => oodp.ProductSku.FKproductId,
+                            oodp => oodp.ProductSku.FkProductId,
                             p => p.PkProductId,
                             (oodp, p) => new
                             {
@@ -276,6 +276,118 @@ namespace SSD_Major_Web_Project.Repositories
             }
         }
 
+
+        public OrderVM GetOrderById(int orderId)
+        {
+            return _context.Orders.Where(o => o.PkOrderId == orderId).Select(o => new OrderVM
+            {
+                OrderId = o.PkOrderId,
+                OrderDate = o.OrderDate,
+                OrderStatus = _context.OrderStatuses
+                                .Where(os => os.PkOrderStatusId == o.FkOrderStatusId)
+                                .Select(os => os.Status)
+                                .FirstOrDefault()
+                                .ToString(),
+                BuyerNote = o.BuyerNote,
+                OrderDetails = _context.OrderDetails
+                                .Where(od => od.FkOrderId == o.PkOrderId)
+                                .Select(od => new OrderDetail
+                                {
+                                    Quantity = od.Quantity,
+                                    FkSku = _context.ProductSkus
+                                        .Where(psku => psku.PkSkuId == od.FkSkuId)
+                                        .Select(fsku => new ProductSku
+                                        {
+                                            Size = fsku.Size,
+                                            FkProduct = _context.Products
+                                                .Where(p => p.PkProductId == fsku.FkProductId)
+                                                .FirstOrDefault()
+                                        }).FirstOrDefault()
+                                }).ToList(),
+                Contact = _context.Contacts
+                        .Where(u => u.PkContactId == o.FkContactId)
+                        .FirstOrDefault(),
+                Discount = _context.Discounts
+                        .Where(d => d.PkDiscountCode == o.FkDiscountCode)
+                        .FirstOrDefault(),
+
+                OrderTotal = Math.Round(_context.Orders
+                    .Join(_context.OrderDetails,
+                            o => o.PkOrderId,
+                            od => od.FkOrderId,
+                            (o, od) => new
+                            {
+                                Order = o,
+                                OrderDetail = od
+                            })
+                    .Join(_context.ProductSkus,
+                            ood => ood.OrderDetail.FkSkuId,
+                            psku => psku.PkSkuId,
+                            (ood, psku) => new
+                            {
+                                ood.Order,
+                                ood.OrderDetail,
+                                ProductSku = psku
+                            })
+                    .Join(_context.Products,
+                            oodp => oodp.ProductSku.FkProductId,
+                            p => p.PkProductId,
+                            (oodp, p) => new
+                            {
+                                oodp.Order,
+                                oodp.OrderDetail,
+                                oodp.ProductSku,
+                                Product = p
+                            })
+                    .LeftJoin(_context.Discounts,
+                            oodpp => oodpp.Order.FkDiscountCode,
+                            d => d.PkDiscountCode,
+                            (oodpp, d) => new
+                            {
+                                oodpp.Order,
+                                oodpp.OrderDetail,
+                                oodpp.ProductSku,
+                                oodpp.Product,
+                                Discount = d
+                            })
+                    .Where(order => order.OrderDetail.FkOrderId == o.PkOrderId)
+                    .Select((order) => order.OrderDetail.Quantity * order.Product.Price * (order.Discount != null ? (1 - order.Discount.DiscountValue) : 1))
+                    .Sum(), 2)
+            }).FirstOrDefault();
+        }
+
+        public Discount CreateDiscount(string discountCode,
+                                        double discountValue,
+                                        string discountType,
+                                        DateOnly startDate,
+                                        DateOnly endDate
+                                       )
+        {
+            Discount discount = new Discount
+            {
+                PkDiscountCode = discountCode,
+                DiscountValue = discountValue,
+                DiscountType = discountType,
+                StartDate = startDate,
+                EndDate = endDate,
+                IsActive = "1"
+            };
+
+            _context.Discounts.Add(discount);
+            //_context.SaveChanges();
+            return discount;
+        }
+
+        public bool CancelOrder(int orderId)
+        {
+            Order order = _context.Orders.Where(o => o.PkOrderId == orderId).FirstOrDefault();
+            OrderStatus cancelledStatus = _context.OrderStatuses.Where(os => os.Status == "Cancelled").FirstOrDefault();
+            order.FkOrderStatusId = cancelledStatus.PkOrderStatusId;
+            //_context.SaveChanges();
+            return true;
+
+
+        }
 
     }
 }

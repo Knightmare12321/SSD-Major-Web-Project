@@ -14,7 +14,8 @@ namespace SSD_Major_Web_Project.Repositories
         public IEnumerable<ProductVM> GetAll()
         {
             IEnumerable<ProductVM> products =
-            _context.Products.Select(u => new ProductVM {
+            _context.Products.Select(u => new ProductVM
+            {
                 PkProductId = u.PkProductId,
                 Name = u.Name,
                 Price = u.Price,
@@ -25,7 +26,8 @@ namespace SSD_Major_Web_Project.Repositories
             return products;
         }
 
-        public ProductDetailVM? GetById(int pkProductId) {
+        public ProductDetailVM? GetById(int pkProductId)
+        {
             ProductVM? productVM = _context.Products
                 .Where(u => u.PkProductId == pkProductId)
                 .Select(u => new ProductVM
@@ -40,7 +42,7 @@ namespace SSD_Major_Web_Project.Repositories
                 .FirstOrDefault();
             if (productVM == null) { return null; }
             IEnumerable<String> sizes = _context.ProductSkus
-                .Where(u => u.FKproductId == pkProductId)
+                .Where(u => u.FkProductId == pkProductId)
                 .Select(x => x.Size)
                 .Distinct();
             ProductDetailVM productDetailVM = new ProductDetailVM
