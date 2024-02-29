@@ -274,12 +274,14 @@ textarea[name="Description"] {
 }
 
 /*Admin AdminOrder*/
-#admin-orders {
+#admin-orders{
+    display:none;
+}
+
+#admin-orders.active {
     display: flex;
     grid-column-gap: 10px;
-    ul
-
-{
+    ul{
     padding: 0;
     width: 150px;
 }
@@ -312,4 +314,30 @@ button {
 tr.dispatched {
     background-color: orange;
 }
+}
+
+#admin-order-detail{
+    display:none;
+}
+
+#admin-order-detail.active{
+    display:block;
+}
+#admin-order-detail tr td:first-child{
+    width:100px;
+    vertical-align:top;
+}
+#admin-order-detail .items {
+    display: flex;
+    flex-direction: column;
+}
+#admin-order-detail .item {
+    width: fit-content;
+    padding: 10px 0;
+}
+#admin-order-detail .item span:not(last-child) {
+    margin-right: 30px;
+}
+#admin-order-detail .item:not(:last-child) {
+    border-bottom: solid 1px black;
 }

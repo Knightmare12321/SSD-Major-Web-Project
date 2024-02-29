@@ -232,7 +232,7 @@ namespace SSD_Major_Web_Project.Repositories
             });
         }
 
-        public IQueryable<OrderVM> GetOrdersByStatus(string orderStatus)
+        public IQueryable<OrderVM> GetOrdersByStatus(string orderStatus = "")
         {
             //find order satus record id of the given order status
             int orderStatusId = _context.OrderStatuses
@@ -240,7 +240,7 @@ namespace SSD_Major_Web_Project.Repositories
                 .Select(os => os.PkOrderStatusId)
                 .FirstOrDefault();
 
-            return _context.Orders.Where(o => orderStatus == null || o.FkOrderStatusId == orderStatusId).Select(o => new OrderVM
+            return _context.Orders.Where(o => orderStatus == "" || o.FkOrderStatusId == orderStatusId).Select(o => new OrderVM
             {
                 OrderId = o.PkOrderId,
                 OrderDate = o.OrderDate,
