@@ -18,7 +18,7 @@ namespace SSD_Major_Web_Project.Repositories
             _context = context;
         }
 
-        public async Task AddProduct(string name, double price, string description, string isActive, IFormFile imageFile, List<string> sizes)
+        public async Task AddProduct(string name, decimal price, string description, string isActive, IFormFile imageFile, List<string> sizes)
         {
 
             try
@@ -178,6 +178,7 @@ namespace SSD_Major_Web_Project.Repositories
                                 .Select(od => new OrderDetail
                                 {
                                     Quantity = od.Quantity,
+                                    UnitPrice = od.UnitPrice,
                                     FkSku = _context.ProductSkus
                                         .Where(psku => psku.PkSkuId == od.FkSkuId)
                                         .Select(fsku => new ProductSku
@@ -204,38 +205,17 @@ namespace SSD_Major_Web_Project.Repositories
                                 Order = o,
                                 OrderDetail = od
                             })
-                    .Join(_context.ProductSkus,
-                            ood => ood.OrderDetail.FkSkuId,
-                            psku => psku.PkSkuId,
-                            (ood, psku) => new
+                    .LeftJoin(_context.Discounts,
+                            ood => ood.Order.FkDiscountCode,
+                            d => d.PkDiscountCode,
+                            (ood, d) => new
                             {
                                 ood.Order,
                                 ood.OrderDetail,
-                                ProductSku = psku
-                            })
-                    .Join(_context.Products,
-                            oodp => oodp.ProductSku.FkProductId,
-                            p => p.PkProductId,
-                            (oodp, p) => new
-                            {
-                                oodp.Order,
-                                oodp.OrderDetail,
-                                oodp.ProductSku,
-                                Product = p
-                            })
-                    .LeftJoin(_context.Discounts,
-                            oodpp => oodpp.Order.FkDiscountCode,
-                            d => d.PkDiscountCode,
-                            (oodpp, d) => new
-                            {
-                                oodpp.Order,
-                                oodpp.OrderDetail,
-                                oodpp.ProductSku,
-                                oodpp.Product,
                                 Discount = d
                             })
                     .Where(order => order.OrderDetail.FkOrderId == o.PkOrderId)
-                    .Select((order) => order.OrderDetail.Quantity * order.Product.Price * (order.Discount != null ? (1 - order.Discount.DiscountValue) : 1))
+                    .Select((order) => order.OrderDetail.Quantity * order.OrderDetail.UnitPrice * (order.Discount != null ? (1 - order.Discount.DiscountValue) : 1))
                     .Sum(), 2)
             });
         }
@@ -294,6 +274,7 @@ namespace SSD_Major_Web_Project.Repositories
                                 .Select(od => new OrderDetail
                                 {
                                     Quantity = od.Quantity,
+                                    UnitPrice = od.UnitPrice,
                                     FkSku = _context.ProductSkus
                                         .Where(psku => psku.PkSkuId == od.FkSkuId)
                                         .Select(fsku => new ProductSku
@@ -320,44 +301,23 @@ namespace SSD_Major_Web_Project.Repositories
                                 Order = o,
                                 OrderDetail = od
                             })
-                    .Join(_context.ProductSkus,
-                            ood => ood.OrderDetail.FkSkuId,
-                            psku => psku.PkSkuId,
-                            (ood, psku) => new
+                    .LeftJoin(_context.Discounts,
+                            ood => ood.Order.FkDiscountCode,
+                            d => d.PkDiscountCode,
+                            (ood, d) => new
                             {
                                 ood.Order,
                                 ood.OrderDetail,
-                                ProductSku = psku
-                            })
-                    .Join(_context.Products,
-                            oodp => oodp.ProductSku.FkProductId,
-                            p => p.PkProductId,
-                            (oodp, p) => new
-                            {
-                                oodp.Order,
-                                oodp.OrderDetail,
-                                oodp.ProductSku,
-                                Product = p
-                            })
-                    .LeftJoin(_context.Discounts,
-                            oodpp => oodpp.Order.FkDiscountCode,
-                            d => d.PkDiscountCode,
-                            (oodpp, d) => new
-                            {
-                                oodpp.Order,
-                                oodpp.OrderDetail,
-                                oodpp.ProductSku,
-                                oodpp.Product,
                                 Discount = d
                             })
                     .Where(order => order.OrderDetail.FkOrderId == o.PkOrderId)
-                    .Select((order) => order.OrderDetail.Quantity * order.Product.Price * (order.Discount != null ? (1 - order.Discount.DiscountValue) : 1))
+                    .Select((order) => order.OrderDetail.Quantity * order.OrderDetail.UnitPrice * (order.Discount != null ? (1 - order.Discount.DiscountValue) : 1))
                     .Sum(), 2)
             }).FirstOrDefault();
         }
 
         public Discount CreateDiscount(string discountCode,
-                                        double discountValue,
+                                        decimal discountValue,
                                         string discountType,
                                         DateOnly startDate,
                                         DateOnly endDate
