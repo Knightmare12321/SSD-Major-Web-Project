@@ -90,9 +90,11 @@ namespace SSD_Major_Web_Project.Controllers
             AdminRepo adminRepo = new AdminRepo(_context);
             OrderVM order = adminRepo.GetOrderById(orderId);
 
+            //if order.OrderStatus !=
+
             //create a discount with refund amount
             string discountCode = GetRandomString(15);
-            double discountValue = order.OrderTotal;
+            decimal discountValue = order.OrderTotal;
             string discountType = "Number";
             DateOnly startDate = DateOnly.FromDateTime(DateTime.Now);
             DateOnly endDate = DateOnly.FromDateTime(DateTime.Now.AddDays(365));

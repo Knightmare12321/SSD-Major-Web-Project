@@ -14,6 +14,8 @@
             <li class="active" onClick="toggleSummary(this,'Paid','Open Orders')">Open</li>
             <li onClick="toggleSummary(this,'Shipped', 'Shipped Orders')">Shipped</li>
             <li onClick="toggleSummary(this,'Delivered','Delivered Orders')">Delivered</li>
+            <li onClick="toggleSummary(this,'Refunded','Refunded Orders')">Refunded</li>
+
 
         </ul>
     </div>
@@ -115,16 +117,15 @@
         $("#admin-order-detail td.status").html(order.orderStatus);
         $("#admin-order-detail td.buyer").html(order.contact.firstName + " " + order.contact.lastName);
         $("#admin-order-detail td.buyernote").html(order.buyerNote);
-        console.log(order);
         $("#admin-order-detail td.id").html(order.orderrId);
         const items = order.orderDetails.map(od => {
-            console.log('adminOrder detail images:', od.fkSku.fKproduct.images);
+            console.log('adminOrder detail images:', od.fkSku.fkProduct.Images);
 
             return `<div class='item'>
-                        <div>${od.fkSku.fKproduct.name}</div>
+                        <div>${od.fkSku.fkProduct.name}</div>
                         <div>
                             <span>Size: ${od.fkSku.size}</span>
-                            <span>Price: $${od.fkSku.fKproduct.price}</span>
+                                <span>Price: $${od.unitPrice}</span>
                             <span>Quantity: ${od.quantity}</span>
                     </div>`;
 
