@@ -9,5 +9,13 @@ public partial class Discount
 
     public double DiscountValue { get; set; }
 
+    public string DiscountType { get; set; } = null!;
+
+    public DateOnly StartDate { get; set; }
+
+    public DateOnly EndDate { get; set; }
+
+    public string IsActive { get; set; } = null!;
+
     public virtual ICollection<Order> Orders { get; set; } = new List<Order>();
 }

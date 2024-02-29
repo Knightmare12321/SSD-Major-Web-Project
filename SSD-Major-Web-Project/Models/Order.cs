@@ -13,7 +13,7 @@ public partial class Order
 
     public string? FkDiscountCode { get; set; }
 
-    public int? FkAddressId { get; set; }
+    public int? FkContactId { get; set; }
 
     public string? TransactionId { get; set; }
 
@@ -21,7 +21,7 @@ public partial class Order
 
     public DateOnly OrderDate { get; set; }
 
-    public virtual Address? FkAddress { get; set; }
+    public virtual Contact? FkContact { get; set; }
 
     public virtual Customer? FkCustomer { get; set; }
 

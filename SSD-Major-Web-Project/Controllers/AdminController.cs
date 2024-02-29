@@ -80,5 +80,24 @@ namespace SSD_Major_Web_Project.Controllers
             AdminOrderVM vm = new AdminOrderVM() { AllOrders = orders.ToList(), PendingOrders = pendingOrders, OpenOrders = openOrders, ShippedOrders = shippedOrders, DeliveredOrders = deliveredOrders };
             return View(vm);
         }
+
+        public IActionResult GetOrdersByStatus(string orderStatus)
+        {
+            ViewData["OrderStatus"] = orderStatus;
+            AdminRepo adminRepo = new AdminRepo(_context);
+            IQueryable<OrderVM> orders = adminRepo.GetOrdersByStatus(orderStatus);
+            List<OrderVM> vm = orders.ToList();
+            return PartialView("_OrderSummaryPartial", vm);
+        }
+
+        [HttpPost]
+        public JsonResult DispatchOrder([FromBody] int orderId)
+        {
+            AdminRepo adminRepo = new AdminRepo(_context);
+            string jsonString = adminRepo.dispatchOrder(orderId);
+
+            return Json(jsonString);
+
+        }
     }
 }

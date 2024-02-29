@@ -1,35 +1,40 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SSD_Major_Web_Project.Data;
+using SSD_Major_Web_Project.Interface;
 using SSD_Major_Web_Project.Models;
 using SSD_Major_Web_Project.Repositories;
 using SSD_Major_Web_Project.ViewModels;
 
 namespace SSD_Major_Web_Project.Repositories
 {
-    public class ShopRepository
+    public class ShopRepo
     {
         private readonly NovaDbContext _context;
 
-        public ShopRepository(NovaDbContext context)
+        public ShopRepo(NovaDbContext context)
         {
             _context = context;
         }
 
-        //public void AddOrder(int pkOrderId, string fkUserId, int fkORderStatusId, string fkDiscountCode, int fkAdressId, string transactionId, string buyerNote, DateOnly orderDate)
+        //public string AddOrder(CheckoutVM checkoutEntity)
         //{
+        //    // place holder to return message
+        //    string message = string.Empty;
         //    try
         //    {
-        //        List<ProductSku> productSkus = new List<ProductSku>(){ SkuId = skuId};
-        //        _context.Order.Add(order);
+        //        _context.Add(checkoutEntity);
         //        _context.SaveChanges();
+        //        message = "Order has been placed, you will get an email confirmation";
+
         //    }
         //    catch (Exception ex)
         //    {
-        //        throw new Exception(ex.ToString());
+        //        message = $" Error placeing new order: {checkoutEntity.Order.OrderId}";
         //    }
+        //    return message;
+
 
         //}
-
         // calculate taxes
         public double CalculateSubtotal(List<Product> products)
         {
@@ -39,7 +44,6 @@ namespace SSD_Major_Web_Project.Repositories
             {
                 subtotal += product.Price;
             }
-
             return subtotal;
         }
 
@@ -52,7 +56,7 @@ namespace SSD_Major_Web_Project.Repositories
             const double TAX_RATES = 0.12;
             // only save 2 decimal places and add zero if needed
             taxes = System.Math.Round(subtotal * TAX_RATES, 2);
-            
+
             return taxes;
         }
 
@@ -65,6 +69,11 @@ namespace SSD_Major_Web_Project.Repositories
 
             return grandTotal;
         }
+
+
+
+
+
 
     }
 }

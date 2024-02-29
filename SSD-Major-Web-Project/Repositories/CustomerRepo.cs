@@ -12,13 +12,13 @@ namespace SSD_Major_Web_Project.Repositories
             this._db = context;
         }
 
-        public Customer RegisterUser(string lastName, string firstName, string email)
+        public Customer RegisterUser(string email)
         {
             Customer customer = new Customer
             {
-                LastName = lastName,
-                FirstName = firstName,
-                PkCustomerId = email
+                PkCustomerId = email,
+                FkUserTypeId = null,
+                FkContactId = null,
             };
 
             _db.Customers.Add(customer);
@@ -27,10 +27,10 @@ namespace SSD_Major_Web_Project.Repositories
 
         }
 
-        public string GetUsername(string email)
+/*        public string GetUsername(string email)
         {
             Customer customer = _db.Customers.FirstOrDefault(x => x.PkCustomerId == email);
             return $"{customer.FirstName}";
-        }
+        }*/
     }
 }
