@@ -28,7 +28,7 @@
     </div>
 </div>
 
-@* Order detail Page *@
+@* Order detail Page Component*@
 <div id="admin-order-detail">
     <button class="btn btn-secondary" onclick="closeOrderDetail()">Back</button>
     <table>
@@ -89,6 +89,8 @@
         $("#admin-order-detail td.buyer").html(order.contact.firstName + " " + order.contact.lastName);
         $("#admin-order-detail td.id").html(order.orderrId);
         const items = order.orderDetails.map(od => {
+            console.log('adminOrder detail images:', od.fkSku.fKproduct.images);
+
             return `<div class='item'>
                         <div>${od.fkSku.fKproduct.name}</div>
                         <div>
