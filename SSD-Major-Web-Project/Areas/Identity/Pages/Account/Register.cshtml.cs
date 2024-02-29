@@ -143,18 +143,18 @@ namespace SSD_Major_Web_Project.Areas.Identity.Pages.Account
 
                 if (result.Succeeded)
                 {
-/*                    MyRegisteredUser registerUser = new MyRegisteredUser()
-                    {
-                        Email = Input.Email,
-                        FirstName = Input.FirstName
-                    };
-                    _db.MyRegisteredUsers.Add(registerUser);
-                    _db.SaveChanges();*/
+                    /*                    MyRegisteredUser registerUser = new MyRegisteredUser()
+                                        {
+                                            Email = Input.Email,
+                                            FirstName = Input.FirstName
+                                        };
+                                        _db.MyRegisteredUsers.Add(registerUser);
+                                        _db.SaveChanges();*/
 
                     Customer customer = new Customer()
                     {
                         PkCustomerId = Input.Email,
-                        FkUserTypeId = null,
+                        //FkUserTypeId = null,
                         FkContactId = null,
                     };
                     _db.Customers.Add(customer);
