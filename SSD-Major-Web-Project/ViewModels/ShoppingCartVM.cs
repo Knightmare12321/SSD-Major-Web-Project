@@ -16,7 +16,7 @@ namespace SSD_Major_Web_Project.ViewModels
         public decimal ShippingFee { get; set; }
         [DisplayFormat(DataFormatString = "{0:C}")]
         public decimal Taxes { get; set; }
-        // [DisplayFormat(DataFormatString = "{0:C}")]
+        [DisplayFormat(DataFormatString = "{0:C}")]
 
         public decimal GrandTotal { get; set; }
         public string Currency { get; set; }

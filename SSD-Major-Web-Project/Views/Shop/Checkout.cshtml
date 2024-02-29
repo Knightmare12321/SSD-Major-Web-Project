@@ -50,10 +50,8 @@
                 </div>
                 <div class="contact-info-line">
                     @* ask user to input email *@
-                    <div>
                         <input type="text" placeholder="Email" asp-for="@Model.DeliveryContactEmail" />
                         <span asp-validation-for="@Model.DeliveryContactEmail" class="text-danger"></span>
-                    </div>
                     @* ask user to input phone number *@
                     <input type="text" placeholder="Phone Number" asp-for="Order.Contact.PhoneNumber" />
                     <span asp-validation-for="Order.Contact.PhoneNumber" class="text-danger"></span>
