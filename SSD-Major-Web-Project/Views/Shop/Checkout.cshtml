@@ -12,17 +12,56 @@
     <div class="row">
         <h2>checkout</h2>
         <div class="col-md-4">
-            <div class="shipping">
+            <div class="shipping-address-title">
                 <h3>Shipping Address</h3>
             </div>
             <div class="shipping-address">
-                @* ask user to input firstname *@
-                <input type="text" placeholder="First Name" asp-for="Order.Contact.FirstName" />
-                <span asp-validation-for="Order.Contact.FirstName" class="text-danger"></span>
-                @* ask user to input lastname *@
-                <input type="text" placeholder="Last Name" asp-for="Order.Contact.LastName" />
-                <span asp-validation-for="Order.Contact.LastName" class="text-danger"></span>
+                <div class="name">
+                    @* ask user to input firstname *@
+                    <input type="text" placeholder="First Name" asp-for="Order.Contact.FirstName" />
+                    <span asp-validation-for="Order.Contact.FirstName" class="text-danger"></span>
+                    @* ask user to input lastname *@
+                    <input type="text" placeholder="Last Name" asp-for="Order.Contact.LastName" />
+                    <span asp-validation-for="Order.Contact.LastName" class="text-danger"></span>
+                </div>
+                <div class="address-line">
+                    @* ask user to input address *@
+                    <input type="text" placeholder="Address" asp-for="Order.Contact.Address" />
+                    <span asp-validation-for="Order.Contact.Address" class="text-danger"></span>
+                    @* ask user to input Apt No. (address 2) *@
+                    <input type="text" placeholder="Apt No." asp-for="Order.Contact.Address2" />
+                    <span asp-validation-for="Order.Contact.Address2" class="text-danger"></span>
+                </div>
+                <div class="address-line">
+                    @* ask user to input city *@
+                    <input type="text" placeholder="City" asp-for="Order.Contact.City" />
+                    <span asp-validation-for="Order.Contact.City" class="text-danger"></span>
+                    @* ask user to input province *@
+                    <input type="text" placeholder="Province" asp-for="Order.Contact.Province" />
+                    <span asp-validation-for="Order.Contact.Province" class="text-danger"></span>
+                </div>
+                <div class="address-line">
+                    @* ask user to input postal code *@
+                    <input type="text" placeholder="Postal Code" asp-for="Order.Contact.PostalCode" />
+                    <span asp-validation-for="Order.Contact.PostalCode" class="text-danger"></span>
+                    @* ask user to input country *@
+                    <input type="text" placeholder="Country" asp-for="Order.Contact.Country" />
+                    <span asp-validation-for="Order.Contact.Country" class="text-danger"></span>
+                </div>
+                <div class="contact-info-line">
+                    @* ask user to input email *@
+                    <div>
+                        <input type="text" placeholder="Email" asp-for="@Model.DeliveryContactEmail" />
+                        <span asp-validation-for="@Model.DeliveryContactEmail" class="text-danger"></span>
+                    </div>
+                    @* ask user to input phone number *@
+                    <input type="text" placeholder="Phone Number" asp-for="Order.Contact.PhoneNumber" />
+                    <span asp-validation-for="Order.Contact.PhoneNumber" class="text-danger"></span>
+                </div>
+
             </div>
+        </div>
+
             <div class="col-md-6 col-md-offset-2">
                 <dt class="col-sm-3">
                     @Html.DisplayNameFor(model => model.ShoppingCart.Subtotal)
@@ -49,15 +88,15 @@
                     @Html.DisplayFor(model => model.ShoppingCart.CurrencySymbol)@Model.ShoppingCart.GrandTotal
                 </dd>
                 <div>
-                    <form asp-action="Paypal" asp-controller="Shop" method="post">
-                    <dd class="col-sm-10">
-                        <input type="hidden" id="itemPrice" value="@Model.ShoppingCart.GrandTotal" />
-                    </dd>
-                    <div id="paypal-button-container"></div>
+                    <form asp-action="OrderConfirmation" asp-controller="Shop" method="post">
+                        <input type="hidden" id="itemPrice" name="itemPrice" value="@Model.ShoppingCart.GrandTotal" />
+                        <input type="hidden" itemid="firstName" name="firstName" asp-for="Order.Contact.FirstName" />
+                        <input type="hidden" itemid="lastName" name="lastName" asp-for="Order.Contact.LastName" />
+                        <div id="paypal-button-container"></div>
                     </form>
                 </div>
             </div>
-        </div>
+      
     </div>
 
 
@@ -70,7 +109,7 @@
                     purchase_units: [{
                         amount: {
                             value: document.getElementById('itemPrice').value,
-                            currency: 'USD'
+                            currency: 'CAD'
                         }
                     }]
                 });
