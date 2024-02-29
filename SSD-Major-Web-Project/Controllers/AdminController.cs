@@ -52,33 +52,24 @@ namespace SSD_Major_Web_Project.Controllers
             return View(vm);
         }
 
-
-        //public IActionResult AdminOrderItems()
-        //{
-        //    AdminRepository adminRepository = new AdminRepository(_context);
-        //    IQueryable<OrderItemVM> orders = adminRepository.GetAllOrderItems();
-
-        //    //Separate orders based on order status
-        //    List<OrderItemVM> pendingOrders = orders.Where(o => o.OrderStatus.Equals("Pending")).ToList();
-        //    List<OrderItemVM> openOrders = orders.Where(o => o.OrderStatus.Equals("Paid")).ToList();
-        //    List<OrderItemVM> shippedOrders = orders.Where(o => o.OrderStatus.Equals("Shipped")).ToList();
-        //    List<OrderItemVM> deliveredOrders = orders.Where(o => o.OrderStatus.Equals("Delivered")).ToList();
-        //    AdminOrderVM vm = new AdminOrderVM() { AllOrders = orders.ToList(), PendingOrders = pendingOrders, OpenOrders = openOrders, ShippedOrders = shippedOrders, DeliveredOrders = deliveredOrders };
-        //    return View(vm);
-        //}
-
         public IActionResult AdminOrder()
         {
             AdminRepo adminRepo = new AdminRepo(_context);
-            IQueryable<OrderVM> orders = adminRepo.GetAllOrders();
+            ViewData["OrderStatus"] = "Paid";
 
-            //Separate orders based on order status
-            List<OrderVM> pendingOrders = orders.Where(o => o.OrderStatus.Equals("Pending")).ToList();
-            List<OrderVM> openOrders = orders.Where(o => o.OrderStatus.Equals("Paid")).ToList();
-            List<OrderVM> shippedOrders = orders.Where(o => o.OrderStatus.Equals("Shipped")).ToList();
-            List<OrderVM> deliveredOrders = orders.Where(o => o.OrderStatus.Equals("Delivered")).ToList();
-            AdminOrderVM vm = new AdminOrderVM() { AllOrders = orders.ToList(), PendingOrders = pendingOrders, OpenOrders = openOrders, ShippedOrders = shippedOrders, DeliveredOrders = deliveredOrders };
+            //show the open orders as default on the page
+            IQueryable<OrderVM> orders = adminRepo.GetOrdersByStatus("Paid");
+            List<OrderVM> vm = orders.ToList();
             return View(vm);
+        }
+
+        public IActionResult GetOrdersByStatus(string orderStatus = "")
+        {
+            ViewData["OrderStatus"] = orderStatus;
+            AdminRepo adminRepo = new AdminRepo(_context);
+            IQueryable<OrderVM> orders = adminRepo.GetOrdersByStatus(orderStatus);
+            List<OrderVM> vm = orders.ToList();
+            return PartialView("_OrderSummaryPartial", vm);
         }
 
         [HttpPost]

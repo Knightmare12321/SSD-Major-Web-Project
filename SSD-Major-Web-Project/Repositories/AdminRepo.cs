@@ -5,6 +5,7 @@ using SSD_Major_Web_Project.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Internal;
 using Newtonsoft.Json;
+using Microsoft.EntityFrameworkCore;
 
 namespace SSD_Major_Web_Project.Repositories
 {
@@ -153,9 +154,16 @@ namespace SSD_Major_Web_Project.Repositories
         //        });
         //}
 
-        public IQueryable<OrderVM> GetAllOrders()
+
+        public IQueryable<OrderVM> GetOrdersByStatus(string orderStatus = "")
         {
-            return _context.Orders.Select(o => new OrderVM
+            //find order satus record id of the given order status
+            int orderStatusId = _context.OrderStatuses
+                .Where(os => os.Status == orderStatus)
+                .Select(os => os.PkOrderStatusId)
+                .FirstOrDefault();
+
+            return _context.Orders.Where(o => orderStatus == "" || o.FkOrderStatusId == orderStatusId).Select(o => new OrderVM
             {
                 OrderId = o.PkOrderId,
                 OrderDate = o.OrderDate,
