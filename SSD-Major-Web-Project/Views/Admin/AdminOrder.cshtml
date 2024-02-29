@@ -20,6 +20,7 @@
     <div>
         <div id="order-sheet" class="summary">
             <h1 id="orders-title">Open Orders</h1>
+            @ViewBag.Message
             <span id="message"></span>
             <div id="orders-data">
                 @await Html.PartialAsync("../Shared/_OrderSummaryPartial", Model)
@@ -47,6 +48,10 @@
         <tr>
             <td>Buyer: </td>
             <td class="buyer"></td>
+        </tr>
+        <tr>
+            <td>Buyer Note: </td>
+            <td class="buyernote"></td>
         </tr>
         <tr>
             <td>Items: </td>
@@ -82,43 +87,6 @@
         });
     }
 
-    const getOrderDetail = (order) => {
-        $("#admin-order-detail td.id").html(order.orderId);
-        $("#admin-order-detail td.date").html(order.orderDate);
-        $("#admin-order-detail td.status").html(order.orderStatus);
-        $("#admin-order-detail td.buyer").html(order.contact.firstName + " " + order.contact.lastName);
-        $("#admin-order-detail td.id").html(order.orderrId);
-        const items = order.orderDetails.map(od => {
-            console.log('adminOrder detail images:', od.fkSku.fKproduct.images);
-
-            return `<div class='item'>
-                        <div>${od.fkSku.fKproduct.name}</div>
-                        <div>
-                            <span>Size: ${od.fkSku.size}</span>
-                            <span>Price: $${od.fkSku.fKproduct.price}</span>
-                            <span>Quantity: ${od.quantity}</span>
-                    </div>`;
-
-        });
-        $("#admin-order-detail td.items").html(items);
-        //also show discount detail if there is one
-        if (order.discount) {
-            const discountValue = order.discount.discountValue;
-            const discountContent = order.discount.discountType.toLowerCase() == 'percent' ? `${discountValue*100}% off` : `-$${discountValue}`
-            $("#admin-order-detail td.discount").html(`${order.discount.pkDiscountCode} (${discountContent})`)
-        }
-        $("#admin-order-detail td.total-price").html(`$${order.orderTotal}`);
-
-        //toggle on detail page
-        $("#admin-orders").removeClass("active");
-        $("#admin-order-detail").addClass("active");
-    }
-
-    const closeOrderDetail = () => {
-        $("#admin-order-detail").removeClass("active");
-        $("#admin-orders").addClass("active");
-    }
-
     const dispatchOrder = async (orderId) => {
         const url = '@Url.Action("DispatchOrder", "Admin")';
         $.ajax({
@@ -140,5 +108,59 @@
             }
         });
     }
+
+    const getOrderDetail = (order) => {
+        $("#admin-order-detail td.id").html(order.orderId);
+        $("#admin-order-detail td.date").html(order.orderDate);
+        $("#admin-order-detail td.status").html(order.orderStatus);
+        $("#admin-order-detail td.buyer").html(order.contact.firstName + " " + order.contact.lastName);
+        $("#admin-order-detail td.buyernote").html(order.buyerNote);
+        console.log(order);
+        $("#admin-order-detail td.id").html(order.orderrId);
+        const items = order.orderDetails.map(od => {
+            console.log('adminOrder detail images:', od.fkSku.fKproduct.images);
+
+            return `<div class='item'>
+                        <div>${od.fkSku.fKproduct.name}</div>
+                        <div>
+                            <span>Size: ${od.fkSku.size}</span>
+                            <span>Price: $${od.fkSku.fKproduct.price}</span>
+                            <span>Quantity: ${od.quantity}</span>
+                    </div>`;
+
+        });
+        $("#admin-order-detail td.items").html(items);
+        //also show discount detail if there is one
+        if (order.discount) {
+            const discountValue = order.discount.discountValue;
+            const discountContent = order.discount.discountType.toLowerCase() == 'percent' ? `${discountValue * 100}% off` : `-$${discountValue}`
+            $("#admin-order-detail td.discount").html(`${order.discount.pkDiscountCode} (${discountContent})`)
+        } else {
+            $("#admin-order-detail td.discount").html("None");
+        }
+        $("#admin-order-detail td.total-price").html(`$${order.orderTotal}`);
+
+        //toggle on detail page
+        $("#admin-orders").removeClass("active");
+        $("#admin-order-detail").addClass("active");
+    }
+
+    const closeOrderDetail = () => {
+        $("#admin-order-detail").removeClass("active");
+        $("#admin-orders").addClass("active");
+    }
+
+    const refundOrder = (orderId) => {
+        const url = '@Url.Action("RefundOrder", "Admin")';
+        $.ajax({
+            type: "POST",
+            url: url,
+            data: { orderId },
+            success: function (data) {
+                console.log('res.data:', data);
+            }
+        });
+    }
+
 </script>
 
