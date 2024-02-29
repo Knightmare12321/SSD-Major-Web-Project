@@ -1,19 +1,19 @@
-﻿@model SSD_Major_Web_Project.ViewModels.AdminOrderVM
+﻿@model List<SSD_Major_Web_Project.ViewModels.OrderVM>
 
 @{
     ViewData["Title"] = "AdminOrder";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div id="admin-orders">
+<div id="admin-orders" class="active">
     <div class="side-bar">
         <h4>Order Status</h4>
         <ul>
-            <li onClick="toggleSummary(this,null)">All</li>
-            <li onClick="toggleSummary(this,'Pending')">Pending Payment</li>
-            <li class="active" onClick="toggleSummary(this,'Paid')">Open</li>
-            <li onClick="toggleSummary(this,'Shipped')">Shipped</li>
-            <li onClick="toggleSummary(this,'Delivered')">Delivered</li>
+            <li onClick="toggleSummary(this,'','All Orders')">All</li>
+            <li onClick="toggleSummary(this,'Pending','Pending Orders')">Pending Payment</li>
+            <li class="active" onClick="toggleSummary(this,'Paid','Open Orders')">Open</li>
+            <li onClick="toggleSummary(this,'Shipped', 'Shipped Orders')">Shipped</li>
+            <li onClick="toggleSummary(this,'Delivered','Delivered Orders')">Delivered</li>
 
         </ul>
     </div>
@@ -22,17 +22,49 @@
             <h1 id="orders-title">Open Orders</h1>
             <span id="message"></span>
             <div id="orders-data">
-            @await Html.PartialAsync("../Shared/_OrderSummaryPartial", Model.OpenOrders, new ViewDataDictionary(ViewData)
-            {
-            { "SheetName", "open-orders" }
-            })
+                @await Html.PartialAsync("../Shared/_OrderSummaryPartial", Model)
             </div>
         </div>
     </div>
 </div>
 
+@* Order detail Page Component*@
+<div id="admin-order-detail">
+    <button class="btn btn-secondary" onclick="closeOrderDetail()">Back</button>
+    <table>
+        <tr>
+            <td>Order Id:</td>
+            <td class="id"></td>
+        </tr>
+        <tr>
+            <td>Order Date: </td>
+            <td class="date"></td>
+        </tr>
+        <tr>
+            <td>Status: </td>
+            <td class="status"></td>
+        </tr>
+        <tr>
+            <td>Buyer: </td>
+            <td class="buyer"></td>
+        </tr>
+        <tr>
+            <td>Items: </td>
+            <td class="items"></td>
+        </tr>
+        <tr>
+            <td>Discount: </td>
+            <td class="discount"></td>
+        </tr>
+        <tr>
+            <td>Total: </td>
+            <td class="total-price"></td>
+        </tr>
+    </table>
+</div>
+
 <script>
-    const toggleSummary = (tabClicked, sheetType) => {
+    const toggleSummary = (tabClicked, sheetType, sheetTitle) => {
         //toggle tabs
         $("#admin-orders li").removeClass("active");
         $(tabClicked).addClass("active");
@@ -44,49 +76,67 @@
             url: url,
             data: { "orderStatus": sheetType },
             success: function (data) {
-                $("#orders-title").html("Pending Orders")
+                $("#orders-title").html(sheetTitle)
                 $("#orders-data").html(data);
             }
         });
+    }
 
+    const getOrderDetail = (order) => {
+        $("#admin-order-detail td.id").html(order.orderId);
+        $("#admin-order-detail td.date").html(order.orderDate);
+        $("#admin-order-detail td.status").html(order.orderStatus);
+        $("#admin-order-detail td.buyer").html(order.contact.firstName + " " + order.contact.lastName);
+        $("#admin-order-detail td.id").html(order.orderrId);
+        const items = order.orderDetails.map(od => {
+            console.log('adminOrder detail images:', od.fkSku.fKproduct.images);
+
+            return `<div class='item'>
+                        <div>${od.fkSku.fKproduct.name}</div>
+                        <div>
+                            <span>Size: ${od.fkSku.size}</span>
+                            <span>Price: $${od.fkSku.fKproduct.price}</span>
+                            <span>Quantity: ${od.quantity}</span>
+                    </div>`;
+
+        });
+        $("#admin-order-detail td.items").html(items);
+        //also show discount detail if there is one
+        if (order.discount) {
+            const discountValue = order.discount.discountValue;
+            const discountContent = order.discount.discountType.toLowerCase() == 'percent' ? `${discountValue*100}% off` : `-$${discountValue}`
+            $("#admin-order-detail td.discount").html(`${order.discount.pkDiscountCode} (${discountContent})`)
         }
+        $("#admin-order-detail td.total-price").html(`$${order.orderTotal}`);
 
-    const dispatchOrder = async (orderId, rowGroupId) => {
-        // const url = '@Url.Action("DispatchOrder", "Admin")';
-        // const response = await fetch(url, {
-        //     headers: {
-        //         'Content-Type': 'application/json'
-        //     },
-        //     method: "POST",
-        //     body: orderId
-        // });
-        // const result = await response.json();
-        // const data = JSON.parse(result);
-        // if (data.Success) {
-        //     //update order color
-        //     $("[id^=" + rowGroupId + "]").addClass('dispatched')
-        //     console.log($("[id^=" + rowGroupId + "]"))
+        //toggle on detail page
+        $("#admin-orders").removeClass("active");
+        $("#admin-order-detail").addClass("active");
+    }
 
-        //     //update button class and text
-        //     $("[id^=" + rowGroupId + "] button:contains(Dispatch)").addClass('dispatched').html('Dispatched')
-        // }
+    const closeOrderDetail = () => {
+        $("#admin-order-detail").removeClass("active");
+        $("#admin-orders").addClass("active");
+    }
+
+    const dispatchOrder = async (orderId) => {
         const url = '@Url.Action("DispatchOrder", "Admin")';
         $.ajax({
             type: "POST",
             headers: {
-                        'Content-Type': 'application/json'
-                    },
+                'Content-Type': 'application/json'
+            },
             url: url,
             data: { "orderId": orderId },
             success: function (data) {
-                $("[id^=" + rowGroupId + "]").addClass('dispatched')
+                $("[id^=" + orderId + "]").addClass('dispatched')
 
-                //update button class and text
-                $("[id^=" + rowGroupId + "] button:contains(Dispatch)").addClass('dispatched').html('Dispatched')
-
+                //update button class, text and order status text
+                $("[id^=" + orderId + "] button:contains(Dispatch)").addClass('dispatched').html('Dispatched')
+                $("[id^=" + orderId + "] td.order-status").html("Shipped");
             },
             error: function (request, status, error) {
-                    $("#message").html(error)
+                $("#message").html(error)
             }
         });
     }
