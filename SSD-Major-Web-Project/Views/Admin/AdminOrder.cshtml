@@ -30,7 +30,10 @@
         </div>
         <div id="open-orders-sheet" class="summary active">
             <h1>Open Orders</h1>
-                @await Html.PartialAsync("../Shared/OrderSummaryPartial", Model.OpenOrders)
+            @await Html.PartialAsync("../Shared/OrderSummaryPartial", Model.OpenOrders, new ViewDataDictionary(ViewData)
+            {
+            { "SheetName", "open-orders" }
+            })
 
         </div>
         <div id="shipped-orders-sheet" class="summary">
@@ -54,4 +57,26 @@
         $("[id$=orders-sheet]").removeClass("active");
         $("#" + sheetName).addClass("active");
     }
+
+    const dispatchOrder = async (orderId, rowGroupId) => {
+        const url = '@Url.Action("DispatchOrder", "Admin")';
+        const response = await fetch(url, {
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            method: "POST",
+            body: orderId
+        });
+        const result = await response.json();
+        const data =  JSON.parse(result);
+        if (data.Success) {
+            //update order color
+            $("[id^="+rowGroupId+"]").addClass('dispatched')
+            console.log($("[id^=" + rowGroupId + "]"))
+            
+            //update button class and text
+            $("[id^=" + rowGroupId + "] button:contains(Dispatch)").addClass('dispatched').html('Dispatched')
+        }
+    }
 </script>
+
