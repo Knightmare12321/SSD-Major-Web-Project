@@ -39,11 +39,11 @@
                     @{
                         if (ViewBag.OrderStatus == "Paid")
                         {
-                                        <td><button class="btn" onclick="dispatchOrder(@item.OrderId)">Dispatch</button></td>
+                            <td><button class="btn" onclick="dispatchOrder(@item.OrderId)">Dispatch</button></td>
                         }
                     }
                     <td><button class="btn" onClick="getOrderDetail(@Json.Serialize(@item).ToString())">Detail</button></td>
-                    <td><button class="btn" onclick="refundOrder(@item.OrderId.ToString())">Refund</button></td>
+                    <td><button class="btn" onclick="refundOrder(@item.OrderId)">Refund</button></td>
 
                 </tr>
 

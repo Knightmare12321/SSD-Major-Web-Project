@@ -55,106 +55,6 @@ namespace SSD_Major_Web_Project.Repositories
             }
         }
 
-
-
-        //public IQueryable<OrderItemVM> GetAllOrderItems()
-        //{
-        //    return _context.Orders.Join(
-        //        _context.OrderDetails,
-        //        o => o.PkOrderId,
-        //        od => od.FkOrderId,
-        //        (o, od) =>
-        //        new
-        //        {
-        //            Order = o,
-        //            OrderDetail = od
-        //        })
-        //        .Join(_context.ProductSkus,
-        //            ood => ood.OrderDetail.FkSkuId,
-        //            pSku => pSku.PkSkuId,
-        //            (ood, pSku) => new
-        //            {
-        //                ood.Order,
-        //                ood.OrderDetail,
-        //                ProductSku = pSku
-        //            })
-        //        .Join(_context.Products,
-        //        oodp => oodp.ProductSku.FKproductId,
-        //        p => p.PkProductId,
-        //        (oodp, p) => new
-        //        {
-        //            oodp.Order,
-        //            oodp.OrderDetail,
-        //            oodp.ProductSku,
-        //            Product = p
-        //        })
-        //        .Join(_context.Images,
-        //        oodpp => oodpp.Product.PkProductId,
-        //        i => i.FkProductId,
-        //        (oodpp, i) => new
-        //        {
-        //            oodpp.Order,
-        //            oodpp.OrderDetail,
-        //            oodpp.ProductSku,
-        //            oodpp.Product,
-        //            Image = i
-        //        })
-        //        .Join(_context.OrderStatuses,
-        //        oodppi => oodppi.Order.FkOrderStatusId,
-        //        os => os.PkOrderStatusId,
-        //        (oodppi, os) => new
-        //        {
-        //            oodppi.Order,
-        //            oodppi.OrderDetail,
-        //            oodppi.ProductSku,
-        //            oodppi.Product,
-        //            oodppi.Image,
-        //            OrderStatus = os
-        //        })
-        //        .Join(_context.Discounts,
-        //        oodppio => oodppio.Order.FkDiscountCode,
-        //        d => d.PkDiscountCode,
-        //        (oodppio, d) => new
-        //        {
-        //            oodppio.Order,
-        //            oodppio.OrderDetail,
-        //            oodppio.ProductSku,
-        //            oodppio.Product,
-        //            oodppio.Image,
-        //            oodppio.OrderStatus,
-        //            Discount = d
-        //        })
-        //        .Join(_context.Contacts,
-        //        oodppiod => oodppiod.Order.FkContactId,
-        //        c => c.PkContactId,
-        //        (oodppiod, c) => new
-        //        {
-        //            oodppiod.Order,
-        //            oodppiod.OrderDetail,
-        //            oodppiod.ProductSku,
-        //            oodppiod.Product,
-        //            oodppiod.Image,
-        //            oodppiod.OrderStatus,
-        //            oodppiod.Discount,
-        //            Contact = c
-        //        })
-        //        .Select(order => new OrderItemVM
-        //        {
-        //            OrderId = order.Order.PkOrderId,
-        //            OrderDate = order.Order.OrderDate,
-        //            BuyerNote = order.Order.BuyerNote,
-        //            Quantity = order.OrderDetail.Quantity,
-        //            Size = order.ProductSku.Size,
-        //            ProductName = order.Product.Name,
-        //            ProductImage = order.Image.Data,
-        //            UnitPrice = order.Product.Price,
-        //            Contact = order.Contact,
-        //            Discount = order.Discount,
-        //            OrderStatus = order.OrderStatus.Status
-        //        });
-        //}
-
-
         public IQueryable<OrderVM> GetOrdersByStatus(string orderStatus = "")
         {
             //find order satus record id of the given order status
@@ -338,13 +238,20 @@ namespace SSD_Major_Web_Project.Repositories
             return discount;
         }
 
-        public bool CancelOrder(int orderId)
+        public string CancelOrder(int orderId)
         {
-            Order order = _context.Orders.Where(o => o.PkOrderId == orderId).FirstOrDefault();
-            OrderStatus cancelledStatus = _context.OrderStatuses.Where(os => os.Status == "Cancelled").FirstOrDefault();
-            order.FkOrderStatusId = cancelledStatus.PkOrderStatusId;
-            //_context.SaveChanges();
-            return true;
+            try
+            {
+                Order order = _context.Orders.Where(o => o.PkOrderId == orderId).FirstOrDefault();
+                OrderStatus cancelledStatus = _context.OrderStatuses.Where(os => os.Status == "Cancelled").FirstOrDefault();
+                order.FkOrderStatusId = cancelledStatus.PkOrderStatusId;
+                //_context.SaveChanges();
+                return "";
+            }
+            catch (Exception ex)
+            {
+                return "An unexpected error occured";
+            }
 
 
         }

@@ -2,20 +2,27 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.Data.SqlClient;
 using Newtonsoft.Json;
+using SSD_Major_Web_Project.Data.Services;
 using SSD_Major_Web_Project.Models;
 using SSD_Major_Web_Project.Repositories;
 using SSD_Major_Web_Project.ViewModels;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.Encodings.Web;
+using Microsoft.AspNetCore.Identity.UI.Services;
+
 
 namespace SSD_Major_Web_Project.Controllers
 {
     public class AdminController : Controller
     {
         private readonly NovaDbContext _context;
-        public AdminController(NovaDbContext context)
+        private readonly IEmailService _emailService;
+
+        public AdminController(NovaDbContext context, IEmailService emailService)
         {
             _context = context;
+            _emailService = emailService;
         }
 
         public IActionResult Index()
@@ -76,7 +83,7 @@ namespace SSD_Major_Web_Project.Controllers
         }
 
         [HttpPost]
-        public JsonResult DispatchOrder([FromBody] int orderId)
+        public JsonResult DispatchOrder(int orderId)
         {
             AdminRepo adminRepo = new AdminRepo(_context);
             string jsonString = adminRepo.dispatchOrder(orderId);
@@ -85,23 +92,52 @@ namespace SSD_Major_Web_Project.Controllers
 
         }
 
-        public void RefundOrder(int orderId)
+        [HttpPost]
+        public async Task<string> RefundOrder(int orderId)
         {   //find order
             AdminRepo adminRepo = new AdminRepo(_context);
             OrderVM order = adminRepo.GetOrderById(orderId);
 
-            //if order.OrderStatus !=
+            if (new List<string> { "paid", "shipped", "delivered" }.Contains(order.OrderStatus.ToLower()))
+            {
+                //create a discount with refund amount
+                string discountCode = GetRandomString(15);
+                decimal discountValue = order.OrderTotal;
+                string discountType = "Number";
+                DateOnly startDate = DateOnly.FromDateTime(DateTime.Now);
+                DateOnly endDate = DateOnly.FromDateTime(DateTime.Now.AddDays(365));
+                Discount discount = adminRepo.CreateDiscount(discountCode, discountValue, discountType, startDate, endDate);
 
-            //create a discount with refund amount
-            string discountCode = GetRandomString(15);
-            decimal discountValue = order.OrderTotal;
-            string discountType = "Number";
-            DateOnly startDate = DateOnly.FromDateTime(DateTime.Now);
-            DateOnly endDate = DateOnly.FromDateTime(DateTime.Now.AddDays(365));
-            Discount discount = adminRepo.CreateDiscount(discountCode, discountValue, discountType, startDate, endDate);
+                //cancel order
+                string error = adminRepo.CancelOrder(orderId);
+                if (error != "")
+                {
+                    return error;
+                }
 
-            //cancel order and send discount
-            adminRepo.CancelOrder(orderId);
+                //send refund as a discount code in email
+                //var response = await _emailService.SendSingleEmail(new Models.ComposeEmailModel
+                //{
+                //    FirstName = "Nova",
+                //    LastName = "Clothing",
+                //    Subject = $"Nova Fashion Order (#{orderId}) Cancelled",
+                //    Email = "afang324@gmail.com",
+                //    Body = $"Your order (#{order.OrderId}) of ${order.OrderTotal} has been" +
+                //    $"refunded. The credit has been added to the discount code {discountCode} and will" +
+                //    $"expire on {endDate}."
+                //});
+
+                return "Order was successfully refunded";
+            }
+            else if (order.OrderStatus.ToLower() == "refunded")
+            {
+                return "Order was already refunded so no action was taken";
+            }
+            else
+            {
+                return "Order hasn't been paid. A refund is not possible";
+            }
+
 
         }
 
