@@ -1,5 +1,7 @@
-﻿using SSD_Major_Web_Project.Data;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using SSD_Major_Web_Project.Data;
 using SSD_Major_Web_Project.Models;
+using SSD_Major_Web_Project.ViewModels;
 
 namespace SSD_Major_Web_Project.Repositories
 {
@@ -27,10 +29,33 @@ namespace SSD_Major_Web_Project.Repositories
 
         }
 
-/*        public string GetUsername(string email)
+        /*        public string GetUsername(string email)
+                {
+                    Customer customer = _db.Customers.FirstOrDefault(x => x.PkCustomerId == email);
+                    return $"{customer.FirstName}";
+                }*/
+
+        public IEnumerable<UserVM> GetAllUsers()
         {
-            Customer customer = _db.Customers.FirstOrDefault(x => x.PkCustomerId == email);
-            return $"{customer.FirstName}";
-        }*/
+            IEnumerable<UserVM> users =
+            _db.Customers.Select(u => new UserVM { Email = u.PkCustomerId });
+
+            return users;
+        }
+
+        public SelectList GetUserSelectList()
+        {
+            IEnumerable<SelectListItem> users =
+                GetAllUsers().Select(u => new SelectListItem
+                {
+                    Value = u.Email,
+                    Text = u.Email
+                });
+
+            SelectList roleSelectList = new SelectList(users,
+                                                      "Value",
+                                                      "Text");
+            return roleSelectList;
+        }
     }
 }

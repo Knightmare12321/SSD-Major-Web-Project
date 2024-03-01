@@ -6,7 +6,7 @@
     string email = ViewBag.Email;
 }
 
-<h3 style="color:darkred;">@email</h3>
+<h3>@email</h3>
 
 @if (message.Length > 0)
 {
@@ -25,7 +25,7 @@
         <table class="table">
             <thead>
                 <tr>
-                    <th style="color:darkred;">@Html.DisplayNameFor(model => model.RoleName)</th>
+                    <th>@Html.DisplayNameFor(model => model.RoleName)</th>
                 </tr>
             </thead>
             <tbody>
@@ -43,6 +43,6 @@
                 }
             </tbody>
         </table>
-        <p>&nbsp; <a href="/UserRole" style="color:darkred;">Back to Users</a></p>
+        <p>&nbsp; <a href="/UserRole">Back to Users</a></p>
     </div>
 </div>

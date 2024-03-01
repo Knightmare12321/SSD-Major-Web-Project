@@ -31,15 +31,15 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Admin" asp-action="Index">Admin</a>
                         </li>
-                        @if (User.IsInRole("Admin") || User.IsInRole("Manager"))
-                        {
+                        @* @if (User.IsInRole("Admin") || User.IsInRole("Manager")) *@
+                        @* { *@
                             <li class="nav-item">
-                                <a class="nav-link text-dark" style="color:#D9D9D9 !important; font-size: 1.3em !important;" asp-area="" asp-controller="UserRole" asp-action="Index">Users</a>
+                                <a class="nav-link text-dark"asp-area="" asp-controller="UserRole" asp-action="Index">Users</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-dark" style="color:#D9D9D9 !important; font-size: 1.3em !important;" asp-area="" asp-controller="Role" asp-action="Index">Roles</a>
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Role" asp-action="Index">Roles</a>
                             </li>
-                        }
+                        @* } *@
                     </ul>
                     <partial name="_LoginPartial" />
                 </div>

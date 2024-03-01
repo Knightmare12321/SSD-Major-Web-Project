@@ -7,12 +7,12 @@ using SSD_Major_Web_Project.ViewModels;
 
 namespace SSD_Major_Web_Project.Controllers
 {
-    [Authorize(Roles = "Admin, Manager")]
+    //[Authorize(Roles = "Admin, Manager")]
     public class RoleController : Controller
     {
-        private readonly NovaDbContext _db;
+        private readonly ApplicationDbContext _db;
 
-        public RoleController(NovaDbContext db)
+        public RoleController(ApplicationDbContext db)
         {
             _db = db;
         }
@@ -38,7 +38,7 @@ namespace SSD_Major_Web_Project.Controllers
             {
                 RoleRepo roleRepo = new RoleRepo(_db);
                 bool isSuccess =
-                    roleRepo.CreateRole(roleVM.RoleName, roleVM.Id);
+                    roleRepo.CreateRole(roleVM.RoleName);
 
                 if (isSuccess)
                 {

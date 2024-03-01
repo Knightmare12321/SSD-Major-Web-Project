@@ -1,6 +1,6 @@
 ﻿@model SSD_Major_Web_Project.ViewModels.UserRoleVM
 
-<h4 style="color:darkred;">User Role</h4>
+<h4>User Role</h4>
 <hr />
 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
@@ -27,13 +27,12 @@
                 <input type="hidden" asp-for-"Email" value="Email" />
                 <input type="hidden" asp-for-"RoleName" value="RoleName" />
                 <div class="form-group">
-                    <input type="submit" value="Create" class="btn btn-primary"
-                           style="border-color:#6E0B14; background-color: #6E0B14; margin-top: 20px;" />
+                    <input type="submit" value="Create" class="btn btn-primary"/>
                 </div>
             </div>
         </form>
         <div>
-            <a style="color:darkred;" href="/UserRole">Back to Users</a>
+            <a href="/UserRole">Back to Users</a>
         </div>
     </div>
 </div>

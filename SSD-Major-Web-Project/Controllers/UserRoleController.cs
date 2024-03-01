@@ -8,24 +8,27 @@ using SSD_Major_Web_Project.ViewModels;
 
 namespace SSD_Major_Web_Project.Controllers
 {
-    [Authorize(Roles = "Admin, Manager")]
+    //[Authorize(Roles = "Admin, Manager")]
 
     public class UserRoleController : Controller
     {
-        private readonly NovaDbContext _db;
+        private readonly ApplicationDbContext _db;
         private readonly UserManager<IdentityUser> _userManager;
+        private readonly NovaDbContext _novaContext;
 
-        public UserRoleController(NovaDbContext context,
-                                 UserManager<IdentityUser> userManager)
+        public UserRoleController(ApplicationDbContext context,
+                                 UserManager<IdentityUser> userManager, 
+                                 NovaDbContext novaContext)
         {
             _db = context;
             _userManager = userManager;
+            _novaContext = novaContext;
         }
 
         public ActionResult Index()
         {
-            UserRepo userRepo = new UserRepo(_db);
-            IEnumerable<UserVM> customers = userRepo.GetAllUsers();
+            CustomerRepo customerRepo = new CustomerRepo(_novaContext);
+            IEnumerable<UserVM> customers = customerRepo.GetAllUsers();
 
             return View(customers);
         }
@@ -37,10 +40,10 @@ namespace SSD_Major_Web_Project.Controllers
 
 
             var roles = await userRoleRepo.GetUserRolesAsync(userName);
-            CustomerRepo customerRepo = new CustomerRepo(_db);
-            var userFullName = customerRepo.GetUsername(userName);
+            CustomerRepo customerRepo = new CustomerRepo(_novaContext);
+            //var userFullName = customerRepo.GetUsername(userName);
 
-            ViewBag.UserName = userFullName;
+            //ViewBag.UserName = userFullName;
             ViewBag.Message = message;
             ViewBag.Email = userName;
 
@@ -54,8 +57,8 @@ namespace SSD_Major_Web_Project.Controllers
             ViewBag.RoleSelectList = roleRepo.GetRoleSelectList();
 
 
-            UserRepo userRepo = new UserRepo(_db);
-            ViewBag.UserSelectList = userRepo.GetUserSelectList();
+            CustomerRepo customerRepo = new CustomerRepo(_novaContext);
+            ViewBag.UserSelectList = customerRepo.GetUserSelectList();
 
             return View();
         }
@@ -95,8 +98,8 @@ namespace SSD_Major_Web_Project.Controllers
             RoleRepo roleRepo = new RoleRepo(_db);
             ViewBag.RoleSelectList = roleRepo.GetRoleSelectList();
 
-            UserRepo userRepo = new UserRepo(_db);
-            ViewBag.UserSelectList = userRepo.GetUserSelectList();
+            CustomerRepo customerRepo = new CustomerRepo(_novaContext);
+            ViewBag.UserSelectList = customerRepo.GetUserSelectList();
 
             return View();
         }
