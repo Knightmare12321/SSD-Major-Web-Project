@@ -4,6 +4,7 @@ using SSD_Major_Web_Project.Models;
 using SSD_Major_Web_Project.Repositories;
 using SSD_Major_Web_Project.ViewModels;
 using Newtonsoft.Json;
+using EllipticCurve.Utils;
 
 namespace SSD_Major_Web_Project.Controllers
 {
@@ -29,24 +30,26 @@ namespace SSD_Major_Web_Project.Controllers
             ProductRepo products = new ProductRepo(_context);
             if (addType == "cart" || addType == "favorite")
             {
-                // Retrieve the user's cart from the session
-                var cartSession = HttpContext.Session.GetString(addType);
-                string cartJson;
-                // If the cart session variable doesn't exist,
+                // Set the expired date when cookie is updated/created.
+                CookieOptions option = new CookieOptions();
+                option.Expires = DateTime.Now.AddDays(365);
+                // Retrieve the user's cart from the cookies.
+                var cartSession = Request.Cookies[addType];
+                // If the cart doesn't exist,
                 // create a new cart and add product to the cart.
                 if (cartSession == null)
                 {
-                    Cart cart = new Cart();
-                    cart.AddItem(products.GetById(id));
-                    cartJson = JsonConvert.SerializeObject(cart);
-                    HttpContext.Session.SetString(addType, cartJson);
+                    List<int> cart = new List<int>();
+                    cart.Add(id);
+                    string cartJson = JsonConvert.SerializeObject(cart);
+                    Response.Cookies.Append(addType, cartJson, option);
                 }
                 else
                 {
-                    Cart cart = JsonConvert.DeserializeObject<Cart>(cartSession);
-                    cart.AddItem(products.GetById(id));
-                    cartJson = JsonConvert.SerializeObject(cart);
-                    HttpContext.Session.SetString(addType, cartJson);
+                    List<int> cart = JsonConvert.DeserializeObject<List<int>>(cartSession);
+                    cart.Add(id);
+                    string cartJson = JsonConvert.SerializeObject(cart);
+                    Response.Cookies.Append(addType, cartJson, option);
                 }
 
             }
@@ -57,14 +60,19 @@ namespace SSD_Major_Web_Project.Controllers
 
         public IActionResult Favorite()
         {
-            var cartSession = HttpContext.Session.GetString("cart");
+            var cartSession = Request.Cookies["cart"];
+            List<Product> results = new List<Product>();
             if (cartSession != null)
             {
-                Cart cart = JsonConvert.DeserializeObject<Cart>(cartSession);
-                return View(cart.Items);
+                List<int> cart = JsonConvert.DeserializeObject<List<int>>(cartSession);
+                ProductRepo products = new ProductRepo(_context);
+                foreach (var id in cart)
+                {
+                    results.Add(products.GetById(id));
+                }
             }
 
-            return View();
+            return View(results);
             
         }
     }
