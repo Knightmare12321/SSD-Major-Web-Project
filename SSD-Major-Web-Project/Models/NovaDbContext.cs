@@ -34,6 +34,7 @@ public partial class NovaDbContext : DbContext
     public virtual DbSet<ProductSku> ProductSkus { get; set; }
 
     public virtual DbSet<Review> Reviews { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Contact>(entity =>
