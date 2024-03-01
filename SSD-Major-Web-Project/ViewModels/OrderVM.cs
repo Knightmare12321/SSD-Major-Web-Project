@@ -27,7 +27,6 @@ namespace SSD_Major_Web_Project.ViewModels
         public List<OrderDetail> OrderDetails { get; set; }
 
         [Required]
-        [Range(0, double.MaxValue)]
-        public double OrderTotal { get; set; }
+        public decimal OrderTotal { get; set; }
     }
 }

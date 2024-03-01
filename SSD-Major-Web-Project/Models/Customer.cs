@@ -7,8 +7,6 @@ public partial class Customer
 {
     public string PkCustomerId { get; set; } = null!;
 
-    public int? FkUserTypeId { get; set; }
-
     public int? FkContactId { get; set; }
 
     public virtual Contact? FkContact { get; set; }
