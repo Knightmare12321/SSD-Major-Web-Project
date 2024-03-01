@@ -33,23 +33,24 @@ namespace SSD_Major_Web_Project.Controllers
                 // Set the expired date when cookie is updated/created.
                 CookieOptions option = new CookieOptions();
                 option.Expires = DateTime.Now.AddDays(365);
-                // Retrieve the user's cart from the cookies.
-                var cartSession = Request.Cookies[addType];
-                // If the cart doesn't exist,
-                // create a new cart and add product to the cart.
-                if (cartSession == null)
+
+                var IDListCookie = Request.Cookies[addType];
+                /* If the cookie doesn't exist, create a new cookie.
+                   If the cookie exists, deserialize the ID list and and add new ID to the list.
+                   Pass in cookie with serialized ID list. */
+                if (IDListCookie == null)
                 {
-                    List<int> cart = new List<int>();
-                    cart.Add(id);
-                    string cartJson = JsonConvert.SerializeObject(cart);
-                    Response.Cookies.Append(addType, cartJson, option);
+                    List<int> IDList = new List<int>();
+                    IDList.Add(id);
+                    string resultJson = JsonConvert.SerializeObject(IDList);
+                    Response.Cookies.Append(addType, resultJson, option);
                 }
                 else
                 {
-                    List<int> cart = JsonConvert.DeserializeObject<List<int>>(cartSession);
-                    cart.Add(id);
-                    string cartJson = JsonConvert.SerializeObject(cart);
-                    Response.Cookies.Append(addType, cartJson, option);
+                    List<int> IDList = JsonConvert.DeserializeObject<List<int>>(IDListCookie);
+                    IDList.Add(id);
+                    string resultJson = JsonConvert.SerializeObject(IDList);
+                    Response.Cookies.Append(addType, resultJson, option);
                 }
 
             }
@@ -60,13 +61,13 @@ namespace SSD_Major_Web_Project.Controllers
 
         public IActionResult Favorite()
         {
-            var cartSession = Request.Cookies["cart"];
+            var IDListCookie = Request.Cookies["cart"];
             List<Product> results = new List<Product>();
-            if (cartSession != null)
+            if (IDListCookie != null)
             {
-                List<int> cart = JsonConvert.DeserializeObject<List<int>>(cartSession);
+                List<int> IDList = JsonConvert.DeserializeObject<List<int>>(IDListCookie);
                 ProductRepo products = new ProductRepo(_context);
-                foreach (var id in cart)
+                foreach (var id in IDList)
                 {
                     results.Add(products.GetById(id));
                 }
