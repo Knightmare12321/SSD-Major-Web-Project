@@ -5,6 +5,7 @@ using SSD_Major_Web_Project.Repositories;
 using SSD_Major_Web_Project.ViewModels;
 using Newtonsoft.Json;
 using EllipticCurve.Utils;
+using Microsoft.CodeAnalysis.Options;
 
 namespace SSD_Major_Web_Project.Controllers
 {
@@ -25,35 +26,50 @@ namespace SSD_Major_Web_Project.Controllers
             return View(temp.GetAll());
         }
 
-        public IActionResult Details(int id, string addType)
+        public IActionResult Details(int id, string catagory, string method)
         {
             ProductRepo products = new ProductRepo(_context);
-            if (addType == "cart" || addType == "favorite")
+            var cartCookie = Request.Cookies["cart"];
+            var favoriteCookie = Request.Cookies["favorite"];
+
+            if (catagory == "cart" || catagory == "favorite")
             {
                 // Set the expired date when cookie is updated/created.
                 CookieOptions option = new CookieOptions();
                 option.Expires = DateTime.Now.AddDays(365);
+                string resultJson;
 
-                var IDListCookie = Request.Cookies[addType];
+                var IDListCookie = catagory == "cart" ? cartCookie : favoriteCookie;
                 /* If the cookie doesn't exist, create a new cookie.
-                   If the cookie exists, deserialize the ID list and and add new ID to the list.
+                   If the cookie exists, deserialize the ID list and and add/delete ID in the list.
                    Pass in cookie with serialized ID list. */
                 if (IDListCookie == null)
                 {
                     List<int> IDList = new List<int>();
                     IDList.Add(id);
-                    string resultJson = JsonConvert.SerializeObject(IDList);
-                    Response.Cookies.Append(addType, resultJson, option);
+                    resultJson = JsonConvert.SerializeObject(IDList);
+                    Response.Cookies.Append(catagory, resultJson, option);
                 }
                 else
                 {
                     List<int> IDList = JsonConvert.DeserializeObject<List<int>>(IDListCookie);
-                    IDList.Add(id);
-                    string resultJson = JsonConvert.SerializeObject(IDList);
-                    Response.Cookies.Append(addType, resultJson, option);
+                    if (method == "add") IDList.Add(id);
+                    else if (method == "remove") IDList.Remove(id);
+                    resultJson = JsonConvert.SerializeObject(IDList);
+                    Response.Cookies.Append(catagory, resultJson, option);
                 }
-
+                if (catagory == "cart") cartCookie = resultJson;
+                else favoriteCookie = resultJson;
             }
+
+            ViewBag.isCart =
+                cartCookie == null ?
+                false :
+                JsonConvert.DeserializeObject<List<int>>(cartCookie).Contains(id);
+            ViewBag.isFav =
+                favoriteCookie == null ?
+                false :
+                JsonConvert.DeserializeObject<List<int>>(favoriteCookie).Contains(id);
 
             ProductDetailVM? vm = products.GetByIdVM(id);
             return View(vm);
