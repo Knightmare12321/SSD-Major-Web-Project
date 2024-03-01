@@ -1,9 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis;
 using Microsoft.Data.SqlClient;
+using Newtonsoft.Json;
 using SSD_Major_Web_Project.Models;
 using SSD_Major_Web_Project.Repositories;
 using SSD_Major_Web_Project.ViewModels;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace SSD_Major_Web_Project.Controllers
 {
@@ -52,33 +55,24 @@ namespace SSD_Major_Web_Project.Controllers
             return View(vm);
         }
 
-
-        //public IActionResult AdminOrderItems()
-        //{
-        //    AdminRepository adminRepository = new AdminRepository(_context);
-        //    IQueryable<OrderItemVM> orders = adminRepository.GetAllOrderItems();
-
-        //    //Separate orders based on order status
-        //    List<OrderItemVM> pendingOrders = orders.Where(o => o.OrderStatus.Equals("Pending")).ToList();
-        //    List<OrderItemVM> openOrders = orders.Where(o => o.OrderStatus.Equals("Paid")).ToList();
-        //    List<OrderItemVM> shippedOrders = orders.Where(o => o.OrderStatus.Equals("Shipped")).ToList();
-        //    List<OrderItemVM> deliveredOrders = orders.Where(o => o.OrderStatus.Equals("Delivered")).ToList();
-        //    AdminOrderVM vm = new AdminOrderVM() { AllOrders = orders.ToList(), PendingOrders = pendingOrders, OpenOrders = openOrders, ShippedOrders = shippedOrders, DeliveredOrders = deliveredOrders };
-        //    return View(vm);
-        //}
-
         public IActionResult AdminOrder()
         {
             AdminRepo adminRepo = new AdminRepo(_context);
-            IQueryable<OrderVM> orders = adminRepo.GetAllOrders();
+            ViewData["OrderStatus"] = "Paid";
 
-            //Separate orders based on order status
-            List<OrderVM> pendingOrders = orders.Where(o => o.OrderStatus.Equals("Pending")).ToList();
-            List<OrderVM> openOrders = orders.Where(o => o.OrderStatus.Equals("Paid")).ToList();
-            List<OrderVM> shippedOrders = orders.Where(o => o.OrderStatus.Equals("Shipped")).ToList();
-            List<OrderVM> deliveredOrders = orders.Where(o => o.OrderStatus.Equals("Delivered")).ToList();
-            AdminOrderVM vm = new AdminOrderVM() { AllOrders = orders.ToList(), PendingOrders = pendingOrders, OpenOrders = openOrders, ShippedOrders = shippedOrders, DeliveredOrders = deliveredOrders };
+            //show the open orders as default on the page
+            IQueryable<OrderVM> orders = adminRepo.GetOrdersByStatus("Paid");
+            List<OrderVM> vm = orders.ToList();
             return View(vm);
+        }
+
+        public IActionResult GetOrdersByStatus(string orderStatus = "")
+        {
+            ViewData["OrderStatus"] = orderStatus;
+            AdminRepo adminRepo = new AdminRepo(_context);
+            IQueryable<OrderVM> orders = adminRepo.GetOrdersByStatus(orderStatus);
+            List<OrderVM> vm = orders.ToList();
+            return PartialView("_OrderSummaryPartial", vm);
         }
 
         [HttpPost]
@@ -89,6 +83,48 @@ namespace SSD_Major_Web_Project.Controllers
 
             return Json(jsonString);
 
+        }
+
+        public void RefundOrder(int orderId)
+        {   //find order
+            AdminRepo adminRepo = new AdminRepo(_context);
+            OrderVM order = adminRepo.GetOrderById(orderId);
+
+            //if order.OrderStatus !=
+
+            //create a discount with refund amount
+            string discountCode = GetRandomString(15);
+            decimal discountValue = order.OrderTotal;
+            string discountType = "Number";
+            DateOnly startDate = DateOnly.FromDateTime(DateTime.Now);
+            DateOnly endDate = DateOnly.FromDateTime(DateTime.Now.AddDays(365));
+            Discount discount = adminRepo.CreateDiscount(discountCode, discountValue, discountType, startDate, endDate);
+
+            //cancel order and send discount
+            adminRepo.CancelOrder(orderId);
+
+        }
+
+        public static string GetRandomString(int size)
+        {
+            char[] chars =
+            "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890".ToCharArray();
+
+            byte[] data = new byte[4 * size];
+            using (var crypto = RandomNumberGenerator.Create())
+            {
+                crypto.GetBytes(data);
+            }
+            StringBuilder result = new StringBuilder(size);
+            for (int i = 0; i < size; i++)
+            {
+                var rnd = BitConverter.ToUInt32(data, i * 4);
+                var idx = rnd % chars.Length;
+
+                result.Append(chars[idx]);
+            }
+
+            return result.ToString();
         }
     }
 }

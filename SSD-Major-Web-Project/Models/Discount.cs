@@ -7,7 +7,7 @@ public partial class Discount
 {
     public string PkDiscountCode { get; set; } = null!;
 
-    public double DiscountValue { get; set; }
+    public decimal DiscountValue { get; set; }
 
     public string DiscountType { get; set; } = null!;
 

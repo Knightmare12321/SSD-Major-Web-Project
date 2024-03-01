@@ -35,11 +35,15 @@ public partial class NovaDbContext : DbContext
 
     public virtual DbSet<Review> Reviews { get; set; }
 
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
+        => optionsBuilder.UseSqlServer("Server=tcp:novadatabase.database.windows.net,1433;Initial Catalog=novaDb;Persist Security Info=False;User ID=nova;Password=P@ssw0rd!;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;");
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Contact>(entity =>
         {
-            entity.HasKey(e => e.PkContactId).HasName("PK__Contact__5D8CD4C03E30B6F6");
+            entity.HasKey(e => e.PkContactId).HasName("PK__Contact__5D8CD4C0E7C08FC1");
 
             entity.ToTable("Contact");
 
@@ -84,7 +88,7 @@ public partial class NovaDbContext : DbContext
 
         modelBuilder.Entity<Customer>(entity =>
         {
-            entity.HasKey(e => e.PkCustomerId).HasName("PK__Customer__1FD9D5A28AEB5701");
+            entity.HasKey(e => e.PkCustomerId).HasName("PK__Customer__1FD9D5A27C25E9AC");
 
             entity.ToTable("Customer");
 
@@ -93,7 +97,6 @@ public partial class NovaDbContext : DbContext
                 .IsUnicode(false)
                 .HasColumnName("pkCustomerId");
             entity.Property(e => e.FkContactId).HasColumnName("fkContactId");
-            entity.Property(e => e.FkUserTypeId).HasColumnName("fkUserTypeId");
 
             entity.HasOne(d => d.FkContact).WithMany(p => p.Customers)
                 .HasForeignKey(d => d.FkContactId)
@@ -103,7 +106,7 @@ public partial class NovaDbContext : DbContext
 
         modelBuilder.Entity<Discount>(entity =>
         {
-            entity.HasKey(e => e.PkDiscountCode).HasName("PK__Discount__79BE3D84FC5F3AD6");
+            entity.HasKey(e => e.PkDiscountCode).HasName("PK__Discount__79BE3D845A5EDE5E");
 
             entity.ToTable("Discount");
 
@@ -115,7 +118,9 @@ public partial class NovaDbContext : DbContext
                 .HasMaxLength(10)
                 .IsUnicode(false)
                 .HasColumnName("discountType");
-            entity.Property(e => e.DiscountValue).HasColumnName("discountValue");
+            entity.Property(e => e.DiscountValue)
+                .HasColumnType("decimal(10, 2)")
+                .HasColumnName("discountValue");
             entity.Property(e => e.EndDate).HasColumnName("endDate");
             entity.Property(e => e.IsActive)
                 .HasMaxLength(1)
@@ -127,7 +132,7 @@ public partial class NovaDbContext : DbContext
 
         modelBuilder.Entity<Image>(entity =>
         {
-            entity.HasKey(e => e.PkImageId).HasName("PK__Image__03FC43766FB22876");
+            entity.HasKey(e => e.PkImageId).HasName("PK__Image__03FC4376CEE56E08");
 
             entity.ToTable("Image");
 
@@ -151,7 +156,7 @@ public partial class NovaDbContext : DbContext
 
         modelBuilder.Entity<Order>(entity =>
         {
-            entity.HasKey(e => e.PkOrderId).HasName("PK__Order__C196130B8CB7243F");
+            entity.HasKey(e => e.PkOrderId).HasName("PK__Order__C196130B298EFB7D");
 
             entity.ToTable("Order");
 
@@ -199,13 +204,16 @@ public partial class NovaDbContext : DbContext
 
         modelBuilder.Entity<OrderDetail>(entity =>
         {
-            entity.HasKey(e => new { e.FkOrderId, e.FkSkuId }).HasName("PK__OrderDet__1F82522D65EAA0D9");
+            entity.HasKey(e => new { e.FkOrderId, e.FkSkuId }).HasName("PK__OrderDet__1F82522D89F22BE9");
 
             entity.ToTable("OrderDetail");
 
             entity.Property(e => e.FkOrderId).HasColumnName("fkOrderId");
             entity.Property(e => e.FkSkuId).HasColumnName("fkSkuId");
             entity.Property(e => e.Quantity).HasColumnName("quantity");
+            entity.Property(e => e.UnitPrice)
+                .HasColumnType("decimal(10, 2)")
+                .HasColumnName("unitPrice");
 
             entity.HasOne(d => d.FkOrder).WithMany(p => p.OrderDetails)
                 .HasForeignKey(d => d.FkOrderId)
@@ -218,7 +226,7 @@ public partial class NovaDbContext : DbContext
 
         modelBuilder.Entity<OrderStatus>(entity =>
         {
-            entity.HasKey(e => e.PkOrderStatusId).HasName("PK__OrderSta__ABDB6887E4B6D402");
+            entity.HasKey(e => e.PkOrderStatusId).HasName("PK__OrderSta__ABDB688778EB7F48");
 
             entity.ToTable("OrderStatus");
 
@@ -231,7 +239,7 @@ public partial class NovaDbContext : DbContext
 
         modelBuilder.Entity<Product>(entity =>
         {
-            entity.HasKey(e => e.PkProductId).HasName("PK__Product__4492A4B525460427");
+            entity.HasKey(e => e.PkProductId).HasName("PK__Product__4492A4B5AFCAE493");
 
             entity.ToTable("Product");
 
@@ -249,31 +257,33 @@ public partial class NovaDbContext : DbContext
                 .HasMaxLength(30)
                 .IsUnicode(false)
                 .HasColumnName("name");
-            entity.Property(e => e.Price).HasColumnName("price");
+            entity.Property(e => e.Price)
+                .HasColumnType("decimal(10, 2)")
+                .HasColumnName("price");
         });
 
         modelBuilder.Entity<ProductSku>(entity =>
         {
-            entity.HasKey(e => e.PkSkuId).HasName("PK__ProductS__B7ADEE3BF76AB22C");
+            entity.HasKey(e => e.PkSkuId).HasName("PK__ProductS__B7ADEE3B8B428762");
 
             entity.ToTable("ProductSku");
 
             entity.Property(e => e.PkSkuId).HasColumnName("pkSkuId");
-            entity.Property(e => e.FKproductId).HasColumnName("fKProductId");
+            entity.Property(e => e.FkProductId).HasColumnName("fkProductId");
             entity.Property(e => e.Size)
                 .HasMaxLength(4)
                 .IsUnicode(false)
                 .HasColumnName("size");
 
-            entity.HasOne(d => d.FKproduct).WithMany(p => p.ProductSkus)
-                .HasForeignKey(d => d.FKproductId)
+            entity.HasOne(d => d.FkProduct).WithMany(p => p.ProductSkus)
+                .HasForeignKey(d => d.FkProductId)
                 .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("ProductSkuProductFK");
         });
 
         modelBuilder.Entity<Review>(entity =>
         {
-            entity.HasKey(e => new { e.FkCustomerId, e.FkProductId }).HasName("PK__Review__598FD389CE030AAF");
+            entity.HasKey(e => new { e.FkCustomerId, e.FkProductId }).HasName("PK__Review__598FD389A14A8E04");
 
             entity.ToTable("Review");
 

@@ -8,33 +8,35 @@
 <div class="shoppingcart-container">
 
     <div class="row">
+
         <div class="col-md-4">
             <div class="shopping-cart">
-            <h4>SHOPPING CART</h4>
-@*                 @foreach (var item in Model.Products)
+                <h4>SHOPPING CART</h4>
+                @*                 @foreach (var item in Model.Products)
                 {
-                    <div class="product">
-                        @if (item.Image != null && item.Image.Length > 0)
-                        {
-                            <img src="data:image/jpeg;base64,
-                     @Convert.ToBase64String(@item.Image)"
-                                 alt="Model.Name"
-                                 class="product-image" />
-                        }
-                     
-                        <div class="product-details">
-                            <h5>@item.Name</h5>
-                            <p>@item.Price</p>
-                        </div>
-                    </div>
+                <div class="product">
+                @if (item.Image != null && item.Image.Length > 0)
+                {
+                <img src="data:image/jpeg;base64,
+                @Convert.ToBase64String(@item.Image)"
+                alt="Model.Name"
+                class="product-image" />
+                }
+
+                <div class="product-details">
+                <h5>@item.Name</h5>
+                <p>@item.Price</p>
+                </div>
+                </div>
                 } *@
             </div>
             <div class="my-wishlist">
-               <h4>MY WISHLIST </h4>
+                <h4>MY WISHLIST </h4>
+
             </div>
         </div>
 
-         <div class="col-md-6 col-md-offset-2">
+        <div class="col-md-6 col-md-offset-2">
             <div class="coupon-code">
                 <input type="text" placeholder="Coupon Code" />
                 <input type="submit" value="Apply Code" class="btn btn-primary" />
@@ -62,16 +64,17 @@
             </dt>
             <dd class="col-sm-10">
                 @Html.DisplayFor(model => model.GrandTotal)
-                
+
             </dd>
             <div>
-                @using (Html.BeginForm("Checkout", "ShoppingCart", FormMethod.Post))
-                {
-                    @Html.HiddenFor(model => model.UserId)
-          
-
-                    <input type="submit" value="Proceed to Checkout" class="btn btn-primary" />
-                }
+                <form asp-action="Checkout" asp-controller="Shop" method="post">
+                    <input type="hidden" asp-for="@Model.UserId" />
+                    @foreach (var item in Model.Products)
+                    {
+                        <input type="hidden" name="Products" value="@item" />
+                    }
+                    <button type="submit" class="btn btn-primary">Proceed to Checkout</button>
+                </form>
             </div>
         </div>
     </div>
