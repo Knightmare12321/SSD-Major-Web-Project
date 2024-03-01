@@ -274,46 +274,54 @@ textarea[name="Description"] {
 }
 
 /*Admin AdminOrder*/
-#admin-orders{
-    display:none;
-}
+    #admin-orders{
+        display:none;
+    }
 
 #admin-orders.active {
     display: flex;
     grid-column-gap: 10px;
-    ul{
-    padding: 0;
-    width: 150px;
-}
 
-li {
-    list-style: none;
-    padding: 10px;
-    cursor: pointer;
-}
+    ul{
+        padding: 0;
+        width: 150px;
+    }
+
+    li {
+        list-style: none;
+        padding: 10px;
+        cursor: pointer;
+    }
 
     li:hover, li.active {
         background-color: var(--theme-color);
     }
 
-.summary {
-    display: block
-}
+    .summary {
+        display: block
+    }
 
 
-button {
-    white-space: nowrap;
-    background-color: royalblue;
-    color: white;
-}
+    button {
+        white-space: nowrap;
+        background-color: royalblue;
+        color: white;
+    }
 
-    button.dispatched {
+    button.deactivated {
         background-color: grey;
     }
 
-tr.dispatched {
-    background-color: orange;
+    tr.dispatched {
+        background-color: orange;
+    }
+    tr.refunded{
+        background-color: lightgray
+    }
 }
+
+#admin-orders #message{
+    color:red;
 }
 
 #admin-order-detail{
