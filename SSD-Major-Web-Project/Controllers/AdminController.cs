@@ -133,25 +133,26 @@ namespace SSD_Major_Web_Project.Controllers
                     });
                 }
 
+                string abc = order.Contact.Customers.ToList()[0].PkCustomerId;
                 //send refund as a discount code in email
                 var response = await _emailService.SendSingleEmail(new Models.ComposeEmailModel
                 {
                     FirstName = "Nova",
                     LastName = "Clothing",
                     Subject = $"Nova Fashion Order (#{orderId}) Cancelled",
-                    Email = "afang324@gmail.com",
-                    Body = $"Your order (#{order.OrderId}) of ${order.OrderTotal} has been" +
-                    $"refunded. The credit has been added to the discount code {discountCode} and will" +
+                    Email = order.Contact.Customers.ToList()[0].PkCustomerId,
+                    Body = $"Your order (#{order.OrderId}) of {order.OrderTotal:C} has been " +
+                    $"refunded. The credit has been added to the discount code {discountCode} and will " +
                     $"expire on {endDate}."
                 });
 
-                return Json(new { sucess = true, error = "" });
+                return Json(new { success = true, error = "" });
             }
             else if (order.OrderStatus.ToLower() == "refunded")
             {
                 return Json(new
                 {
-                    sucess = false,
+                    success = false,
                     error = "Order was already refunded so no action was taken"
                 });
             }
@@ -163,8 +164,6 @@ namespace SSD_Major_Web_Project.Controllers
                     error = "Order hasn't been paid. A refund is not possible"
                 });
             }
-
-
         }
 
         public static string GetRandomString(int size)

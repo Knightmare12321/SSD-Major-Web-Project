@@ -117,10 +117,29 @@ namespace SSD_Major_Web_Project.Repositories
                     .Where(order => order.OrderDetail.FkOrderId == o.PkOrderId)
                     .Select((order) => order.OrderDetail.Quantity * order.OrderDetail.UnitPrice * (order.Discount != null ? (1 - order.Discount.DiscountValue) : 1))
                     .Sum(), 2)
-            });//filter based on search term
-               //.Where(o => o.ToString().Contains(searchTerm) ||
-               //          o.BuyerNote.Contains(searchTerm) ||
-               //          o.OrderDetails.Where(od => od.Quantity.ToString().Contains(searchTerm)).;
+            })
+            //filter based on search term
+            .Where(o => o.OrderId.ToString().Contains(searchTerm) ||
+                        o.OrderDate.ToString().Contains(searchTerm) ||
+                        o.BuyerNote.Contains(searchTerm) ||
+                        o.OrderDetails.Any(od => od.Quantity.ToString().Contains(searchTerm) ||
+                                                 od.UnitPrice.ToString().Contains(searchTerm) ||
+                                                 od.FkSku.FkProduct.Name.ToString().Contains(searchTerm)
+                                        ) ||
+                        o.Contact.FirstName.Contains(searchTerm) ||
+                        o.Contact.LastName.Contains(searchTerm) ||
+                        o.Contact.Address.Contains(searchTerm) ||
+                        o.Contact.Address2.Contains(searchTerm) ||
+                        o.Contact.City.Contains(searchTerm) ||
+                        o.Contact.LastName.Contains(searchTerm) ||
+                        o.Contact.Province.Contains(searchTerm) ||
+                        o.Contact.Country.Contains(searchTerm) ||
+                        o.Contact.PostalCode.Contains(searchTerm) ||
+                        o.Contact.PhoneNumber.Contains(searchTerm) ||
+                        o.Discount.PkDiscountCode.ToString().Contains(searchTerm) ||
+                        o.Discount.DiscountValue.ToString().Contains(searchTerm) ||
+                        o.OrderTotal.ToString().Contains(searchTerm)
+                        );
         }
 
         public string dispatchOrder(int orderId)
@@ -180,6 +199,7 @@ namespace SSD_Major_Web_Project.Repositories
                                 }).ToList(),
                 Contact = _context.Contacts
                         .Where(u => u.PkContactId == o.FkContactId)
+                        .Include(u => u.Customers)
                         .FirstOrDefault(),
                 Discount = _context.Discounts
                         .Where(d => d.PkDiscountCode == o.FkDiscountCode)

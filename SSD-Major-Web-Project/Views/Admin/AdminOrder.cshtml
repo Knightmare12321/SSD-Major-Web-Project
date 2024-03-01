@@ -21,10 +21,11 @@
     </div>
     <div>
         <div id="order-sheet" class="summary">
+            <input id="sheet-type" value="Paid" hidden/>
             <h1 id="orders-title">Open Orders</h1>
             <div>
                 <input id="search-term" placeholder="search text" />
-                <button onClick="getFilteredOrders('Paid')">Filter</button></div>
+                <button class="btn" onClick="getFilteredOrders()">Filter</button></div>
             <span id="message"></span>
             <div id="orders-data">
                 @await Html.PartialAsync("../Shared/_OrderSummaryPartial", Model)
@@ -78,6 +79,9 @@
         $("#admin-orders li").removeClass("active");
         $(tabClicked).addClass("active");
 
+        //update hidden sheet-type variable
+        $("#sheet-type").val(sheetType);
+
         //toggle order summary sheet
         const url = '@Url.Action("GetFilteredOrders", "Admin")';
         $.ajax({
@@ -91,9 +95,9 @@
         });
     }
 
-    const getFilteredOrders = (sheetType) => {
+    const getFilteredOrders = () => {
         const searchTerm = $("#search-term").val();
-        console.log('searchTerm:', searchTerm);
+        const sheetType = $("#sheet-type").val();
         const url = '@Url.Action("GetFilteredOrders", "Admin")';
         $.ajax({
             type: "GET",
@@ -169,7 +173,7 @@
     }
 
     const refundOrder = (orderId) => {
-        const url = '@Url.Action("DispatchOrder", "Admin")';
+        const url = '@Url.Action("RefundOrder", "Admin")';
         $.ajax({
             type: "POST",
             url: url,
