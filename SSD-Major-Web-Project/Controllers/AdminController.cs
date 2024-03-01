@@ -68,16 +68,16 @@ namespace SSD_Major_Web_Project.Controllers
             ViewData["OrderStatus"] = "Paid";
 
             //show the open orders as default on the page
-            IQueryable<OrderVM> orders = adminRepo.GetOrdersByStatus("Paid");
+            IQueryable<OrderVM> orders = adminRepo.GetFilteredOrders("Paid");
             List<OrderVM> vm = orders.ToList();
             return View(vm);
         }
 
-        public IActionResult GetOrdersByStatus(string orderStatus = "")
+        public IActionResult GetFilteredOrders(string orderStatus = "", string searchTerm = "")
         {
             ViewData["OrderStatus"] = orderStatus;
             AdminRepo adminRepo = new AdminRepo(_context);
-            IQueryable<OrderVM> orders = adminRepo.GetOrdersByStatus(orderStatus);
+            IQueryable<OrderVM> orders = adminRepo.GetFilteredOrders(orderStatus, searchTerm);
             List<OrderVM> vm = orders.ToList();
             return PartialView("_OrderSummaryPartial", vm);
         }
@@ -86,14 +86,28 @@ namespace SSD_Major_Web_Project.Controllers
         public JsonResult DispatchOrder(int orderId)
         {
             AdminRepo adminRepo = new AdminRepo(_context);
-            string jsonString = adminRepo.dispatchOrder(orderId);
+            string errorString = adminRepo.dispatchOrder(orderId);
 
-            return Json(jsonString);
+            if (errorString != "")
+            {
+                return Json(
+                   new
+                   {
+                       success = false,
+                       error = errorString
+                   });
+            }
+
+            return Json(new
+            {
+                success = true,
+                error = ""
+            });
 
         }
 
         [HttpPost]
-        public async Task<string> RefundOrder(int orderId)
+        public async Task<JsonResult> RefundOrder(int orderId)
         {   //find order
             AdminRepo adminRepo = new AdminRepo(_context);
             OrderVM order = adminRepo.GetOrderById(orderId);
@@ -109,33 +123,45 @@ namespace SSD_Major_Web_Project.Controllers
                 Discount discount = adminRepo.CreateDiscount(discountCode, discountValue, discountType, startDate, endDate);
 
                 //cancel order
-                string error = adminRepo.CancelOrder(orderId);
-                if (error != "")
+                string errorString = adminRepo.CancelOrder(orderId);
+                if (errorString != "")
                 {
-                    return error;
+                    return Json(new
+                    {
+                        success = false,
+                        error = errorString
+                    });
                 }
 
                 //send refund as a discount code in email
-                //var response = await _emailService.SendSingleEmail(new Models.ComposeEmailModel
-                //{
-                //    FirstName = "Nova",
-                //    LastName = "Clothing",
-                //    Subject = $"Nova Fashion Order (#{orderId}) Cancelled",
-                //    Email = "afang324@gmail.com",
-                //    Body = $"Your order (#{order.OrderId}) of ${order.OrderTotal} has been" +
-                //    $"refunded. The credit has been added to the discount code {discountCode} and will" +
-                //    $"expire on {endDate}."
-                //});
+                var response = await _emailService.SendSingleEmail(new Models.ComposeEmailModel
+                {
+                    FirstName = "Nova",
+                    LastName = "Clothing",
+                    Subject = $"Nova Fashion Order (#{orderId}) Cancelled",
+                    Email = "afang324@gmail.com",
+                    Body = $"Your order (#{order.OrderId}) of ${order.OrderTotal} has been" +
+                    $"refunded. The credit has been added to the discount code {discountCode} and will" +
+                    $"expire on {endDate}."
+                });
 
-                return "Order was successfully refunded";
+                return Json(new { sucess = true, error = "" });
             }
             else if (order.OrderStatus.ToLower() == "refunded")
             {
-                return "Order was already refunded so no action was taken";
+                return Json(new
+                {
+                    sucess = false,
+                    error = "Order was already refunded so no action was taken"
+                });
             }
             else
             {
-                return "Order hasn't been paid. A refund is not possible";
+                return Json(new
+                {
+                    sucess = false,
+                    error = "Order hasn't been paid. A refund is not possible"
+                });
             }
 
 

@@ -11,7 +11,7 @@
         <ul>
             <li onClick="toggleSummary(this,'','All Orders')">All</li>
             <li onClick="toggleSummary(this,'Pending','Pending Orders')">Pending Payment</li>
-            <li class="active" onClick="toggleSummary(this,'Paid','Open Orders')">Open</li>
+            <li onClick="toggleSummary(this,'Paid','Open Orders')" class="active">Open</li>
             <li onClick="toggleSummary(this,'Shipped', 'Shipped Orders')">Shipped</li>
             <li onClick="toggleSummary(this,'Delivered','Delivered Orders')">Delivered</li>
             <li onClick="toggleSummary(this,'Refunded','Refunded Orders')">Refunded</li>
@@ -22,6 +22,9 @@
     <div>
         <div id="order-sheet" class="summary">
             <h1 id="orders-title">Open Orders</h1>
+            <div>
+                <input id="search-term" placeholder="search text" />
+                <button onClick="getFilteredOrders('Paid')">Filter</button></div>
             <span id="message"></span>
             <div id="orders-data">
                 @await Html.PartialAsync("../Shared/_OrderSummaryPartial", Model)
@@ -76,7 +79,7 @@
         $(tabClicked).addClass("active");
 
         //toggle order summary sheet
-        const url = '@Url.Action("GetOrdersByStatus", "Admin")';
+        const url = '@Url.Action("GetFilteredOrders", "Admin")';
         $.ajax({
             type: "GET",
             url: url,
@@ -88,14 +91,27 @@
         });
     }
 
-    const dispatchOrder = async (orderId) => {
+    const getFilteredOrders = (sheetType) => {
+        const searchTerm = $("#search-term").val();
+        console.log('searchTerm:', searchTerm);
+        const url = '@Url.Action("GetFilteredOrders", "Admin")';
+        $.ajax({
+            type: "GET",
+            url: url,
+            data: { "orderStatus": sheetType, "searchTerm":searchTerm },
+            success: function (data) {
+                $("#orders-data").html(data);
+            }
+        });
+    }
+
+    const dispatchOrder =  (orderId) => {
         const url = '@Url.Action("DispatchOrder", "Admin")';
         $.ajax({
             type: "POST",
             url: url,
             data: { orderId },
-            success: function (data) {
-                console.log(data)
+            success:  function(data) {
                 if (data.success) {
                     $("[id^=" + orderId + "]").addClass('dispatched')
 
@@ -153,22 +169,24 @@
     }
 
     const refundOrder = (orderId) => {
-        const url = '@Url.Action("RefundOrder", "Admin")';
+        const url = '@Url.Action("DispatchOrder", "Admin")';
         $.ajax({
             type: "POST",
             url: url,
             data: { orderId },
             success: function (data) {
-                $("#message").html(data);
+                if (data.success) {
+                    $("[id^=" + orderId + "]").addClass('refunded');
 
-                $("[id^=" + orderId + "]").addClass('refunded')
-
-                //update button class, text and order status text
-                $("[id^=" + orderId + "] button:contains(Refund)").addClass('deactivated').html('Refunded')
-                $("[id^=" + orderId + "] td.order-status").html("Refunded");
+                    //update button class, text and order status text
+                    $("[id^=" + orderId + "] button:contains(Refund)").addClass('deactivated').html('Refunded');
+                    $("[id^=" + orderId + "] td.order-status").html("Refunded");
+                } else {
+                    $("#message").html(data.error);
+                }
             },
             error: function (request, status, error) {
-                $("#message").html(error)
+                $("#message").html(error);
             }
         });
     }

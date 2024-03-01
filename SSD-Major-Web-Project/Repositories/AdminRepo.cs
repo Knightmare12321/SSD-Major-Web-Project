@@ -55,9 +55,9 @@ namespace SSD_Major_Web_Project.Repositories
             }
         }
 
-        public IQueryable<OrderVM> GetOrdersByStatus(string orderStatus = "")
+        public IQueryable<OrderVM> GetFilteredOrders(string orderStatus = "", string searchTerm = "")
         {
-            //find order satus record id of the given order status
+            //find status id of the given order status 
             int orderStatusId = _context.OrderStatuses
                 .Where(os => os.Status == orderStatus)
                 .Select(os => os.PkOrderStatusId)
@@ -117,7 +117,10 @@ namespace SSD_Major_Web_Project.Repositories
                     .Where(order => order.OrderDetail.FkOrderId == o.PkOrderId)
                     .Select((order) => order.OrderDetail.Quantity * order.OrderDetail.UnitPrice * (order.Discount != null ? (1 - order.Discount.DiscountValue) : 1))
                     .Sum(), 2)
-            });
+            });//filter based on search term
+               //.Where(o => o.ToString().Contains(searchTerm) ||
+               //          o.BuyerNote.Contains(searchTerm) ||
+               //          o.OrderDetails.Where(od => od.Quantity.ToString().Contains(searchTerm)).;
         }
 
         public string dispatchOrder(int orderId)
@@ -130,12 +133,7 @@ namespace SSD_Major_Web_Project.Repositories
                 //check if order has an open order status
                 if (status != "Paid")
                 {
-                    return JsonConvert.SerializeObject(
-                   new
-                   {
-                       Success = false,
-                       Error = "Order does not have an open status"
-                   });
+                    return "Order does not have an open status";
                 }
 
                 //set order status id to shipped
@@ -143,16 +141,11 @@ namespace SSD_Major_Web_Project.Repositories
                 order.FkOrderStatusId = shippedStatus.PkOrderStatusId;
                 //_context.SaveChanges();
 
-                return JsonConvert.SerializeObject(new { Success = true, Error = "" });
+                return "";
             }
             catch (Exception ex)
             {
-                return JsonConvert.SerializeObject(
-                    new
-                    {
-                        Success = false,
-                        Error = $"An unexpected error occured while dispatching order"
-                    });
+                return "An unexpected error occured while dispatching order";
             }
         }
 
