@@ -19,7 +19,6 @@ namespace SSD_Major_Web_Project.Repositories
             Customer customer = new Customer
             {
                 PkCustomerId = email,
-                //FkUserTypeId = null,
                 FkContactId = null,
             };
 

@@ -11,8 +11,6 @@ public partial class Customer
 
     public virtual Contact? FkContact { get; set; }
 
-    public virtual UserType? FkUserType { get; set; }
-
     public virtual ICollection<Order> Orders { get; set; } = new List<Order>();
 
     public virtual ICollection<Review> Reviews { get; set; } = new List<Review>();

@@ -34,11 +34,6 @@ public partial class NovaDbContext : DbContext
     public virtual DbSet<ProductSku> ProductSkus { get; set; }
 
     public virtual DbSet<Review> Reviews { get; set; }
-
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseSqlServer("Server=tcp:novadatabase.database.windows.net,1433;Initial Catalog=novaDb;Persist Security Info=False;User ID=nova;Password=P@ssw0rd!;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;");
-
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Contact>(entity =>
@@ -305,19 +300,6 @@ public partial class NovaDbContext : DbContext
             entity.HasOne(d => d.FkProduct).WithMany(p => p.Reviews)
                 .HasForeignKey(d => d.FkProductId)
                 .HasConstraintName("ReviewProductFK");
-        });
-
-        modelBuilder.Entity<UserType>(entity =>
-        {
-            entity.HasKey(e => e.PkUserTypeId).HasName("PK__UserType__F1FCA1425B4C0DFF");
-
-            entity.ToTable("UserType");
-
-            entity.Property(e => e.PkUserTypeId).HasColumnName("pkUserTypeId");
-            entity.Property(e => e.UserType1)
-                .HasMaxLength(10)
-                .IsUnicode(false)
-                .HasColumnName("userType");
         });
 
         OnModelCreatingPartial(modelBuilder);
