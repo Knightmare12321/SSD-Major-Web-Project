@@ -187,5 +187,37 @@ namespace SSD_Major_Web_Project.Controllers
 
             return result.ToString();
         }
+
+        public IActionResult GetAllDiscounts()
+        {
+            AdminRepo adminRepo = new AdminRepo(_context);
+            List<DiscountVM> discounts = adminRepo.GetAllDiscounts().ToList();
+            return View(discounts);
+        }
+
+        public IActionResult DeleteDiscount(string discountCode)
+        {
+            AdminRepo adminRepo = new AdminRepo(_context);
+            Discount discount = adminRepo.GetDiscountById(discountCode);
+            DiscountVM vm = new DiscountVM
+            {
+                PkDiscountCode = discountCode,
+                DiscountValue = discount.DiscountValue,
+                DiscountType = discount.DiscountType,
+                StartDate = discount.StartDate,
+                EndDate = discount.EndDate,
+                IsActive = discount.IsActive
+            };
+            return View(vm);
+        }
+
+        //[HttpPost]
+        //public IActionResult PostDeleteDiscount(string discountCode)
+        //{
+        //    AdminRepo adminRepo = new AdminRepo(_context);
+        //    //string message = adminRepo.DeleteDiscount(discountCode);
+        //    return RedirectToAction("Index", new { message = message });
+        //}
+
     }
 }

@@ -229,6 +229,36 @@ namespace SSD_Major_Web_Project.Repositories
             }).FirstOrDefault();
         }
 
+        public string CancelOrder(int orderId)
+        {
+            try
+            {
+                Order order = _context.Orders.Where(o => o.PkOrderId == orderId).FirstOrDefault();
+                OrderStatus cancelledStatus = _context.OrderStatuses.Where(os => os.Status == "Cancelled").FirstOrDefault();
+                order.FkOrderStatusId = cancelledStatus.PkOrderStatusId;
+                //_context.SaveChanges();
+                return "";
+            }
+            catch (Exception ex)
+            {
+                return "An unexpected error occured";
+            }
+        }
+
+        public IQueryable<DiscountVM> GetAllDiscounts()
+        {
+            return _context.Discounts.Select(d =>
+                new DiscountVM
+                {
+                    PkDiscountCode = d.PkDiscountCode,
+                    DiscountValue = d.DiscountValue,
+                    DiscountType = d.DiscountType,
+                    StartDate = d.StartDate,
+                    EndDate = d.EndDate,
+                    IsActive = d.IsActive
+                }); ;
+        }
+
         public Discount CreateDiscount(string discountCode,
                                         decimal discountValue,
                                         string discountType,
@@ -251,23 +281,14 @@ namespace SSD_Major_Web_Project.Repositories
             return discount;
         }
 
-        public string CancelOrder(int orderId)
+        public Discount GetDiscountById(string discountCode)
         {
-            try
-            {
-                Order order = _context.Orders.Where(o => o.PkOrderId == orderId).FirstOrDefault();
-                OrderStatus cancelledStatus = _context.OrderStatuses.Where(os => os.Status == "Cancelled").FirstOrDefault();
-                order.FkOrderStatusId = cancelledStatus.PkOrderStatusId;
-                //_context.SaveChanges();
-                return "";
-            }
-            catch (Exception ex)
-            {
-                return "An unexpected error occured";
-            }
-
-
+            return _context.Discounts
+                .Where(d => d.PkDiscountCode == discountCode)
+                .FirstOrDefault();
         }
+
+        //public string DeleteDiscount(string )
 
     }
 }
