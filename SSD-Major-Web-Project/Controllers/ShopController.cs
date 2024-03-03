@@ -64,117 +64,112 @@ namespace SSD_Major_Web_Project.Controllers
             }
         }
 
+
+
+
         // GET: ShopController/Checkout
+        // Click on the "Proceed to checkout" button at shopping cart page, pass the shopping cart data to checkout view
         [HttpPost]
-        //Click on the "Proceed to checkout" button, pass the shopping cart data to checkout view
-        public IActionResult Checkout(CheckoutVM checkoutVM)
+        public IActionResult Checkout(ShoppingCartVM shoppingcartVM)
         {
-            //Populates the Product(s) include Images property in shopping cart to Checkout view razer page
+            //Create a new Checkout view model object
+            CheckoutVM checkoutVM = new CheckoutVM();
+
+            // Assign Discount Code if available from the shopping cart razor view
+            Discount discount = new Discount();
+            discount.PkDiscountCode = shoppingcartVM.CouponCode != null ? shoppingcartVM.CouponCode : null;
+
+            Contact contact = new Contact();
+
+            // Assign the value from the Razor view to the Order property of the CheckoutVM object
+            OrderVM orderVM = new OrderVM
+            {
+                OrderDate = DateOnly.FromDateTime(DateTime.Today),
+                OrderStatus = "Pending",
+                Discount = discount,
+                Contact = contact,
+                OrderTotal = shoppingcartVM.GrandTotal
+            };
+
+            checkoutVM.Order = orderVM;
+
+            // Populates the Product(s) include Images property in shopping cart to Checkout view razer page
             List<Product> products = _context.Products.Include(p => p.Images).ToList();
 
-            //Pass the shoppingcart products data to Checkout view razer page
-            ShoppingCartVM shoppingcartVM = new ShoppingCartVM();
+
+            // Pass the shopping cart products data to Checkout razer view
             shoppingcartVM.Products = products;
 
-            
-            ShopRepo _shopRepo = new ShopRepo(_context);
-            shoppingcartVM.Subtotal = _shopRepo.CalculateSubtotal(products);
-            shoppingcartVM.ShippingFee = 0;
-            shoppingcartVM.Taxes = _shopRepo.CalculateTaxes(shoppingcartVM.Subtotal);
-            shoppingcartVM.GrandTotal = _shopRepo.CalculateGrandTotal(shoppingcartVM.Subtotal, shoppingcartVM.Taxes, shoppingcartVM.ShippingFee);
+            // Pass the shopping cart data from shopping cart vew model to Checkout view model
 
-            //Info for proceed paypal payment
+            // Info for proceed paypal payment
             shoppingcartVM.Currency = "CAD";
             shoppingcartVM.CurrencySymbol = "$";
 
+            checkoutVM.ShoppingCart = shoppingcartVM;    
 
-            //pass the shoppingcart data to Checkout view model
-            checkoutVM.ShoppingCart = shoppingcartVM;
-
-
+            
             return View("Checkout", checkoutVM);
         }
 
 
-        public IActionResult OrderConfirmation(OrderConfirmationVM orderConfirmationModel)
+
+        public IActionResult CreateNewOrder(string transactionId, decimal amount, string payerName)
         {
-            return View(orderConfirmationModel);
+            // Process the payment and other necessary steps
+
+            var checkoutVM = new CheckoutVM();
+
+            // Create an instance of OrderConfirmationVM and populate its properties
+            var orderConfirmation = new OrderConfirmationVM
+            {
+                TransactionId = transactionId,
+                Amount = amount,
+                PayerName = payerName,
+                CheckoutVM = checkoutVM
+            };
+
+            // Return the OrderConfirmation view, passing the orderConfirmation object
+            return View(orderConfirmation);
         }
 
+        // POST: ShopController/CreateNewOrder
         [HttpPost]
-        public IActionResult OrderConfirmation(string itemPrice, string firstName, string lastName)
+        public IActionResult CreateNewOrder()
         {
+            if (ModelState.IsValid)
+            {
 
-            // Pass the values to the view
-            ViewBag.ItemPrice = itemPrice;
-            ViewBag.FirstName = firstName;
-            ViewBag.LastName = lastName;
+                // Create order and save to the database, regardless of the transaction's success
+                ShopRepo _shopRepo = new ShopRepo(_context);
+                // string message = _shopRepo.AddOrder(checkoutVM);
 
-            return View();
+                // At this point, the order is created in the database
+
+                // Now check if the payment is successful
+                if (true) // Replace "true" with your payment success condition
+                {
+                    // Change the order status to "Paid" and update the order with the transaction ID
+                    // Update the order using the _shopRepo or your preferred method
+
+                    // Compare and get the transaction ID from PayPal, update the order with the transaction ID,
+                    // make a request to PayPal using the transaction ID to get order details from PayPal,
+                    // and compare them with the order details we received in this method
+
+                    OrderConfirmationVM orderconfirmationVM = new OrderConfirmationVM();
+                    // Populate the orderconfirmationVM with the necessary data
+
+                    return View("OrderConfirmation");
+                }
+                else
+                {
+                    // Return the Checkout page with the checkout view model again
+                    // return View("Checkout", checkoutVM);
+                    return View("Checkout");
+                }
+            }
+            return View("Error");
         }
-
-
-       //  GET: ShopController/CreateOrder
-       // public IActionResult CreateOrder()
-       // {
-       //     Show input filed to enter new address
-       //     checkoutVM.Order.Contact.FirstName = FirstName;
-       //     checkoutVM.Order.Contact.LastName = LastName;
-       //     checkoutVM.Order.Contact.Address = address;
-       //     checkoutVM.Order.Contact.Address2 = address2;
-       //     checkoutVM.Order.Contact.City = city;
-       //     checkoutVM.Order.Contact.Province = province;
-       //     checkoutVM.Order.Contact.Country = country;
-       //     checkoutVM.Order.Contact.PostalCode = postalCode;
-       //     checkoutVM.Order.Contact.PhoneNumber = phone;
-
-       //      if user logged in, display user's default adress as shipping option, use radio button to select
-
-       //     return View();
-       // }
-
-       // POST: ShopController/CreateOrder
-       //[HttpPost]
-       // public async Task<IActionResult> CreateOrder(Order order, Customer customer, Contact contact, Product product, OrderDetail orderDetail, Discount discount)
-       // {
-       //      check if data valid
-       //     if (ModelState.IsValid)
-       //     {
-
-       //          create order
-       //         order = new Order();
-       //         order.OrderDate = DateOnly;
-       //         order.FkAddress = vm.ShippingAddress;
-       //         order.ShippingCity = vm.ShippingCity;
-       //         order.ShippingCountry = vm.ShippingCountry;
-       //         order.ShippingPostalCode = vm.ShippingPostalCode;
-       //         order.ShippingState = vm.ShippingState;
-       //         order.UserId = "user123";
-       //         order.OrderItems = new List<OrderItem>();
-
-       //          create order items
-       //         foreach (Product product in vm.Products)
-       //         {
-       //             OrderItem orderItem = new OrderItem();
-       //             orderItem.ProductId = product.Id;
-       //             orderItem.Quantity = product.Quantity;
-       //             orderItem.Price = product.Price;
-       //             order.OrderItems.Add(orderItem);
-       //         }
-
-       //          save order to database
-       //         _context.Orders.Add(order);
-       //         await _context.SaveChangesAsync();
-
-       //          redirect to order confirmation page
-       //         return RedirectToAction("OrderConfirmation", new { orderId = order.Id });
-       //     }
-       //     else
-       //     {
-       //         return View(vm);
-       //     }
-
-       // }
 
 
     }

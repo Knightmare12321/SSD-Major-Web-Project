@@ -16,25 +16,54 @@ namespace SSD_Major_Web_Project.Repositories
             _context = context;
         }
 
-        //public string AddOrder(CheckoutVM checkoutEntity)
-        //{
-        //    // place holder to return message
-        //    string message = string.Empty;
-        //    try
-        //    {
-        //        _context.Add(checkoutEntity);
-        //        _context.SaveChanges();
-        //        message = "Order has been placed, you will get an email confirmation";
+        public string AddOrder(CheckoutVM checkoutEntity)
+        {
+            // Placeholder to return message
+            string message = string.Empty;
+            try
+            {
+                Order order = new Order
+                {
+                    // Entity attribute mapping
+                    FkCustomerId = checkoutEntity.DeliveryContactEmail,
 
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        message = $" Error placeing new order: {checkoutEntity.Order.OrderId}";
-        //    }
-        //    return message;
+                    // FkOrderStatusId 
+                    // 1 : Pending
+                    // 2 : Paid
+                    // 3 : Shipped
+                    // 4 : Delivered
+                    // 5 : Cancelled
+
+                    // Use case to determine which status are we using and assign status id accordingly
+                    FkOrderStatusId = checkoutEntity.Order.OrderStatus switch
+                    {
+                        "Pending" => 1,
+                        "Paid" => 2,
+                        "Shipped" => 3,
+                        "Delivered" => 4,
+                        "Cancelled" => 5,
+                        _ => 0
+                    },
+                    FkDiscountCode = checkoutEntity.Order.Discount.PkDiscountCode,
+                    FkContactId = checkoutEntity.Order.Contact.PkContactId,
+                    TransactionId = checkoutEntity.TransactionId,
+                    BuyerNote = checkoutEntity.Order.BuyerNote,
+                    OrderDate = checkoutEntity.Order.OrderDate,
+                };
+
+                _context.Add(order);
+                _context.SaveChanges();
+                message = "Order has been placed, you will get an email confirmation shortly.";
+            }
+            catch (Exception ex)
+            {
+                message = $"Error placing new order: {checkoutEntity.Order.OrderId}";
+            }
+            return message;
+        }
 
 
-        //}
+
         // calculate taxes
         public decimal CalculateSubtotal(List<Product> products)
         {

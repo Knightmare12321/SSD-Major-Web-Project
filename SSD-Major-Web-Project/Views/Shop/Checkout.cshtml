@@ -120,7 +120,7 @@
 
                     // Redirect to the PayPalConfirmation action method
                     window.location.href =
-                        '/Shop/OrderConfirmation?TransactionId=' +
+                        '/Shop/CreateNewOrder?TransactionId=' +
                         encodeURIComponent(details.id) + '&Amount=' +
                         encodeURIComponent(details.purchase_units[0]
                             .amount.value) + '&PayerName=' +
