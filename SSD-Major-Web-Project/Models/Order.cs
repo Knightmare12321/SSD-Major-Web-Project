@@ -21,6 +21,10 @@ public partial class Order
 
     public DateOnly OrderDate { get; set; }
 
+    public DateOnly? ShipDate { get; set; }
+
+    public int? Tracking { get; set; }
+
     public virtual Contact? FkContact { get; set; }
 
     public virtual Customer? FkCustomer { get; set; }
