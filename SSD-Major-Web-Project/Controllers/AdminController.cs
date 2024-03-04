@@ -116,7 +116,7 @@ namespace SSD_Major_Web_Project.Controllers
             if (new List<string> { "paid", "shipped", "delivered" }.Contains(order.OrderStatus.ToLower()))
             {
                 //create a discount with refund amount
-                string discountCode = GetRandomString(15);
+                string discountCode = adminRepo.GetRandomString(15, "alphanumerical");
                 decimal discountValue = order.OrderTotal;
                 string discountType = "Number";
                 DateOnly startDate = DateOnly.FromDateTime(DateTime.Now);
@@ -176,27 +176,6 @@ namespace SSD_Major_Web_Project.Controllers
             }
         }
 
-        public static string GetRandomString(int size)
-        {
-            char[] chars =
-            "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890".ToCharArray();
-
-            byte[] data = new byte[4 * size];
-            using (var crypto = RandomNumberGenerator.Create())
-            {
-                crypto.GetBytes(data);
-            }
-            StringBuilder result = new StringBuilder(size);
-            for (int i = 0; i < size; i++)
-            {
-                var rnd = BitConverter.ToUInt32(data, i * 4);
-                var idx = rnd % chars.Length;
-
-                result.Append(chars[idx]);
-            }
-
-            return result.ToString();
-        }
 
         public IActionResult GetAllDiscounts(string message = "")
         {
