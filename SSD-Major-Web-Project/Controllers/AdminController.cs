@@ -69,18 +69,16 @@ namespace SSD_Major_Web_Project.Controllers
             ViewData["OrderStatus"] = "Paid";
 
             //show the open orders as default on the page
-            IQueryable<OrderVM> orders = adminRepo.GetFilteredOrders("Paid");
-            List<OrderVM> vm = orders.ToList();
-            return View(vm);
+            List<OrderVM> orders = adminRepo.GetFilteredOrders("Paid");
+            return View(orders);
         }
 
         public IActionResult GetFilteredOrders(string orderStatus = "", string searchTerm = "")
         {
             ViewData["OrderStatus"] = orderStatus;
             AdminRepo adminRepo = new AdminRepo(_context);
-            IQueryable<OrderVM> orders = adminRepo.GetFilteredOrders(orderStatus, searchTerm);
-            List<OrderVM> vm = orders.ToList();
-            return PartialView("_OrderSummaryPartial", vm);
+            List<OrderVM> orders = adminRepo.GetFilteredOrders(orderStatus, searchTerm);
+            return PartialView("_OrderSummaryPartial", orders);
         }
 
         [HttpPost]

@@ -57,7 +57,7 @@ namespace SSD_Major_Web_Project.Repositories
             }
         }
 
-        public IQueryable<OrderVM> GetFilteredOrders(string orderStatus = "", string searchTerm = "")
+        public List<OrderVM> GetFilteredOrders(string orderStatus = "", string searchTerm = "")
         {
             //find status id of the given order status 
             int orderStatusId = _context.OrderStatuses
@@ -65,7 +65,8 @@ namespace SSD_Major_Web_Project.Repositories
                 .Select(os => os.PkOrderStatusId)
                 .FirstOrDefault();
 
-            return _context.Orders.Where(o => orderStatus == "" || o.FkOrderStatusId == orderStatusId).Select(o => new OrderVM
+            //get all orders and its navigational properties needed
+            var query = _context.Orders.Where(o => orderStatus == "" || o.FkOrderStatusId == orderStatusId).Select(o => new OrderVM
             {
                 OrderId = o.PkOrderId,
                 OrderDate = o.OrderDate,
@@ -117,11 +118,12 @@ namespace SSD_Major_Web_Project.Repositories
                                 Discount = d
                             })
                     .Where(order => order.OrderDetail.FkOrderId == o.PkOrderId)
-                    .Select((order) => order.OrderDetail.Quantity * order.OrderDetail.UnitPrice * (order.Discount != null ? (1 - order.Discount.DiscountValue) : 1))
+                    .Select((order) => order.OrderDetail.Quantity * order.OrderDetail.UnitPrice)
                     .Sum(), 2)
-            })
+            });
+
             //filter based on search term
-            .Where(o => o.OrderId.ToString().Contains(searchTerm) ||
+            query.Where(o => o.OrderId.ToString().Contains(searchTerm) ||
                         o.OrderDate.ToString().Contains(searchTerm) ||
                         o.BuyerNote.Contains(searchTerm) ||
                         o.OrderDetails.Any(od => od.Quantity.ToString().Contains(searchTerm) ||
@@ -142,6 +144,27 @@ namespace SSD_Major_Web_Project.Repositories
                         o.Discount.DiscountValue.ToString().Contains(searchTerm) ||
                         o.OrderTotal.ToString().Contains(searchTerm)
                         );
+
+            //apply discount to orderTotal of each order
+            var newQuery = query.ToList();
+            newQuery.ForEach(order =>
+            {
+                if (order.Discount != null)
+                {
+                    if (order.Discount.DiscountType.ToLower() == "percent")
+                    {
+                        order.OrderTotal = order.OrderTotal * (1 - order.Discount.DiscountValue / 100);
+                    }
+                    else
+                    {
+                        order.OrderTotal = order.OrderTotal - order.Discount.DiscountValue;
+                    }
+                }
+            });
+
+
+
+            return newQuery;
         }
 
         public string dispatchOrder(int orderId)
@@ -235,6 +258,7 @@ namespace SSD_Major_Web_Project.Repositories
                        .Sum(), 2)
             }).FirstOrDefault();
 
+            //apply discount to orderTotal
             if (query.Discount != null)
             {
                 if (query.Discount.DiscountType.ToLower() == "percent")
