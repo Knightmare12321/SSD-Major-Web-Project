@@ -40,7 +40,7 @@ public partial class NovaDbContext : DbContext
     {
         modelBuilder.Entity<Contact>(entity =>
         {
-            entity.HasKey(e => e.PkContactId).HasName("PK__Contact__5D8CD4C0E7C08FC1");
+            entity.HasKey(e => e.PkContactId).HasName("PK__Contact__5D8CD4C0227AAF49");
 
             entity.ToTable("Contact");
 
@@ -85,7 +85,7 @@ public partial class NovaDbContext : DbContext
 
         modelBuilder.Entity<Customer>(entity =>
         {
-            entity.HasKey(e => e.PkCustomerId).HasName("PK__Customer__1FD9D5A27C25E9AC");
+            entity.HasKey(e => e.PkCustomerId).HasName("PK__Customer__1FD9D5A297F45F21");
 
             entity.ToTable("Customer");
 
@@ -103,7 +103,7 @@ public partial class NovaDbContext : DbContext
 
         modelBuilder.Entity<Discount>(entity =>
         {
-            entity.HasKey(e => e.PkDiscountCode).HasName("PK__Discount__79BE3D845A5EDE5E");
+            entity.HasKey(e => e.PkDiscountCode).HasName("PK__Discount__79BE3D8433996B81");
 
             entity.ToTable("Discount");
 
@@ -129,7 +129,7 @@ public partial class NovaDbContext : DbContext
 
         modelBuilder.Entity<Image>(entity =>
         {
-            entity.HasKey(e => e.PkImageId).HasName("PK__Image__03FC4376CEE56E08");
+            entity.HasKey(e => e.PkImageId).HasName("PK__Image__03FC4376E6BC081A");
 
             entity.ToTable("Image");
 
@@ -153,7 +153,7 @@ public partial class NovaDbContext : DbContext
 
         modelBuilder.Entity<Order>(entity =>
         {
-            entity.HasKey(e => e.PkOrderId).HasName("PK__Order__C196130B298EFB7D");
+            entity.HasKey(e => e.PkOrderId).HasName("PK__Order__C196130B4691DC38");
 
             entity.ToTable("Order");
 
@@ -175,6 +175,8 @@ public partial class NovaDbContext : DbContext
                 .HasColumnName("fkDiscountCode");
             entity.Property(e => e.FkOrderStatusId).HasColumnName("fkOrderStatusId");
             entity.Property(e => e.OrderDate).HasColumnName("orderDate");
+            entity.Property(e => e.ShipDate).HasColumnName("shipDate");
+            entity.Property(e => e.Tracking).HasColumnName("tracking");
             entity.Property(e => e.TransactionId)
                 .HasMaxLength(30)
                 .IsUnicode(false)
@@ -201,7 +203,7 @@ public partial class NovaDbContext : DbContext
 
         modelBuilder.Entity<OrderDetail>(entity =>
         {
-            entity.HasKey(e => new { e.FkOrderId, e.FkSkuId }).HasName("PK__OrderDet__1F82522D89F22BE9");
+            entity.HasKey(e => new { e.FkOrderId, e.FkSkuId }).HasName("PK__OrderDet__1F82522DAA993C94");
 
             entity.ToTable("OrderDetail");
 
@@ -223,7 +225,7 @@ public partial class NovaDbContext : DbContext
 
         modelBuilder.Entity<OrderStatus>(entity =>
         {
-            entity.HasKey(e => e.PkOrderStatusId).HasName("PK__OrderSta__ABDB688778EB7F48");
+            entity.HasKey(e => e.PkOrderStatusId).HasName("PK__OrderSta__ABDB6887C2C2E0A1");
 
             entity.ToTable("OrderStatus");
 
@@ -236,7 +238,7 @@ public partial class NovaDbContext : DbContext
 
         modelBuilder.Entity<Product>(entity =>
         {
-            entity.HasKey(e => e.PkProductId).HasName("PK__Product__4492A4B5AFCAE493");
+            entity.HasKey(e => e.PkProductId).HasName("PK__Product__4492A4B57AC5155A");
 
             entity.ToTable("Product");
 
@@ -261,7 +263,7 @@ public partial class NovaDbContext : DbContext
 
         modelBuilder.Entity<ProductSku>(entity =>
         {
-            entity.HasKey(e => e.PkSkuId).HasName("PK__ProductS__B7ADEE3B8B428762");
+            entity.HasKey(e => e.PkSkuId).HasName("PK__ProductS__B7ADEE3B4EFE2F52");
 
             entity.ToTable("ProductSku");
 
@@ -280,7 +282,7 @@ public partial class NovaDbContext : DbContext
 
         modelBuilder.Entity<Review>(entity =>
         {
-            entity.HasKey(e => new { e.FkCustomerId, e.FkProductId }).HasName("PK__Review__598FD389A14A8E04");
+            entity.HasKey(e => new { e.FkCustomerId, e.FkProductId }).HasName("PK__Review__598FD38925E0F148");
 
             entity.ToTable("Review");
 

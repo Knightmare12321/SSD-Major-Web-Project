@@ -55,109 +55,9 @@ namespace SSD_Major_Web_Project.Repositories
             }
         }
 
-
-
-        //public IQueryable<OrderItemVM> GetAllOrderItems()
-        //{
-        //    return _context.Orders.Join(
-        //        _context.OrderDetails,
-        //        o => o.PkOrderId,
-        //        od => od.FkOrderId,
-        //        (o, od) =>
-        //        new
-        //        {
-        //            Order = o,
-        //            OrderDetail = od
-        //        })
-        //        .Join(_context.ProductSkus,
-        //            ood => ood.OrderDetail.FkSkuId,
-        //            pSku => pSku.PkSkuId,
-        //            (ood, pSku) => new
-        //            {
-        //                ood.Order,
-        //                ood.OrderDetail,
-        //                ProductSku = pSku
-        //            })
-        //        .Join(_context.Products,
-        //        oodp => oodp.ProductSku.FKproductId,
-        //        p => p.PkProductId,
-        //        (oodp, p) => new
-        //        {
-        //            oodp.Order,
-        //            oodp.OrderDetail,
-        //            oodp.ProductSku,
-        //            Product = p
-        //        })
-        //        .Join(_context.Images,
-        //        oodpp => oodpp.Product.PkProductId,
-        //        i => i.FkProductId,
-        //        (oodpp, i) => new
-        //        {
-        //            oodpp.Order,
-        //            oodpp.OrderDetail,
-        //            oodpp.ProductSku,
-        //            oodpp.Product,
-        //            Image = i
-        //        })
-        //        .Join(_context.OrderStatuses,
-        //        oodppi => oodppi.Order.FkOrderStatusId,
-        //        os => os.PkOrderStatusId,
-        //        (oodppi, os) => new
-        //        {
-        //            oodppi.Order,
-        //            oodppi.OrderDetail,
-        //            oodppi.ProductSku,
-        //            oodppi.Product,
-        //            oodppi.Image,
-        //            OrderStatus = os
-        //        })
-        //        .Join(_context.Discounts,
-        //        oodppio => oodppio.Order.FkDiscountCode,
-        //        d => d.PkDiscountCode,
-        //        (oodppio, d) => new
-        //        {
-        //            oodppio.Order,
-        //            oodppio.OrderDetail,
-        //            oodppio.ProductSku,
-        //            oodppio.Product,
-        //            oodppio.Image,
-        //            oodppio.OrderStatus,
-        //            Discount = d
-        //        })
-        //        .Join(_context.Contacts,
-        //        oodppiod => oodppiod.Order.FkContactId,
-        //        c => c.PkContactId,
-        //        (oodppiod, c) => new
-        //        {
-        //            oodppiod.Order,
-        //            oodppiod.OrderDetail,
-        //            oodppiod.ProductSku,
-        //            oodppiod.Product,
-        //            oodppiod.Image,
-        //            oodppiod.OrderStatus,
-        //            oodppiod.Discount,
-        //            Contact = c
-        //        })
-        //        .Select(order => new OrderItemVM
-        //        {
-        //            OrderId = order.Order.PkOrderId,
-        //            OrderDate = order.Order.OrderDate,
-        //            BuyerNote = order.Order.BuyerNote,
-        //            Quantity = order.OrderDetail.Quantity,
-        //            Size = order.ProductSku.Size,
-        //            ProductName = order.Product.Name,
-        //            ProductImage = order.Image.Data,
-        //            UnitPrice = order.Product.Price,
-        //            Contact = order.Contact,
-        //            Discount = order.Discount,
-        //            OrderStatus = order.OrderStatus.Status
-        //        });
-        //}
-
-
-        public IQueryable<OrderVM> GetOrdersByStatus(string orderStatus = "")
+        public IQueryable<OrderVM> GetFilteredOrders(string orderStatus = "", string searchTerm = "")
         {
-            //find order satus record id of the given order status
+            //find status id of the given order status 
             int orderStatusId = _context.OrderStatuses
                 .Where(os => os.Status == orderStatus)
                 .Select(os => os.PkOrderStatusId)
@@ -217,7 +117,29 @@ namespace SSD_Major_Web_Project.Repositories
                     .Where(order => order.OrderDetail.FkOrderId == o.PkOrderId)
                     .Select((order) => order.OrderDetail.Quantity * order.OrderDetail.UnitPrice * (order.Discount != null ? (1 - order.Discount.DiscountValue) : 1))
                     .Sum(), 2)
-            });
+            })
+            //filter based on search term
+            .Where(o => o.OrderId.ToString().Contains(searchTerm) ||
+                        o.OrderDate.ToString().Contains(searchTerm) ||
+                        o.BuyerNote.Contains(searchTerm) ||
+                        o.OrderDetails.Any(od => od.Quantity.ToString().Contains(searchTerm) ||
+                                                 od.UnitPrice.ToString().Contains(searchTerm) ||
+                                                 od.FkSku.FkProduct.Name.ToString().Contains(searchTerm)
+                                        ) ||
+                        o.Contact.FirstName.Contains(searchTerm) ||
+                        o.Contact.LastName.Contains(searchTerm) ||
+                        o.Contact.Address.Contains(searchTerm) ||
+                        o.Contact.Address2.Contains(searchTerm) ||
+                        o.Contact.City.Contains(searchTerm) ||
+                        o.Contact.LastName.Contains(searchTerm) ||
+                        o.Contact.Province.Contains(searchTerm) ||
+                        o.Contact.Country.Contains(searchTerm) ||
+                        o.Contact.PostalCode.Contains(searchTerm) ||
+                        o.Contact.PhoneNumber.Contains(searchTerm) ||
+                        o.Discount.PkDiscountCode.ToString().Contains(searchTerm) ||
+                        o.Discount.DiscountValue.ToString().Contains(searchTerm) ||
+                        o.OrderTotal.ToString().Contains(searchTerm)
+                        );
         }
 
         public string dispatchOrder(int orderId)
@@ -230,12 +152,7 @@ namespace SSD_Major_Web_Project.Repositories
                 //check if order has an open order status
                 if (status != "Paid")
                 {
-                    return JsonConvert.SerializeObject(
-                   new
-                   {
-                       Success = false,
-                       Error = "Order does not have an open status"
-                   });
+                    return "Order does not have an open status";
                 }
 
                 //set order status id to shipped
@@ -243,16 +160,11 @@ namespace SSD_Major_Web_Project.Repositories
                 order.FkOrderStatusId = shippedStatus.PkOrderStatusId;
                 //_context.SaveChanges();
 
-                return JsonConvert.SerializeObject(new { Success = true, Error = "" });
+                return "";
             }
             catch (Exception ex)
             {
-                return JsonConvert.SerializeObject(
-                    new
-                    {
-                        Success = false,
-                        Error = $"An unexpected error occured while dispatching order"
-                    });
+                return "An unexpected error occured while dispatching order";
             }
         }
 
@@ -287,6 +199,7 @@ namespace SSD_Major_Web_Project.Repositories
                                 }).ToList(),
                 Contact = _context.Contacts
                         .Where(u => u.PkContactId == o.FkContactId)
+                        .Include(u => u.Customers)
                         .FirstOrDefault(),
                 Discount = _context.Discounts
                         .Where(d => d.PkDiscountCode == o.FkDiscountCode)
@@ -316,6 +229,36 @@ namespace SSD_Major_Web_Project.Repositories
             }).FirstOrDefault();
         }
 
+        public string CancelOrder(int orderId)
+        {
+            try
+            {
+                Order order = _context.Orders.Where(o => o.PkOrderId == orderId).FirstOrDefault();
+                OrderStatus cancelledStatus = _context.OrderStatuses.Where(os => os.Status == "Cancelled").FirstOrDefault();
+                order.FkOrderStatusId = cancelledStatus.PkOrderStatusId;
+                //_context.SaveChanges();
+                return "";
+            }
+            catch (Exception ex)
+            {
+                return "An unexpected error occured";
+            }
+        }
+
+        public IQueryable<DiscountVM> GetAllDiscounts()
+        {
+            return _context.Discounts.Select(d =>
+                new DiscountVM
+                {
+                    PkDiscountCode = d.PkDiscountCode,
+                    DiscountValue = d.DiscountValue,
+                    DiscountType = d.DiscountType,
+                    StartDate = d.StartDate,
+                    EndDate = d.EndDate,
+                    IsActive = d.IsActive
+                }); ;
+        }
+
         public Discount CreateDiscount(string discountCode,
                                         decimal discountValue,
                                         string discountType,
@@ -338,16 +281,14 @@ namespace SSD_Major_Web_Project.Repositories
             return discount;
         }
 
-        public bool CancelOrder(int orderId)
+        public Discount GetDiscountById(string discountCode)
         {
-            Order order = _context.Orders.Where(o => o.PkOrderId == orderId).FirstOrDefault();
-            OrderStatus cancelledStatus = _context.OrderStatuses.Where(os => os.Status == "Cancelled").FirstOrDefault();
-            order.FkOrderStatusId = cancelledStatus.PkOrderStatusId;
-            //_context.SaveChanges();
-            return true;
-
-
+            return _context.Discounts
+                .Where(d => d.PkDiscountCode == discountCode)
+                .FirstOrDefault();
         }
+
+        //public string DeleteDiscount(string )
 
     }
 }
