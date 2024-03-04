@@ -10,6 +10,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.Encodings.Web;
 using Microsoft.AspNetCore.Identity.UI.Services;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 
 namespace SSD_Major_Web_Project.Controllers
@@ -120,10 +121,19 @@ namespace SSD_Major_Web_Project.Controllers
                 string discountType = "Number";
                 DateOnly startDate = DateOnly.FromDateTime(DateTime.Now);
                 DateOnly endDate = DateOnly.FromDateTime(DateTime.Now.AddDays(365));
-                Discount discount = adminRepo.CreateDiscount(discountCode, discountValue, discountType, startDate, endDate);
+                string errorString = adminRepo.CreateDiscount(discountCode, discountValue, discountType, startDate, endDate);
+                if (errorString != "")
+                {
+                    return Json(new
+                    {
+                        success = false,
+                        error = "An unexpected error occured while creating coupon code for refund credit"
+                    });
+                }
+
 
                 //cancel order
-                string errorString = adminRepo.CancelOrder(orderId);
+                errorString = adminRepo.CancelOrder(orderId);
                 if (errorString != "")
                 {
                     return Json(new
@@ -188,14 +198,51 @@ namespace SSD_Major_Web_Project.Controllers
             return result.ToString();
         }
 
-        public IActionResult GetAllDiscounts()
+        public IActionResult GetAllDiscounts(string message = "")
         {
+            ViewData["Message"] = message;
             AdminRepo adminRepo = new AdminRepo(_context);
             List<DiscountVM> discounts = adminRepo.GetAllDiscounts().ToList();
             return View(discounts);
         }
 
-        public IActionResult DeleteDiscount(string discountCode)
+        public IActionResult CreateDiscount()
+        {
+            SelectList discountTypes = new SelectList(new List<string> { "Percent", "Number" });
+
+            DiscountVM vm = new DiscountVM { DiscountTypes = discountTypes };
+            return View(vm);
+        }
+
+        [HttpPost]
+        public IActionResult CreateDiscount(DiscountVM vm)
+        {
+            if (ModelState.IsValid)
+            {
+                AdminRepo adminRepo = new AdminRepo(_context);
+
+                string error = adminRepo.CreateDiscount(vm.PkDiscountCode,
+                                                        vm.DiscountValue,
+                                                        vm.DiscountType,
+                                                        vm.StartDate,
+                                                        vm.EndDate);
+                if (error == "")
+                {
+                    return RedirectToAction("GetAllDiscounts", new { message = $"Discount {vm.PkDiscountCode} successfully created" });
+                }
+                else
+                {
+                    ModelState
+                    .AddModelError("", error);
+                }
+            }
+            SelectList discountTypes = new SelectList(new List<string> { "Percent", "Number" });
+            vm.DiscountTypes = discountTypes;
+            return View(vm);
+
+        }
+
+        public IActionResult DeactivateDiscount(string discountCode)
         {
             AdminRepo adminRepo = new AdminRepo(_context);
             Discount discount = adminRepo.GetDiscountById(discountCode);
@@ -211,13 +258,13 @@ namespace SSD_Major_Web_Project.Controllers
             return View(vm);
         }
 
-        //[HttpPost]
-        //public IActionResult PostDeleteDiscount(string discountCode)
-        //{
-        //    AdminRepo adminRepo = new AdminRepo(_context);
-        //    //string message = adminRepo.DeleteDiscount(discountCode);
-        //    return RedirectToAction("Index", new { message = message });
-        //}
+        [HttpPost]
+        public IActionResult DeactivateDiscount(DiscountVM vm)
+        {
+            AdminRepo adminRepo = new AdminRepo(_context);
+            string message = adminRepo.DeactivateDiscount(vm.PkDiscountCode);
+            return RedirectToAction("GetAllDiscounts", new { message = message });
+        }
 
     }
 }

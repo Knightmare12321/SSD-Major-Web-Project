@@ -259,27 +259,6 @@ namespace SSD_Major_Web_Project.Repositories
                 }); ;
         }
 
-        public Discount CreateDiscount(string discountCode,
-                                        decimal discountValue,
-                                        string discountType,
-                                        DateOnly startDate,
-                                        DateOnly endDate
-                                       )
-        {
-            Discount discount = new Discount
-            {
-                PkDiscountCode = discountCode,
-                DiscountValue = discountValue,
-                DiscountType = discountType,
-                StartDate = startDate,
-                EndDate = endDate,
-                IsActive = "1"
-            };
-
-            _context.Discounts.Add(discount);
-            //_context.SaveChanges();
-            return discount;
-        }
 
         public Discount GetDiscountById(string discountCode)
         {
@@ -288,7 +267,53 @@ namespace SSD_Major_Web_Project.Repositories
                 .FirstOrDefault();
         }
 
-        //public string DeleteDiscount(string )
+        public string CreateDiscount(string discountCode,
+                                        decimal discountValue,
+                                        string discountType,
+                                        DateOnly startDate,
+                                        DateOnly endDate
+                                       )
+        {
+            try
+            {
+                Discount discount = new Discount
+                {
+                    PkDiscountCode = discountCode,
+                    DiscountValue = discountValue,
+                    DiscountType = discountType,
+                    StartDate = startDate,
+                    EndDate = endDate,
+                    IsActive = "1"
+                };
+
+                _context.Discounts.Add(discount);
+                _context.SaveChanges();
+                return "";
+            }
+            catch (Exception ex)
+            {
+                return "An unexpected error ocurred while creating discount";
+            }
+        }
+
+        public string DeactivateDiscount(string discountCode)
+        {
+            try
+            {
+                Discount discount = _context.Discounts
+                                    .Where(d => d.PkDiscountCode == discountCode)
+                                    .FirstOrDefault();
+
+                discount.IsActive = "0";
+                _context.SaveChanges();
+                return "Discount successfully deactivated";
+            }
+            catch (Exception ex)
+            {
+                return "An unexpected error occured while deactivating the discount";
+            }
+
+        }
 
     }
 }
