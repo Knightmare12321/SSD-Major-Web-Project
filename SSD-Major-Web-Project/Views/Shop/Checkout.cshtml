@@ -8,6 +8,7 @@
 
 <script src="https://www.paypal.com/sdk/js?client-id=AT43uF9QHEyOHayLY0lnVVwiD6VfjG2o2NH8Ob6mo9iod3G7VftCAWwy9r8jQHLY6jizC_vHkmQCbfW8"></script>
 
+
 <div class="checkout-container">
     <div class="row">
         <h2>checkout</h2>
@@ -86,7 +87,7 @@
                     @Html.DisplayFor(model => model.ShoppingCart.CurrencySymbol)@Model.ShoppingCart.GrandTotal
                 </dd>
                 <div>
-                    <form asp-action="OrderConfirmation" asp-controller="Shop" method="post">
+                <form id="CreateNewOrderForm" asp-action="CreateNewOrder" asp-controller="Shop" method="post">
                         <input type="hidden" id="itemPrice" name="itemPrice" value="@Model.ShoppingCart.GrandTotal" />
                         <input type="hidden" itemid="firstName" name="firstName" asp-for="Order.Contact.FirstName" />
                         <input type="hidden" itemid="lastName" name="lastName" asp-for="Order.Contact.LastName" />
@@ -115,16 +116,17 @@
 
             // Finalize the transaction
             onApprove: function (data, actions) {
+                // Capture the PayPal transaction details
                 return actions.order.capture().then(function (details) {
+                    // Prepare the query parameters
+                    var transactionId = encodeURIComponent(details.id);
+                    var amount = encodeURIComponent(details.purchase_units[0].amount.value);
+                    var payerName = encodeURIComponent(details.payer.name.given_name);
 
-
-                    // Redirect to the PayPalConfirmation action method
-                    window.location.href =
-                        '/Shop/CreateNewOrder?TransactionId=' +
-                        encodeURIComponent(details.id) + '&Amount=' +
-                        encodeURIComponent(details.purchase_units[0]
-                            .amount.value) + '&PayerName=' +
-                        encodeURIComponent(details.payer.name.given_name);
+                    // Trigger the form submission to the CreateNewOrder action method
+                    var form = document.getElementById('CreateNewOrderForm');
+                    form.action = '/Shop/CreateNewOrder?transactionId=' + transactionId + '&amount=' + amount + '&payerName=' + payerName;
+                    form.submit();
                 });
             },
 

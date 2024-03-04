@@ -16,7 +16,7 @@ namespace SSD_Major_Web_Project.Repositories
             _context = context;
         }
 
-        public string AddOrder(CheckoutVM checkoutEntity)
+        public string AddOrder(OrderConfirmationVM orderConfirmationEntity)
         {
             // Placeholder to return message
             string message = string.Empty;
@@ -25,7 +25,7 @@ namespace SSD_Major_Web_Project.Repositories
                 Order order = new Order
                 {
                     // Entity attribute mapping
-                    FkCustomerId = checkoutEntity.DeliveryContactEmail,
+                    FkCustomerId = orderConfirmationEntity.CheckoutVM.DeliveryContactEmail,
 
                     // FkOrderStatusId 
                     // 1 : Pending
@@ -35,7 +35,7 @@ namespace SSD_Major_Web_Project.Repositories
                     // 5 : Cancelled
 
                     // Use case to determine which status are we using and assign status id accordingly
-                    FkOrderStatusId = checkoutEntity.Order.OrderStatus switch
+                    FkOrderStatusId = orderConfirmationEntity.CheckoutVM.Order.OrderStatus switch
                     {
                         "Pending" => 1,
                         "Paid" => 2,
@@ -44,20 +44,20 @@ namespace SSD_Major_Web_Project.Repositories
                         "Cancelled" => 5,
                         _ => 0
                     },
-                    FkDiscountCode = checkoutEntity.Order.Discount.PkDiscountCode,
-                    FkContactId = checkoutEntity.Order.Contact.PkContactId,
-                    TransactionId = checkoutEntity.TransactionId,
-                    BuyerNote = checkoutEntity.Order.BuyerNote,
-                    OrderDate = checkoutEntity.Order.OrderDate,
+                    FkDiscountCode = orderConfirmationEntity.CheckoutVM.Order.Discount.PkDiscountCode,
+                    FkContactId = orderConfirmationEntity.CheckoutVM.Order.Contact.PkContactId,
+                    TransactionId = orderConfirmationEntity.CheckoutVM.TransactionId,
+                    BuyerNote = orderConfirmationEntity.CheckoutVM.Order.BuyerNote,
+                    OrderDate = orderConfirmationEntity.CheckoutVM.Order.OrderDate,
                 };
 
                 _context.Add(order);
                 _context.SaveChanges();
-                message = "Order has been placed, you will get an email confirmation shortly.";
+                message = $"Order {orderConfirmationEntity.CheckoutVM.Order.OrderId} has been placed, you will get an email confirmation shortly.";
             }
             catch (Exception ex)
             {
-                message = $"Error placing new order: {checkoutEntity.Order.OrderId}";
+                message = $"Error placing new order: {orderConfirmationEntity.CheckoutVM.Order.OrderId}";
             }
             return message;
         }
