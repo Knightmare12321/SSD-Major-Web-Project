@@ -113,12 +113,10 @@ namespace SSD_Major_Web_Project.Controllers
         }
 
 
-
-        public IActionResult CreateNewOrder(string transactionId, decimal amount, string payerName)
+        // GET: ShopController/CreateNewOrder (Order Confirmation Page)
+        public IActionResult CreateNewOrder(string transactionId, decimal amount, string payerName, CheckoutVM checkoutVM)
         {
-            // Process the payment and other necessary steps
-
-            var checkoutVM = new CheckoutVM();
+          
 
             // Create an instance of OrderConfirmationVM and populate its properties
             var orderConfirmation = new OrderConfirmationVM
@@ -133,21 +131,35 @@ namespace SSD_Major_Web_Project.Controllers
             return View(orderConfirmation);
         }
 
+
         // POST: ShopController/CreateNewOrder
         [HttpPost]
-        public IActionResult CreateNewOrder()
+        public IActionResult CreateNewOrder(CheckoutVM checkoutVM)
         {
             if (ModelState.IsValid)
             {
-
-                // Create order and save to the database, regardless of the transaction's success
+                try
+                {
+                    // Populate the checkoutVM object with the necessary data
+                    checkoutVM.Order.OrderStatus = "Pending";
+                   // Create order and save to the database, regardless of the transaction's success
                 ShopRepo _shopRepo = new ShopRepo(_context);
-                // string message = _shopRepo.AddOrder(checkoutVM);
+                string message = _shopRepo.AddOrder(checkoutVM);
 
-                // At this point, the order is created in the database
+                // Log the inserted order details
+                _logger.LogInformation("*******************Order inserted into the database. Order ID: {OrderId}, Order Date: {OrderDate}, Order Total: {OrderTotal}********************", checkoutVM.Order.OrderId, checkoutVM.Order.OrderDate, checkoutVM.Order.OrderTotal);
+
+                    // At this point, the order is already created in the database
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Error inserting order into the database");
+                    return View("Error", new ErrorViewModel { RequestId = "Error inserting order into the database" });
+                }
 
                 // Now check if the payment is successful
-                if (true) // Replace "true" with your payment success condition
+                // if transaction Id is not null, then the payment is successful
+                if(checkoutVM.TransactionId != null)
                 {
                     // Change the order status to "Paid" and update the order with the transaction ID
                     // Update the order using the _shopRepo or your preferred method
