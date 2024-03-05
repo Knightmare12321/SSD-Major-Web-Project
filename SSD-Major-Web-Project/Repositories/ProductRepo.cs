@@ -21,11 +21,13 @@ namespace SSD_Major_Web_Project.Repositories
                 Price = u.Price,
                 Description = u.Description,
                 IsActive = u.IsActive,
-                //ImageByteArray = u.Image
+                ImageByteArray = u.Images.FirstOrDefault().Data
             });
             return products;
         }
 
+        // This method is for testing only.
+        // Delete this after project completes!
         public Product? GetById(int pkProductId)
         {
             return _context.Products.Where(p => p.PkProductId == pkProductId).FirstOrDefault();
@@ -42,10 +44,14 @@ namespace SSD_Major_Web_Project.Repositories
                     Price = u.Price,
                     Description = u.Description,
                     IsActive = u.IsActive,
-                    //ImageByteArray = u.Image
+                    ImageByteArray = u.Images.FirstOrDefault().Data
                 })
                 .FirstOrDefault();
             if (productVM == null) { return null; }
+            List<byte[]> imageByteArray = _context.Images
+                .Where(u => u.FkProductId == pkProductId)
+                .Select(u => u.Data)
+                .ToList();
             IEnumerable<String> sizes = _context.ProductSkus
                 .Where(u => u.FkProductId == pkProductId)
                 .Select(x => x.Size)
@@ -57,7 +63,7 @@ namespace SSD_Major_Web_Project.Repositories
                 Price = productVM.Price,
                 Description = productVM.Description,
                 IsActive = productVM.IsActive,
-                ImageByteArray = productVM.ImageByteArray,
+                ImageByteArray = imageByteArray,
                 Sizes = sizes.ToList()
             };
             return productDetailVM;
