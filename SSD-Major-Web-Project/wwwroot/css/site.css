@@ -349,3 +349,8 @@ textarea[name="Description"] {
 #admin-order-detail .item:not(:last-child) {
     border-bottom: solid 1px black;
 }
+
+/*Discount List Page*/
+#discount-list .message{
+    color:red;
+}

@@ -155,7 +155,7 @@
         //also show discount detail if there is one
         if (order.discount) {
             const discountValue = order.discount.discountValue;
-            const discountContent = order.discount.discountType.toLowerCase() == 'percent' ? `${discountValue * 100}% off` : `-$${discountValue}`
+            const discountContent = order.discount.discountType.toLowerCase() == 'percent' ? `${discountValue}% off` : `-$${discountValue}`
             $("#admin-order-detail td.discount").html(`${order.discount.pkDiscountCode} (${discountContent})`)
         } else {
             $("#admin-order-detail td.discount").html("None");

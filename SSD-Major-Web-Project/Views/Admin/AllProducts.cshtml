@@ -1,0 +1,38 @@
+﻿@model List<SSD_Major_Web_Project.ViewModels.AdminProductVM>
+
+@{
+    ViewData["Title"] = "AllProducts";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div id="discount-list" class="table-responsive">
+    <p class="message">@ViewBag.Message</p>
+    <button class="btn btn-primary" onclick="location.href='@Url.Action("CreateProduct","Admin")'">Add Listing</button>
+    <table class="table transaction-table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Name</th>
+                <th>Price</th>
+                <th>Status</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td> @Html.DisplayFor(modelItem => item.PkProductId)</td>
+                    <td> @Html.DisplayFor(modelItem => item.Name)</td>
+                    <td> @Html.DisplayFor(modelItem => item.Price)</td>
+                    <td> @Html.DisplayName(item.IsActive == "1" ? "Active" : "Inactive")</td>
+                    <td>
+                        <a asp-action="DeactivateProduct" asp-route-prouductId="@item.PkProductId">
+                            <button class="btn btn-danger">Deactivate</button>
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
