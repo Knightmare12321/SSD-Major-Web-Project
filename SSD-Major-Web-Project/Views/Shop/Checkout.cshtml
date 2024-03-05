@@ -87,22 +87,15 @@
                     @Html.DisplayFor(model => model.ShoppingCart.CurrencySymbol)@Model.ShoppingCart.GrandTotal
                 </dd>
                 <div>
-                @* <form id="CreateNewOrderForm" asp-action="CreateNewOrder" asp-controller="Shop" method="post"> *@
-               @*          <input type="hidden" id="itemPrice" name="itemPrice" value="@Model.ShoppingCart.GrandTotal" />
-                    <input type="hidden" name="Order.Contact.FirstName" value="@Model.Order.Contact.FirstName" />
-                    <input type="hidden" name="Order.Contact.LastName" value="@Model.Order.Contact.LastName" />
-                    <input type="hidden" name="Order.Contact.Address" value="@Model.Order.Contact.Address" />
-                    <input type="hidden" name="Order.Contact.Address2" value="@Model.Order.Contact.Address2" />
-                    <input type="hidden" name="Order.Contact.City" value="@Model.Order.Contact.City" />
-                    <input type="hidden" name="Order.Contact.Province" value="@Model.Order.Contact.Province" />
-                    <input type="hidden" name="Order.Contact.PostalCode" value="@Model.Order.Contact.PostalCode" />
-                    <input type="hidden" name="Order.Contact.Country" value="@Model.Order.Contact.Country" />
-                    <input type="hidden" name="Order.Contact.PhoneNumber" value="@Model.Order.Contact.PhoneNumber" />
-                    <input type="hidden" name="DeliveryContactEmail" value="@Model.DeliveryContactEmail" /> *@
+                <form id="CreateNewOrderForm" asp-action="CreateNewOrder" asp-controller="Shop" method="post">
+                        <input type="hidden" id="itemPrice" name="itemPrice" value="@Model.ShoppingCart.GrandTotal" />
+                        <input type="hidden" itemid="firstName" name="firstName" asp-for="Order.Contact.FirstName" />
+                        <input type="hidden" itemid="lastName" name="lastName" asp-for="Order.Contact.LastName" />
                         <div id="paypal-button-container"></div>
-                    @* </form> *@
+                    </form>
                 </div>
             </div>
+      
     </div>
 
 
@@ -130,34 +123,9 @@
                     var amount = encodeURIComponent(details.purchase_units[0].amount.value);
                     var payerName = encodeURIComponent(details.payer.name.given_name);
 
-                    // Get the user-entered shipping address
-                    var firstName = encodeURIComponent(document.getElementById('Order_Contact_FirstName').value);
-                    var lastName = encodeURIComponent(document.getElementById('Order_Contact_LastName').value);
-                    var address = encodeURIComponent(document.getElementById('Order_Contact_Address').value);
-                    var address2 = encodeURIComponent(document.getElementById('Order_Contact_Address2').value);
-                    var city = encodeURIComponent(document.getElementById('Order_Contact_City').value);
-                    var province = encodeURIComponent(document.getElementById('Order_Contact_Province').value);
-                    var postalCode = encodeURIComponent(document.getElementById('Order_Contact_PostalCode').value);
-                    var country = encodeURIComponent(document.getElementById('Order_Contact_Country').value);
-                    var phoneNumber = encodeURIComponent(document.getElementById('Order_Contact_PhoneNumber').value);
-                    var deliveryContactEmail = encodeURIComponent(document.getElementById('DeliveryContactEmail').value);
-
                     // Trigger the form submission to the CreateNewOrder action method
                     var form = document.getElementById('CreateNewOrderForm');
-                    form.action = '/Shop/CreateNewOrder?transactionId=' + transactionId +
-                        '&amount=' + amount +
-                        '&payerName=' + payerName +
-                        '&firstName=' + firstName +
-                        '&lastName=' + lastName +
-                        '&address=' + address +
-                        '&address2=' + address2 +
-                        '&city=' + city +
-                        '&province=' + province +
-                        '&postalCode=' + postalCode +
-                        '&country=' + country +
-                        '&phoneNumber=' + phoneNumber +
-                        '&deliveryContactEmail=' + deliveryContactEmail;
-
+                    form.action = '/Shop/CreateNewOrder?transactionId=' + transactionId + '&amount=' + amount + '&payerName=' + payerName;
                     form.submit();
                 });
             },

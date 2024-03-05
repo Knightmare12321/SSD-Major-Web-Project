@@ -29,7 +29,7 @@ namespace SSD_Major_Web_Project.Controllers
                 //Catch error, if shopping cart is empty(no products found), show a message"
                 if (_context.Products.Count() == 0)
                 {
-                    return View("Error", new ErrorViewModel { RequestId = "Your shopping cart is empty. Shop now" });
+                    return View("Error", new ErrorViewModel { RequestId = "Your shopping cart is empty. Shop now"});
                 }
                 else
                 {
@@ -38,7 +38,7 @@ namespace SSD_Major_Web_Project.Controllers
 
                     ShoppingCartVM shoppingcartVM = new ShoppingCartVM();
 
-                    //////////////////////Logic for validate if customer logged in
+//////////////////////Logic for validate if customer logged in
                     //if (User.Identity.IsAuthenticated)
                     //{
                     //    shoppingcart.UserId = User.Identity.Name;
@@ -51,8 +51,9 @@ namespace SSD_Major_Web_Project.Controllers
                     shoppingcartVM.Taxes = _shopRepo.CalculateTaxes(shoppingcartVM.Subtotal);
                     shoppingcartVM.GrandTotal = _shopRepo.CalculateGrandTotal(shoppingcartVM.Subtotal, shoppingcartVM.Taxes, shoppingcartVM.ShippingFee);
 
-                    //////////////////////Assign shopping cart products to shopping cart view model\
+//////////////////////Assign shopping cart products to shopping cart view model
                     shoppingcartVM.Products = products;
+
                     return View(shoppingcartVM);
                 }
             }
@@ -105,51 +106,50 @@ namespace SSD_Major_Web_Project.Controllers
             shoppingcartVM.Currency = "CAD";
             shoppingcartVM.CurrencySymbol = "$";
 
-            checkoutVM.ShoppingCart = shoppingcartVM;
+            checkoutVM.ShoppingCart = shoppingcartVM;    
 
-
+            
             return View("Checkout", checkoutVM);
         }
 
 
 
 
-        //At checkout page, click on the "Pay with PayPal" button, pass the transaction ID, amount, payer name and checkout view model to CreateNewOrder method
+
         // POST: ShopController/CreateNewOrder
         [HttpPost]
         public IActionResult CreateNewOrder(string transactionId, decimal amount, string payerName, CheckoutVM checkoutVM)
         {
-            
-
+            // Create an instance of OrderConfirmationVM and populate its properties
+            var orderConfirmation = new OrderConfirmationVM
             {
+                TransactionId = transactionId,
+                Amount = amount,
+                PayerName = payerName,
+                CheckoutVM = checkoutVM
+            };
 
-                // Create an instance of OrderConfirmationVM and populate its properties
-                var orderConfirmation = new OrderConfirmationVM
+            OrderConfirmationVM orderConfirmationVM = new OrderConfirmationVM();
+            orderConfirmationVM.CheckoutVM = checkoutVM;
+
+
+            if (ModelState.IsValid)
+            {
+                ShopRepo _shopRepo = new ShopRepo(_context);
+                orderConfirmationVM.CheckoutVM.Order.OrderStatus = "Pending";
+                string message = _shopRepo.AddOrder(orderConfirmationVM);
+                
+                _logger.LogInformation("////////////////////////////");
+                _logger.LogInformation(message);
+                try
                 {
-                    TransactionId = transactionId,
-                    Amount = amount,
-                    PayerName = payerName,
-                    CheckoutVM = checkoutVM,
-                        
-                };
-
-
-                if (ModelState.IsValid)
-                {
-                    ShopRepo _shopRepo = new ShopRepo(_context);
-                    orderConfirmation.CheckoutVM.Order.OrderStatus = "Pending";
-                    string message = _shopRepo.AddOrder(orderConfirmation);
-
-                    _logger.LogInformation("////////////////////////////");
-                    _logger.LogInformation(message);
-
                     // Populate the checkoutVM object with the necessary data
-
-                    if (orderConfirmation.CheckoutVM.TransactionId != null)
+         
+                    if (orderConfirmationVM.CheckoutVM.TransactionId != null)
                     {
                         // Change the order status to "Paid" and update the order with the transaction ID
 
-
+                        
 
                         // At this point, the order is already created in the database
 
@@ -160,20 +160,23 @@ namespace SSD_Major_Web_Project.Controllers
                         OrderConfirmationVM orderconfirmationVM = new OrderConfirmationVM();
                         // Populate the orderconfirmationVM with the necessary data
 
-                        return View("CreateNewOrder",checkoutVM);
+                        return View("CreateNewOrder");
                     }
                     else
                     {
                         // Return the Checkout page with the checkout view model again
-                        return View("Checkout",checkoutVM);
+                        return View("Checkout");
                     }
-
-
                 }
-
-                return View("Error", new ErrorViewModel { RequestId = "Invalid model state" });
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Error inserting order into the database");
+                    return View("Error", new ErrorViewModel { RequestId = "Error inserting order into the database" });
+                }
             }
 
+            return View("CreateNewOrder",orderConfirmation);
         }
+
     }
 }
