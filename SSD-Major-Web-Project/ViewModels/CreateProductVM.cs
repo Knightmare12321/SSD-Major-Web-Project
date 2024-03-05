@@ -20,7 +20,7 @@ namespace SSD_Major_Web_Project.ViewModels
         public string IsActive { get; set; } = "1";
 
         [Required]
-        public IFormFile Image { get; set; }
+        public List<IFormFile> Images { get; set; }
 
         [Required]
         public List<string> Sizes { get; set; }
