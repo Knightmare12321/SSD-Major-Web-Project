@@ -20,7 +20,7 @@ namespace SSD_Major_Web_Project.Repositories
             _context = context;
         }
 
-        public async Task AddProduct(string name, decimal price, string description, string isActive, IFormFile imageFile, List<string> sizes)
+        public async Task<string> AddProduct(string name, decimal price, string description, string isActive, List<IFormFile> imageFiles, List<string> sizes)
         {
 
             try
@@ -36,24 +36,28 @@ namespace SSD_Major_Web_Project.Repositories
                 _context.Products.Add(product);
                 _context.SaveChanges();
 
-
-                //convert image file data to byte[]
+                //convert images to byte and add to database
                 byte[] imageData;
-                using (var memoryStream = new MemoryStream())
+                foreach (IFormFile imageFile in imageFiles)
                 {
-                    await imageFile.CopyToAsync(memoryStream);
-                    imageData = memoryStream.ToArray();
+                    //convert image file data to byte[]
+                    using (var memoryStream = new MemoryStream())
+                    {
+                        await imageFile.CopyToAsync(memoryStream);
+                        imageData = memoryStream.ToArray();
+                    }
+
+                    //add image to db
+                    Image image = new Image { FileName = imageFile.FileName, Data = imageData, AltText = "product photo ", FkProductId = product.PkProductId };
+                    _context.Images.Add(image);
                 }
 
-                //add image to db
-                Image image = new Image { FileName = imageFile.FileName, Data = imageData, AltText = "product photo ", FkProductId = product.PkProductId };
-                _context.Images.Add(image);
-
                 _context.SaveChanges();
+                return "";
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.ToString());
+                return "An unexpected error occured while creating the new product";
             }
         }
 

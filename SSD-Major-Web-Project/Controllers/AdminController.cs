@@ -31,6 +31,14 @@ namespace SSD_Major_Web_Project.Controllers
             return View();
         }
 
+        public IActionResult AllProducts(string message = "")
+        {
+            ViewData["Message"] = message;
+            AdminRepo adminRepo = new AdminRepo(_context);
+            List<AdminProductVM> discounts = adminRepo.GetAllProducts().ToList();
+            return View(discounts);
+        }
+
         public IActionResult CreateProduct()
         {
             CreateProductVM vm = new CreateProductVM();
@@ -42,22 +50,35 @@ namespace SSD_Major_Web_Project.Controllers
         {
             if (ModelState.IsValid)
             {
-                string contentType = vm.Image.ContentType;
-
-                if (contentType == "image/png" ||
-                    contentType == "image/jpeg" ||
-                    contentType == "image/jpg")
+                //make sure all images are in appropriate file types
+                string contentType;
+                foreach (IFormFile image in vm.Images)
                 {
+                    contentType = image.ContentType;
+                    if (contentType != "image/png" &&
+                    contentType != "image/jpeg" &&
+                    contentType != "image/jpg")
+                    {
+                        ModelState.AddModelError("imageUpload", "Please upload a PNG, " +
+                                        "JPG, or JPEG file.");
+                        return View(vm);
 
-                    AdminRepo adminRepo = new AdminRepo(_context);
-                    await adminRepo.AddProduct(vm.Name, vm.Price, vm.Description, vm.IsActive, vm.Image, vm.Sizes);
-                    return View("Index");
+                    }
+                }
+
+                AdminRepo adminRepo = new AdminRepo(_context);
+                string errorString = await adminRepo.AddProduct(vm.Name, vm.Price, vm.Description, vm.IsActive, vm.Images, vm.Sizes);
+
+                string message;
+                if (errorString == "")
+                {
+                    message = "The product was created successfully";
                 }
                 else
                 {
-                    ModelState.AddModelError("imageUpload", "Please upload a PNG, " +
-                                                            "JPG, or JPEG file.");
+                    message = errorString;
                 }
+                return RedirectToAction("AllProducts", new { message = message });
 
             }
             return View(vm);
@@ -241,14 +262,6 @@ namespace SSD_Major_Web_Project.Controllers
             AdminRepo adminRepo = new AdminRepo(_context);
             string message = adminRepo.DeactivateDiscount(vm.PkDiscountCode);
             return RedirectToAction("AllDiscounts", new { message = message });
-        }
-
-        public IActionResult AllProducts(string message = "")
-        {
-            ViewData["Message"] = message;
-            AdminRepo adminRepo = new AdminRepo(_context);
-            List<AdminProductVM> discounts = adminRepo.GetAllProducts().ToList();
-            return View(discounts);
         }
 
     }
