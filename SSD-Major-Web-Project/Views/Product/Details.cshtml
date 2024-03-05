@@ -15,12 +15,39 @@
 <div class="product-details-container">
     <div class="product-details-left">
         <div class="product-image-container">
-            @if (Model.ImageByteArray != null && Model.ImageByteArray.Length > 0)
+            @if (Model.ImageByteArray != null && Model.ImageByteArray.Count > 0)
             {
                 <img src="data:image/jpeg;base64,
-                     @Convert.ToBase64String(Model.ImageByteArray)"
+                         @Convert.ToBase64String(Model.ImageByteArray[0])"
                      alt="Model.Name"
-                     class="product-image" />
+                     class="product-image mySlides"/>
+                @for (int i = 1; i < Model.ImageByteArray.Count; i++)
+                {
+                    <img src="data:image/jpeg;base64,
+                            @Convert.ToBase64String(Model.ImageByteArray[i])"
+                         alt="Model.Name"
+                         class="product-image mySlides" 
+                         style = "display:none"/>
+                }
+            }
+            @{
+                /*TODO: Deal with overflow styling issues*/
+            }
+            @if (Model.ImageByteArray != null && Model.ImageByteArray.Count > 1)
+            {
+                <div class="w3-row-padding w3-section">
+                    @for (int i = 0; i < Model.ImageByteArray.Count; i++)
+                    {
+                        <div class="w3-col s4">
+                            <img class="demo w3-opacity w3-hover-opacity-off"
+                                 src="data:image/jpeg;base64,
+                                    @Convert.ToBase64String(Model.ImageByteArray[i])"
+                                 style="width:100%;cursor:pointer"
+                                 alt="Model.Name"
+                                 onclick="currentDiv(@(i+1))" />
+                        </div>
+                    }
+                </div>
             }
 
         </div>
