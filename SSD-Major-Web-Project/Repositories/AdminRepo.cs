@@ -61,7 +61,7 @@ namespace SSD_Major_Web_Project.Repositories
             }
         }
 
-        public List<OrderVM> GetFilteredOrders(string orderStatus = "", string searchTerm = "")
+        public IQueryable<OrderVM> GetFilteredOrders(string orderStatus = "", string searchTerm = "")
         {
             //find status id of the given order status 
             int orderStatusId = _context.OrderStatuses
@@ -149,26 +149,24 @@ namespace SSD_Major_Web_Project.Repositories
                         o.OrderTotal.ToString().Contains(searchTerm)
                         );
 
-            //apply discount to orderTotal of each order
-            var newQuery = query.ToList();
-            newQuery.ForEach(order =>
+            //apply discount to orderTotal of each order by creating a new query
+            query = query.Select(o => new OrderVM
             {
-                if (order.Discount != null)
-                {
-                    if (order.Discount.DiscountType.ToLower() == "percent")
-                    {
-                        order.OrderTotal = order.OrderTotal * (1 - order.Discount.DiscountValue / 100);
-                    }
-                    else
-                    {
-                        order.OrderTotal = order.OrderTotal - order.Discount.DiscountValue;
-                    }
-                }
+                OrderId = o.OrderId,
+                OrderDate = o.OrderDate,
+                OrderStatus = o.OrderStatus,
+                BuyerNote = o.BuyerNote,
+                OrderDetails = o.OrderDetails,
+                Contact = o.Contact,
+                Discount = o.Discount,
+                OrderTotal = o.Discount != null ?
+                     (o.Discount.DiscountType.ToLower() == "percent" ?
+                         Math.Round(o.OrderTotal * (1 - o.Discount.DiscountValue / 100), 2) :
+                         Math.Round(o.OrderTotal - o.Discount.DiscountValue, 2)) :
+                     o.OrderTotal
             });
 
-
-
-            return newQuery;
+            return query;
         }
 
         public string dispatchOrder(int orderId)
