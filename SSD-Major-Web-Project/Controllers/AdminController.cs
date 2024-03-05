@@ -175,7 +175,7 @@ namespace SSD_Major_Web_Project.Controllers
         }
 
 
-        public IActionResult GetAllDiscounts(string message = "")
+        public IActionResult AllDiscounts(string message = "")
         {
             ViewData["Message"] = message;
             AdminRepo adminRepo = new AdminRepo(_context);
@@ -205,7 +205,7 @@ namespace SSD_Major_Web_Project.Controllers
                                                         vm.EndDate);
                 if (error == "")
                 {
-                    return RedirectToAction("GetAllDiscounts", new { message = $"Discount {vm.PkDiscountCode} successfully created" });
+                    return RedirectToAction("AllDiscounts", new { message = $"Discount {vm.PkDiscountCode} successfully created" });
                 }
                 else
                 {
@@ -240,7 +240,15 @@ namespace SSD_Major_Web_Project.Controllers
         {
             AdminRepo adminRepo = new AdminRepo(_context);
             string message = adminRepo.DeactivateDiscount(vm.PkDiscountCode);
-            return RedirectToAction("GetAllDiscounts", new { message = message });
+            return RedirectToAction("AllDiscounts", new { message = message });
+        }
+
+        public IActionResult AllProducts(string message = "")
+        {
+            ViewData["Message"] = message;
+            AdminRepo adminRepo = new AdminRepo(_context);
+            List<AdminProductVM> discounts = adminRepo.GetAllProducts().ToList();
+            return View(discounts);
         }
 
     }

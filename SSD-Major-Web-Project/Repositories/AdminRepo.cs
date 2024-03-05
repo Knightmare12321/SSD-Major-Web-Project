@@ -392,5 +392,30 @@ namespace SSD_Major_Web_Project.Repositories
 
             return result.ToString();
         }
+
+        public List<AdminProductVM> GetAllProducts()
+        {
+            var productQuery = _context.Products
+                        .Select(p => new AdminProductVM
+                        {
+                            PkProductId = p.PkProductId,
+                            Name = p.Name,
+                            Price = p.Price,
+                            Description = p.Description,
+                            IsActive = p.IsActive
+                        });
+            var query = productQuery.ToList();
+
+            foreach (var product in query)
+            {
+                product.ProductSkus = _context.ProductSkus
+                                        .Where(psku => psku.FkProductId == product.PkProductId)
+                                        .ToList();
+                product.Images = _context.Images
+                                        .Where(i => i.FkProductId == product.PkProductId)
+                                        .ToList();
+            }
+            return query;
+        }
     }
 }
