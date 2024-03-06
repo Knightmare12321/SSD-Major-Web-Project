@@ -1,0 +1,49 @@
+﻿@model IEnumerable<SSD_Major_Web_Project.ViewModels.RoleVM>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    string message = ViewBag.Message;
+}
+
+<h1 style="color:darkred;">Roles</h1>
+<p>
+    <a style="color:darkred;" asp-action="Create">Create New Role</a>
+</p>
+
+@if (message.Length > 0)
+{
+    <div class="alert alert-success" role="alert">
+        @ViewBag.Message
+    </div>
+}
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                <span style="color:darkred;">Id</span>
+            </th>
+            <th>
+                <span style="color:darkred;">Role Name</span>
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Id)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.RoleName)
+                </td>
+@*                 <td>
+                    @Html.ActionLink("Delete", "Delete", new { roleName=item.RoleName})
+                </td> *@
+            </tr>
+        }
+    </tbody>
+</table>
