@@ -8,20 +8,16 @@
     <p>Hello Admin</p>
     <div id="admin-index-grid">
         <div class="grid-item">
-            <button onclick="location.href='@Url.Action("CreateProduct","Admin")'">CREATE NEW PRODUCT</button>
-            <p>Create a new product listing</p>
-        </div>
-        <div class="grid-item">
             <button onclick="location.href='@Url.Action("AdminOrder","Admin")'">ALL ORDERS</button>
-            <p>Manage open orders and fulfilled orders</p>
+            <p>Manage Orders</p>
         </div>
         <div class="grid-item">
-            <button>EDIT/DELETE LISTINGs</button>
-            <p>Edit listing detail<br />Activate/Deactivate existing listings</p>
+            <button onclick="location.href='@Url.Action("AllProducts","Admin")'">CREATE/EDIT/DELETE PRODUCTS</button>
+            <p>Edit product detail<br />Create, Edit, and Delete Products</p>
         </div>
         <div class="grid-item">
-            <button onclick="location.href='@Url.Action("GetAllDiscounts","Admin")'">EDIT/DELETE DISCOUNTS</button>
-            <p>Create/Delete discounts</p>
+            <button onclick="location.href='@Url.Action("AllDiscounts","Admin")'">CREATE/EDIT/DELETE DISCOUNTS</button>
+            <p>Create, Edite, and Delete Discounts</p>
         </div>
     </div>
 

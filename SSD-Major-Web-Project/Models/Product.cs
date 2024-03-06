@@ -13,7 +13,7 @@ public partial class Product
 
     public string Description { get; set; } = null!;
 
-    public string IsActive { get; set; } = null!;
+    public bool IsActive { get; set; }
 
     public virtual ICollection<Image> Images { get; set; } = new List<Image>();
 

@@ -75,6 +75,8 @@ namespace SSD_Major_Web_Project.Controllers
             return View(vm);
         }
 
+        // This controller action is for testing only.
+        // Delete this after project completes!
         public IActionResult Favorite()
         {
             var IDListCookie = Request.Cookies["cart"];

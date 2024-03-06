@@ -1,4 +1,4 @@
-﻿@model List<SSD_Major_Web_Project.ViewModels.OrderVM>
+﻿@model PaginatedList<SSD_Major_Web_Project.ViewModels.OrderVM>
 
 @{
     ViewData["Title"] = "AdminOrder";
@@ -25,7 +25,8 @@
             <h1 id="orders-title">Open Orders</h1>
             <div>
                 <input id="search-term" placeholder="search text" />
-                <button class="btn" onClick="getFilteredOrders()">Filter</button></div>
+                <button class="btn" onClick="getFilteredAndPaginatedOrders(@Model.PageIndex)">Filter</button>
+            </div>
             <span id="message"></span>
             <div id="orders-data">
                 @await Html.PartialAsync("../Shared/_OrderSummaryPartial", Model)
@@ -33,6 +34,7 @@
         </div>
     </div>
 </div>
+
 
 @* Order detail Page Component*@
 <div id="admin-order-detail">
@@ -95,14 +97,14 @@
         });
     }
 
-    const getFilteredOrders = () => {
+    const getFilteredAndPaginatedOrders = (pageIndex) => {
         const searchTerm = $("#search-term").val();
         const sheetType = $("#sheet-type").val();
         const url = '@Url.Action("GetFilteredOrders", "Admin")';
         $.ajax({
             type: "GET",
             url: url,
-            data: { "orderStatus": sheetType, "searchTerm":searchTerm },
+            data: { "orderStatus": sheetType, "searchTerm": searchTerm, "pageIndex": pageIndex },
             success: function (data) {
                 $("#orders-data").html(data);
             }
@@ -142,12 +144,28 @@
         const items = order.orderDetails.map(od => {
             console.log('adminOrder detail images:', od.fkSku.fkProduct.Images);
 
+            const images = od.fkSku.fkProduct.Images;
+            let listingImage = "";
+            if (images != null)
+            {
+                var blob = new Blob(images[0].data);
+                var imageUrl = URL.createObjectURL(blob);
+                listingImage = `<img src=${imgeURl} alt=${images[0].AltText}/>`
+            }
+
             return `<div class='item'>
-                        <div>${od.fkSku.fkProduct.name}</div>
+   
                         <div>
-                            <span>Size: ${od.fkSku.size}</span>
-                                <span>Price: $${od.unitPrice}</span>
-                            <span>Quantity: ${od.quantity}</span>
+                        ${listingImage}
+                        </div>
+                        <div>
+                            <div>${od.fkSku.fkProduct.name}</div>
+                            <div>
+                                <span>Size: ${od.fkSku.size}</span>
+                                    <span>Price: $${od.unitPrice}</span>
+                                <span>Quantity: ${od.quantity}</span>
+                            </div>
+                        </div>
                     </div>`;
 
         });
@@ -155,7 +173,7 @@
         //also show discount detail if there is one
         if (order.discount) {
             const discountValue = order.discount.discountValue;
-            const discountContent = order.discount.discountType.toLowerCase() == 'percent' ? `${discountValue * 100}% off` : `-$${discountValue}`
+            const discountContent = order.discount.discountType.toLowerCase() == 'percent' ? `${discountValue}% off` : `-$${discountValue}`
             $("#admin-order-detail td.discount").html(`${order.discount.pkDiscountCode} (${discountContent})`)
         } else {
             $("#admin-order-detail td.discount").html("None");

@@ -1,0 +1,48 @@
+﻿@model IEnumerable<SSD_Major_Web_Project.ViewModels.RoleVM>
+
+@{
+    ViewData["Title"] = "User Roles Detail";
+    string message = ViewBag.Message;
+    string email = ViewBag.Email;
+}
+
+<h3>@email</h3>
+
+@if (message.Length > 0)
+{
+    <div class="alert alert-success" role="alert">
+        @ViewBag.Message
+    </div>
+}
+<p>
+    @Html.ActionLink("Assign Roles"
+            , "Create"
+            , new { userName = @ViewBag.UserName })
+</p>
+
+<div class="row">
+    <div class="col-sm-4">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>@Html.DisplayNameFor(model => model.RoleName)</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+
+                            @Html.DisplayFor(modelItem => item.RoleName)
+                            &nbsp;&nbsp;&nbsp;&nbsp;
+                            &nbsp;&nbsp;&nbsp;&nbsp;
+                            @* @Html.ActionLink("Delete", "Delete", new { roleName=item.RoleName, email = email}) *@
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <p>&nbsp; <a href="/UserRole">Back to Users</a></p>
+    </div>
+</div>

@@ -273,29 +273,44 @@ textarea[name="Description"] {
     }
 }
 
+/*Admin DeactivateProduct*/
+#delete-product-page img{
+    width:200px;
+}
+#delete-product-page .info-block{
+    display:inline-block;
+}
+#delete-product-page dt{
+    display:inline-block;
+    width:130px;
+}
+#delete-product-page dd {
+    display:inline-block;
+}
+
 /*Admin AdminOrder*/
-    #admin-orders{
-        display:none;
-    }
+#admin-orders {
+    display: none;
+}
 
 #admin-orders.active {
     display: flex;
     grid-column-gap: 10px;
 
-    ul{
+    .side-bar ul{
         padding: 0;
         width: 150px;
     }
 
-    li {
+    .side-bar li {
         list-style: none;
         padding: 10px;
         cursor: pointer;
     }
 
-    li:hover, li.active {
-        background-color: var(--theme-color);
-    }
+        .side-bar li:hover, .side-bar li.active {
+            background-color: var(--theme-color);
+        }
 
     .summary {
         display: block
@@ -312,6 +327,18 @@ textarea[name="Description"] {
         background-color: grey;
     }
 
+    thead{
+        border-bottom:solid 1px black;
+    }
+    td{
+        border-top:none;
+        border-bottom:none;
+    }
+
+    tr.bold-border{
+        border-bottom: solid 1px black;
+    }
+
     tr.dispatched {
         background-color: orange;
     }
@@ -324,10 +351,16 @@ textarea[name="Description"] {
     color:red;
 }
 
-#admin-order-detail{
-    display:none;
+
+#admin-orders-pagination li:not(.disabled) {
+    cursor: pointer;
 }
 
+
+/*Admin OrderDetail*/
+#admin-order-detail {
+    display: none;
+}
 #admin-order-detail.active{
     display:block;
 }
@@ -348,4 +381,9 @@ textarea[name="Description"] {
 }
 #admin-order-detail .item:not(:last-child) {
     border-bottom: solid 1px black;
+}
+
+/*Discount List Page*/
+#discount-list .message{
+    color:red;
 }

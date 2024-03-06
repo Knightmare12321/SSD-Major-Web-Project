@@ -1,0 +1,58 @@
+﻿@model SSD_Major_Web_Project.ViewModels.AdminProductVM
+
+@{
+    ViewData["Title"] = "Delete";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div id="delete-product-page">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <h3>Are you sure you want to deactivate this Product?</h3>
+    <div>
+        <hr />
+        <div>
+            @{
+                if (Model.Images?.Count>0)
+                {
+                    <img src="data:image/jpeg;base64,
+                                                 @Convert.ToBase64String(Model.Images.FirstOrDefault().Data)"
+                         alt="@Model.Images.FirstOrDefault().FileName" />
+
+                }
+            }
+            <div class="info-block">
+                <dl>
+                    <dt>
+                        @Html.DisplayNameFor(model => model.PkProductId)
+                    </dt>
+                    <dd>
+                        @Html.DisplayFor(model => model.PkProductId)
+                    </dd>
+                </dl>
+                <dl>
+                    <dt>
+                        @Html.DisplayNameFor(model => model.Name)
+                    </dt>
+                    <dd>
+                        @Html.DisplayFor(model => model.Name)
+                    </dd>
+                </dl>
+                <dl>
+                    <dt>
+                        @Html.DisplayNameFor(model => model.Price)
+                    </dt>
+                    <dd>
+                        $@Model.Price
+                    </dd>
+                </dl>
+            </div>
+        </div>
+        <form asp-action="DeactivateProduct" method="post">
+            <input type="hidden" name="PkProductId" value="@Model.PkProductId" />
+            <input type="submit" value="Delete" class="btn btn-danger" /> 
+            <a asp-action="AllProducts">Back to List</a>
+        </form>
+    </div>
+</div>
+

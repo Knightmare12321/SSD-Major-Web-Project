@@ -8,7 +8,7 @@
 <h1>@Model.PkDiscountCode</h1>
 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-<h3>Are you sure you want to delete this discount?</h3>
+<h3>Are you sure you want to deactivate this discount?</h3>
 <div>
     <hr />
     <dl class="row">
@@ -51,10 +51,9 @@
             @Html.DisplayFor(model => model.DiscountValue)
         </dd>
     </dl>
-    <form asp-action="Delete">
-        <input type="hidden" asp-antiforgery="true" />
-        @* <input type="hidden" name="discountCode" value="@Model.PkDiscountCode" /> *@
+    <form asp-action="DeactivateDiscount">
+        <input type="hidden" name="PkDiscountCode" value="@Model.PkDiscountCode" />
         <input type="submit" value="Delete" class="btn btn-danger" /> |
-        <a asp-action="Index">Back to List</a>
+        <a asp-action="AllDiscounts">Back to List</a>
     </form>
 </div>
