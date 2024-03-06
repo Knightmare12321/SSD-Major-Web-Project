@@ -71,7 +71,7 @@ namespace SSD_Major_Web_Project.Controllers
 
 
         // GET: ShopController/Checkout
-        // Click on the "Proceed to checkout" button at shopping cart page, pass the shopping cart data to checkout view
+        // Click on the "Proceed to checkout" button at shopping cart page, pass the shopping cart data to ConfirmCheckout view
         [HttpPost]
         public IActionResult Checkout(ShoppingCartVM shoppingcartVM)
         {
@@ -112,14 +112,34 @@ namespace SSD_Major_Web_Project.Controllers
             checkoutVM.ShoppingCart = shoppingcartVM;    
 
             
-            return View("Checkout", checkoutVM);
+            return View("ConfirmCheckout", checkoutVM);
         }
 
+        // GET: ShopController/ConfirmCheckout
 
-        // POST: ShopController/CreateNewOrder
-        [HttpPost]
-        public IActionResult CreateNewOrder(string transactionId, decimal amount, string payerName, CheckoutVM checkoutVM)
+        public IActionResult ConfirmCheckout()
         {
+            // Initialize the CheckoutVM model
+            var checkoutVM = new CheckoutVM();
+
+            // Populate the ShoppingCart object
+            checkoutVM.ShoppingCart = new ShoppingCartVM
+            {
+                CurrencySymbol = "$", // Set the currency symbol
+                GrandTotal = 171 // Set the grand total
+                                 // Set other properties of the ShoppingCart object as needed
+            };
+
+            // Pass the checkoutVM model to the ProceedPayment view
+            return View("ProceedPayment", checkoutVM);
+        }
+
+        // POST: ShopController/ConfirmCheckout
+        [HttpPost]
+        public IActionResult ProceedPayment(string transactionId, decimal amount, string payerName, CheckoutVM checkoutVM)
+        {
+
+           
             // Create an instance of OrderConfirmationVM and populate its properties
             var orderConfirmation = new OrderConfirmationVM
             {
@@ -160,12 +180,12 @@ namespace SSD_Major_Web_Project.Controllers
                         OrderConfirmationVM orderconfirmationVM = new OrderConfirmationVM();
                         // Populate the orderconfirmationVM with the necessary data
 
-                        return View("OrderConfirmation");
+                        return View("OrderConfirmation", checkoutVM);
                     }
                     else
                     {
                         // Return the Checkout page with the checkout view model again
-                        return View("Checkout");
+                        return View("Checkout", checkoutVM);
                     }
                 }
                 catch (Exception ex)
@@ -175,12 +195,11 @@ namespace SSD_Major_Web_Project.Controllers
                 }
             }
 
-            return View("CreateNewOrder", orderConfirmation);
+            return View("ProceedPayment", checkoutVM);
         }
 
 
-        // POST: ShopController/CreateNewOrder
-        [HttpPost]
+        // GET: ShopController//orderConfirmation
         public IActionResult OrderConfirmation(string transactionId, decimal amount, string payerName, CheckoutVM checkoutVM)
         {
             // Create an instance of OrderConfirmationVM and populate its properties

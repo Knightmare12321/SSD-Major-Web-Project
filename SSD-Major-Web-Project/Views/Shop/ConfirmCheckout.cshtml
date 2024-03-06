@@ -87,11 +87,10 @@
                     @Html.DisplayFor(model => model.ShoppingCart.CurrencySymbol)@Model.ShoppingCart.GrandTotal
                 </dd>
                 <div>
-                <form id="CreateNewOrderForm" asp-action="CreateNewOrder" asp-controller="Shop" method="post">
+                <form id="RequestOrderConfirmation" asp-action="ProceedPayment" asp-controller="Shop" method="post">
                         <input type="hidden" id="itemPrice" name="itemPrice" value="@Model.ShoppingCart.GrandTotal" />
-                        <input type="hidden" itemid="firstName" name="firstName" asp-for="Order.Contact.FirstName" />
-                        <input type="hidden" itemid="lastName" name="lastName" asp-for="Order.Contact.LastName" />
-                        <div id="paypal-button-container"></div>
+                  
+                    <button type="submit" class="btn btn-primary">Proceed to Payment Page</button>
                     </form>
                 </div>
             </div>
@@ -99,49 +98,3 @@
     </div>
 
 
-
-    <script>
-        paypal.Buttons({
-            // Set up the transaction
-            createOrder: function (data, actions) {
-                return actions.order.create({
-                    purchase_units: [{
-                        amount: {
-                            value: document.getElementById('itemPrice').value,
-                            currency: 'CAD'
-                        }
-                    }]
-                });
-            },
-
-            // Finalize the transaction
-            onApprove: function (data, actions) {
-                // Capture the PayPal transaction details
-                return actions.order.capture().then(function (details) {
-                    // Prepare the query parameters
-                    var transactionId = encodeURIComponent(details.id);
-                    var amount = encodeURIComponent(details.purchase_units[0].amount.value);
-                    var payerName = encodeURIComponent(details.payer.name.given_name);
-
-                    // Trigger the form submission to the CreateNewOrder action method
-                    var form = document.getElementById('CreateNewOrderForm');
-                    form.action = '/Shop/OrderConfirmation?transactionId=' + transactionId + '&amount=' + amount + '&payerName=' + payerName;
-                    form.submit();
-                });
-            },
-
-
-            onCancel: function (data) {
-                alert('Transaction was cancelled.');
-            },
-            onError: function (err) {
-                alert('An error occurred during the transaction. Error ==> ' + err);
-            },
-            style: {
-                layout: 'vertical', // 'vertical', 'horizontal'
-                color: 'blue',      // 'gold', 'blue', 'silver', 'black'
-                shape: 'rect',      // 'rect', 'pill'
-                label: 'paypal'     // 'checkout', 'pay', 'buynow', 'paypal'
-            }
-        }).render('#paypal-button-container');
-    </script>

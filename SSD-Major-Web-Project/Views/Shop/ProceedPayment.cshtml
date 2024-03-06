@@ -1,0 +1,86 @@
+﻿@model SSD_Major_Web_Project.ViewModels.CheckoutVM
+
+@{
+    ViewData["Title"] = "Checkout";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+}
+
+<script src="https://www.paypal.com/sdk/js?client-id=AT43uF9QHEyOHayLY0lnVVwiD6VfjG2o2NH8Ob6mo9iod3G7VftCAWwy9r8jQHLY6jizC_vHkmQCbfW8"></script>
+
+
+<div class="checkout-container">
+    <div class="row">
+        <h2>checkout</h2>
+        <div class="col-md-4">
+            <div class="order-total">
+                <h3>Confirm Payment Amount</h3>
+                <div class="order-total-details">
+
+                    <dt class="col-sm-2">
+                        @Html.DisplayNameFor(model => model.ShoppingCart.GrandTotal)
+                    </dt>
+                    @if (Model?.ShoppingCart != null)
+                    {
+                        @Html.DisplayFor(model => model.ShoppingCart.CurrencySymbol)
+
+                        @Model.ShoppingCart.GrandTotal
+                    }
+
+            </div>
+        </div>
+ 
+                        <div id="paypal-button-container"></div>
+         
+                </div>
+            </div>
+      
+    </div>
+
+
+
+    <script>
+        paypal.Buttons({
+            // Set up the transaction
+            createOrder: function (data, actions) {
+                return actions.order.create({
+                    purchase_units: [{
+                        amount: {
+                            value: document.getElementById('itemPrice').value,
+                            currency: 'CAD'
+                        }
+                    }]
+                });
+            },
+
+            // Finalize the transaction
+            onApprove: function (data, actions) {
+                // Capture the PayPal transaction details
+                return actions.order.capture().then(function (details) {
+                    // Prepare the query parameters
+                    var transactionId = encodeURIComponent(details.id);
+                    var amount = encodeURIComponent(details.purchase_units[0].amount.value);
+                    var payerName = encodeURIComponent(details.payer.name.given_name);
+
+                    // Trigger the form submission to the CreateNewOrder action method
+                    var form = document.getElementById('CreateNewOrderForm');
+                    form.action = '/Shop/OrderConfirmation?transactionId=' + transactionId + '&amount=' + amount + '&payerName=' + payerName;
+                    form.submit();
+                });
+            },
+
+
+            onCancel: function (data) {
+                alert('Transaction was cancelled.');
+            },
+            onError: function (err) {
+                alert('An error occurred during the transaction. Error ==> ' + err);
+            },
+            style: {
+                layout: 'vertical', // 'vertical', 'horizontal'
+                color: 'blue',      // 'gold', 'blue', 'silver', 'black'
+                shape: 'rect',      // 'rect', 'pill'
+                label: 'paypal'     // 'checkout', 'pay', 'buynow', 'paypal'
+            }
+        }).render('#paypal-button-container');
+    </script>
