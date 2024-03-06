@@ -15,7 +15,7 @@ public partial class Discount
 
     public DateOnly EndDate { get; set; }
 
-    public string IsActive { get; set; } = null!;
+    public bool IsActive { get; set; }
 
     public virtual ICollection<Order> Orders { get; set; } = new List<Order>();
 }

@@ -18,7 +18,7 @@ namespace SSD_Major_Web_Project.ViewModels
 
         [Display(Name = "Is Active")]
         [Required]
-        public string IsActive { get; set; } = null!;
+        public bool IsActive { get; set; }
         public byte[]? ImageByteArray { get; set; }
     }
 }

@@ -20,7 +20,67 @@ namespace SSD_Major_Web_Project.Repositories
             _context = context;
         }
 
-        public async Task<string> AddProduct(string name, decimal price, string description, string isActive, List<IFormFile> imageFiles, List<string> sizes)
+        public IQueryable<AdminProductVM> GetAllProducts()
+        {
+            return _context.Products
+                        .Select(p => new AdminProductVM
+                        {
+                            PkProductId = p.PkProductId,
+                            Name = p.Name,
+                            Price = p.Price,
+                            Description = p.Description,
+                            IsActive = p.IsActive,
+                            ProductSkus = _context.ProductSkus
+                                        .Where(psku => psku.FkProductId == p.PkProductId)
+                                        .ToList(),
+                            Images = _context.Images
+                                        .Where(i => i.FkProductId == p.PkProductId)
+                                        .ToList()
+                        });
+
+        }
+
+        public AdminProductVM GetProductById(int productId)
+        {
+            return _context.Products
+                        .Where(p => p.PkProductId == productId)
+                        .Select(p => new AdminProductVM
+                        {
+                            PkProductId = p.PkProductId,
+                            Name = p.Name,
+                            Price = p.Price,
+                            Description = p.Description,
+                            IsActive = p.IsActive,
+                            ProductSkus = _context.ProductSkus
+                                        .Where(psku => psku.FkProductId == p.PkProductId)
+                                        .ToList(),
+                            Images = _context.Images
+                                        .Where(i => i.FkProductId == p.PkProductId)
+                                        .ToList()
+                        })
+                        .FirstOrDefault();
+        }
+
+        public string DeactivateProduct(int productId)
+        {
+            try
+            {
+                Product product = _context.Products
+                                    .Where(p => p.PkProductId == productId)
+                                    .FirstOrDefault();
+
+                product.IsActive = false;
+                //_context.SaveChanges();
+                return "Product successfully deactivated";
+            }
+            catch (Exception ex)
+            {
+                return "An unexpected error occured while deactivating the discount";
+            }
+
+        }
+
+        public async Task<string> AddProduct(string name, decimal price, string description, bool isActive, List<IFormFile> imageFiles, List<string> sizes)
         {
 
             try
@@ -93,6 +153,7 @@ namespace SSD_Major_Web_Project.Repositories
                                             Size = fsku.Size,
                                             FkProduct = _context.Products
                                                 .Where(p => p.PkProductId == fsku.FkProductId)
+                                                .Include(p => p.Images)
                                                 .FirstOrDefault()
                                         }).FirstOrDefault()
                                 }).ToList(),
@@ -168,38 +229,6 @@ namespace SSD_Major_Web_Project.Repositories
 
             return query;
         }
-
-        public string dispatchOrder(int orderId)
-        {
-            try
-            {
-                Order order = _context.Orders.Where(o => o.PkOrderId == orderId).FirstOrDefault();
-                string status = _context.OrderStatuses.Where(os => os.PkOrderStatusId == order.FkOrderStatusId).Select(os => os.Status).FirstOrDefault();
-
-                //check if order has an open order status
-                if (status != "Paid")
-                {
-                    return "Order does not have an open status and can't be dispatched";
-                }
-
-                int tracking = Int32.Parse(GetRandomString(8, "number"));
-                DateOnly today = DateOnly.FromDateTime(DateTime.Now);
-
-                //set order status id to shipped
-                OrderStatus shippedStatus = _context.OrderStatuses.Where(od => od.Status == "Shipped").FirstOrDefault();
-                order.FkOrderStatusId = shippedStatus.PkOrderStatusId;
-                order.Tracking = tracking;
-                order.ShipDate = today;
-                //_context.SaveChanges();
-
-                return "";
-            }
-            catch (Exception ex)
-            {
-                return "An unexpected error occured while dispatching order";
-            }
-        }
-
 
         public OrderVM GetOrderById(int orderId)
         {
@@ -277,6 +306,37 @@ namespace SSD_Major_Web_Project.Repositories
 
         }
 
+        public string dispatchOrder(int orderId)
+        {
+            try
+            {
+                Order order = _context.Orders.Where(o => o.PkOrderId == orderId).FirstOrDefault();
+                string status = _context.OrderStatuses.Where(os => os.PkOrderStatusId == order.FkOrderStatusId).Select(os => os.Status).FirstOrDefault();
+
+                //check if order has an open order status
+                if (status != "Paid")
+                {
+                    return "Order does not have an open status and can't be dispatched";
+                }
+
+                int tracking = Int32.Parse(GetRandomString(8, "number"));
+                DateOnly today = DateOnly.FromDateTime(DateTime.Now);
+
+                //set order status id to shipped
+                OrderStatus shippedStatus = _context.OrderStatuses.Where(od => od.Status == "Shipped").FirstOrDefault();
+                order.FkOrderStatusId = shippedStatus.PkOrderStatusId;
+                order.Tracking = tracking;
+                order.ShipDate = today;
+                //_context.SaveChanges();
+
+                return "";
+            }
+            catch (Exception ex)
+            {
+                return "An unexpected error occured while dispatching order";
+            }
+        }
+
         public string CancelOrder(int orderId)
         {
             try
@@ -284,7 +344,7 @@ namespace SSD_Major_Web_Project.Repositories
                 Order order = _context.Orders.Where(o => o.PkOrderId == orderId).FirstOrDefault();
                 OrderStatus cancelledStatus = _context.OrderStatuses.Where(os => os.Status == "Cancelled").FirstOrDefault();
                 order.FkOrderStatusId = cancelledStatus.PkOrderStatusId;
-                //_context.SaveChanges();
+                _context.SaveChanges();
                 return "";
             }
             catch (Exception ex)
@@ -308,10 +368,19 @@ namespace SSD_Major_Web_Project.Repositories
         }
 
 
-        public Discount GetDiscountById(string discountCode)
+        public DiscountVM GetDiscountById(string discountCode)
         {
             return _context.Discounts
                 .Where(d => d.PkDiscountCode == discountCode)
+                .Select(d => new DiscountVM
+                {
+                    PkDiscountCode = d.PkDiscountCode,
+                    DiscountValue = d.DiscountValue,
+                    DiscountType = d.DiscountType,
+                    StartDate = d.StartDate,
+                    EndDate = d.EndDate,
+                    IsActive = d.IsActive
+                })
                 .FirstOrDefault();
         }
 
@@ -331,7 +400,7 @@ namespace SSD_Major_Web_Project.Repositories
                     DiscountType = discountType,
                     StartDate = startDate,
                     EndDate = endDate,
-                    IsActive = "1"
+                    IsActive = true
                 };
 
                 _context.Discounts.Add(discount);
@@ -352,7 +421,7 @@ namespace SSD_Major_Web_Project.Repositories
                                     .Where(d => d.PkDiscountCode == discountCode)
                                     .FirstOrDefault();
 
-                discount.IsActive = "0";
+                discount.IsActive = false;
                 _context.SaveChanges();
                 return "Discount successfully deactivated";
             }
@@ -395,29 +464,5 @@ namespace SSD_Major_Web_Project.Repositories
             return result.ToString();
         }
 
-        public List<AdminProductVM> GetAllProducts()
-        {
-            var productQuery = _context.Products
-                        .Select(p => new AdminProductVM
-                        {
-                            PkProductId = p.PkProductId,
-                            Name = p.Name,
-                            Price = p.Price,
-                            Description = p.Description,
-                            IsActive = p.IsActive
-                        });
-            var query = productQuery.ToList();
-
-            foreach (var product in query)
-            {
-                product.ProductSkus = _context.ProductSkus
-                                        .Where(psku => psku.FkProductId == product.PkProductId)
-                                        .ToList();
-                product.Images = _context.Images
-                                        .Where(i => i.FkProductId == product.PkProductId)
-                                        .ToList();
-            }
-            return query;
-        }
     }
 }

@@ -33,7 +33,7 @@ namespace SSD_Major_Web_Project.ViewModels
         public DateOnly EndDate { get; set; } = DateOnly.FromDateTime(DateTime.Now);
 
         [Display(Name = "Status")]
-        public string IsActive { get; set; } = null!;
+        public bool IsActive { get; set; }
 
         public SelectList? DiscountTypes { get; set; }
     }

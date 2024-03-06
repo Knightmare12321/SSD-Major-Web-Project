@@ -25,9 +25,9 @@
                     <td> @Html.DisplayFor(modelItem => item.PkProductId)</td>
                     <td> @Html.DisplayFor(modelItem => item.Name)</td>
                     <td> @Html.DisplayFor(modelItem => item.Price)</td>
-                    <td> @Html.DisplayName(item.IsActive == "1" ? "Active" : "Inactive")</td>
+                    <td> @Html.DisplayName(item.IsActive == true ? "Active" : "Inactive")</td>
                     <td>
-                        <a asp-action="DeactivateProduct" asp-route-prouductId="@item.PkProductId">
+                        <a asp-action="DeactivateProduct" asp-route-productId="@item.PkProductId">
                             <button class="btn btn-danger">Deactivate</button>
                         </a>
                     </td>

@@ -17,7 +17,7 @@ namespace SSD_Major_Web_Project.ViewModels
         [Required]
         public string Description { get; set; }
 
-        public string IsActive { get; set; } = "1";
+        public bool IsActive { get; set; } = true;
 
         [Required]
         public List<IFormFile> Images { get; set; }
