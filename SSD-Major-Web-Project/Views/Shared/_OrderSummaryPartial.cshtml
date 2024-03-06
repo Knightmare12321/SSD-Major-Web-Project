@@ -1,4 +1,4 @@
-﻿@model ICollection<SSD_Major_Web_Project.ViewModels.OrderVM>
+﻿@model PaginatedList<SSD_Major_Web_Project.ViewModels.OrderVM>
 <div class="table-responsive">
     <table class="table transaction-table">
         <thead>
@@ -23,55 +23,72 @@
             </tr>
         </thead>
         <tbody>
-            @foreach (var item in Model)
-            {
-                //first Line that lists eveything out
-                <tr id="@item.OrderId-0">
-                    <td> @Html.DisplayFor(modelItem => item.OrderId)</td>
-                    <td> @Html.DisplayFor(modelItem => item.OrderDate)</td>
-                    <td class="order-status"> @Html.DisplayFor(modelItem => item.OrderStatus)</td>
-                    <td>@Html.DisplayName($"{item.Contact.FirstName} {item.Contact.LastName}")</td>
-                    <td> @Html.DisplayFor(modelItem => item.OrderDetails[0].FkSku.FkProduct.Name)</td>
-                    <td> @Html.DisplayFor(modelItem => item.OrderDetails[0].FkSku.Size)</td>
-                    <td> @Html.DisplayFor(modelItem => item.OrderDetails[0].Quantity)</td>
-                    <td> @Html.DisplayFor(modelItem => item.OrderTotal)</td>
-                    <td> @Html.DisplayName(item.BuyerNote!=""? "Yes":"No")</td>
-                    @{
-                        if (ViewBag.OrderStatus == "Paid")
-                        {
-                            <td><button class="btn" onclick="dispatchOrder(@item.OrderId)">Dispatch</button></td>
-                        }
-                    }
-                    <td><button class="btn" onClick="getOrderDetail(@Json.Serialize(@item).ToString())">Detail</button></td>
-                    <td><button class="btn" onclick="refundOrder(@item.OrderId)">Refund</button></td>
-
-                </tr>
-
-                //subsequent lines only lists additional order items
-                @for (var i = 1; i < item.OrderDetails.Count; i++)
+            @{
+                foreach (var item in Model)
                 {
-                    <tr id="@item.OrderId-@i">
-                        <td>-</td>
-                        <td>-</td>
-                        <td>-</td>
-                        <td>-</td>
-                        <td> @Html.DisplayFor(modelItem => item.OrderDetails[i].FkSku.FkProduct.Name)</td>
-                        <td> @Html.DisplayFor(modelItem => item.OrderDetails[i].FkSku.Size)</td>
-                        <td> @Html.DisplayFor(modelItem => item.OrderDetails[i].Quantity)</td>
-                        <td>-</td>
-                        <td>-</td>
-                        <td></td>
-                        <td></td>
+                    //first Line that lists eveything out
+                    <tr id="@item.OrderId-0" class="@(item.OrderDetails.Count==1?"bold-border":"")">
+                        <td> @Html.DisplayFor(modelItem => item.OrderId)</td>
+                        <td> @Html.DisplayFor(modelItem => item.OrderDate)</td>
+                        <td class="order-status"> @Html.DisplayFor(modelItem => item.OrderStatus)</td>
+                        <td>@Html.DisplayName($"{item.Contact.FirstName} {item.Contact.LastName}")</td>
+                        <td> @Html.DisplayFor(modelItem => item.OrderDetails[0].FkSku.FkProduct.Name)</td>
+                        <td> @Html.DisplayFor(modelItem => item.OrderDetails[0].FkSku.Size)</td>
+                        <td> @Html.DisplayFor(modelItem => item.OrderDetails[0].Quantity)</td>
+                        <td> @Html.DisplayFor(modelItem => item.OrderTotal)</td>
+                        <td> @Html.DisplayName(item.BuyerNote!=""? "Yes":"No")</td>
                         @{
                             if (ViewBag.OrderStatus == "Paid")
                             {
-
-                                            <td></td>
+                                <td><button class="btn" onclick="dispatchOrder(@item.OrderId)">Dispatch</button></td>
                             }
                         }
+                        <td><button class="btn" onClick="getOrderDetail(@Json.Serialize(@item).ToString())">Detail</button></td>
+                        <td><button class="btn" onclick="refundOrder(@item.OrderId)">Refund</button></td>
                     </tr>
+
+                    //subsequent lines only lists additional order items
+                    @for (var i = 1; i < item.OrderDetails.Count; i++)
+                    {
+                        <tr id="@item.OrderId-@i" class="@(i==item.OrderDetails.Count-1?"bold-border":"")">
+                            <td>-</td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td> @Html.DisplayFor(modelItem => item.OrderDetails[i].FkSku.FkProduct.Name)</td>
+                            <td> @Html.DisplayFor(modelItem => item.OrderDetails[i].FkSku.Size)</td>
+                            <td> @Html.DisplayFor(modelItem => item.OrderDetails[i].Quantity)</td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            @{
+                                if (ViewBag.OrderStatus == "Paid")
+                                {
+
+                                                <td></td>
+                                }
+                            }
+                        </tr>
+                    }
                 }
             }
         </tbody>
     </table>
 </div>
+<nav id="admin-orders-pagination">
+    <ul class="pagination">
+        <li class="page-item @(Model.HasPreviousPage ? "" : "disabled")">
+            <a class="page-link"
+               onClick="getFilteredAndPaginatedOrders(@(Model.PageIndex-1))">
+                Previous
+            </a>
+        </li>
+        <li class="page-item @(Model.HasNextPage ? "" : "disabled")">
+            <a class="page-link"
+               onClick="getFilteredAndPaginatedOrders(@(Model.PageIndex+1)) ">
+                Next
+            </a>
+        </li>
+    </ul>
+</nav>
