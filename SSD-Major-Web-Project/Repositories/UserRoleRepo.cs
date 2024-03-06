@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using SSD_Major_Web_Project.Models;
 using SSD_Major_Web_Project.ViewModels;
 
 namespace SSD_Major_Web_Project.Repositories
@@ -17,6 +18,8 @@ namespace SSD_Major_Web_Project.Repositories
                                                 , string roleName)
         {
             var user = await _userManager.FindByEmailAsync(email);
+
+
             if (user != null)
             {
                 var result = await _userManager.AddToRoleAsync(user
@@ -49,6 +52,7 @@ namespace SSD_Major_Web_Project.Repositories
             var user = await _userManager.FindByEmailAsync(email);
             if (user != null)
             {
+                /*return Enumerable.Empty<RoleVM>();*/
                 var roles = await _userManager.GetRolesAsync(user);
                 return roles.Select(roleName =>
                    new RoleVM { RoleName = roleName });

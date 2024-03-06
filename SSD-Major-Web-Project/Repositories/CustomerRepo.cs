@@ -28,11 +28,11 @@ namespace SSD_Major_Web_Project.Repositories
 
         }
 
-        /*        public string GetUsername(string email)
-                {
-                    Customer customer = _db.Customers.FirstOrDefault(x => x.PkCustomerId == email);
-                    return $"{customer.FirstName}";
-                }*/
+        public string GetEmail(string email)
+        {
+            Customer customer = _db.Customers.FirstOrDefault(x => x.PkCustomerId == email);
+            return $"{customer.PkCustomerId}";
+        }
 
         public IEnumerable<UserVM> GetAllUsers()
         {
