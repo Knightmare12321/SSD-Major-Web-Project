@@ -6,9 +6,9 @@
     string message = ViewBag.Message;
 }
 
-<h1 style="color:darkred;">Roles</h1>
+<h1>Roles</h1>
 <p>
-    <a style="color:darkred;" asp-action="Create">Create New Role</a>
+    <a asp-action="Create">Create New Role</a>
 </p>
 
 @if (message.Length > 0)
@@ -21,11 +21,11 @@
 <table class="table">
     <thead>
         <tr>
+            @* <th>
+                <span>Id</span>
+            </th> *@
             <th>
-                <span style="color:darkred;">Id</span>
-            </th>
-            <th>
-                <span style="color:darkred;">Role Name</span>
+                <span>Role Name</span>
             </th>
             <th></th>
         </tr>
@@ -34,9 +34,9 @@
         @foreach (var item in Model)
         {
             <tr>
-                <td>
+                @* <td>
                     @Html.DisplayFor(modelItem => item.Id)
-                </td>
+                </td> *@
                 <td>
                     @Html.DisplayFor(modelItem => item.RoleName)
                 </td>

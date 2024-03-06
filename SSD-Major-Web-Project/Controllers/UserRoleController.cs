@@ -8,7 +8,7 @@ using SSD_Major_Web_Project.ViewModels;
 
 namespace SSD_Major_Web_Project.Controllers
 {
-    //[Authorize(Roles = "Admin, Manager")]
+    [Authorize(Roles = "Admin, Manager")]
 
     public class UserRoleController : Controller
     {
