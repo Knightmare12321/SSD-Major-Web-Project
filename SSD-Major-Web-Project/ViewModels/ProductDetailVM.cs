@@ -20,7 +20,7 @@ namespace SSD_Major_Web_Project.ViewModels
         [Required]
         public string IsActive { get; set; } = null!;
 
-        public byte[]? ImageByteArray { get; set; }
+        public List<byte[]>? ImageByteArray { get; set; }
 
         public List<String>? Sizes { get; set; }
     }
