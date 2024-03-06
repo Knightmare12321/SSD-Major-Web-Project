@@ -125,7 +125,7 @@
 
                     // Trigger the form submission to the CreateNewOrder action method
                     var form = document.getElementById('CreateNewOrderForm');
-                    form.action = '/Shop/CreateNewOrder?transactionId=' + transactionId + '&amount=' + amount + '&payerName=' + payerName;
+                    form.action = '/Shop/OrderConfirmation?transactionId=' + transactionId + '&amount=' + amount + '&payerName=' + payerName;
                     form.submit();
                 });
             },

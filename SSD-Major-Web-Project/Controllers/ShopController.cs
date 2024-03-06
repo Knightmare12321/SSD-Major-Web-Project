@@ -34,7 +34,10 @@ namespace SSD_Major_Web_Project.Controllers
                 else
                 {
                     //populates the Product(s) include Images property in shopping cart for shopping cart view
-                    List<Product> products = _context.Products.Include(p => p.Images).ToList();
+                    // to save money, only use two items for now
+                    List<Product> products = _context.Products.Include(p => p.Images)
+                                                                .Take(2)
+                                                                .ToList();
 
                     ShoppingCartVM shoppingcartVM = new ShoppingCartVM();
 
@@ -113,9 +116,6 @@ namespace SSD_Major_Web_Project.Controllers
         }
 
 
-
-
-
         // POST: ShopController/CreateNewOrder
         [HttpPost]
         public IActionResult CreateNewOrder(string transactionId, decimal amount, string payerName, CheckoutVM checkoutVM)
@@ -138,18 +138,18 @@ namespace SSD_Major_Web_Project.Controllers
                 ShopRepo _shopRepo = new ShopRepo(_context);
                 orderConfirmationVM.CheckoutVM.Order.OrderStatus = "Pending";
                 string message = _shopRepo.AddOrder(orderConfirmationVM);
-                
+
                 _logger.LogInformation("////////////////////////////");
                 _logger.LogInformation(message);
                 try
                 {
                     // Populate the checkoutVM object with the necessary data
-         
+
                     if (orderConfirmationVM.CheckoutVM.TransactionId != null)
                     {
                         // Change the order status to "Paid" and update the order with the transaction ID
 
-                        
+
 
                         // At this point, the order is already created in the database
 
@@ -160,7 +160,7 @@ namespace SSD_Major_Web_Project.Controllers
                         OrderConfirmationVM orderconfirmationVM = new OrderConfirmationVM();
                         // Populate the orderconfirmationVM with the necessary data
 
-                        return View("CreateNewOrder");
+                        return View("OrderConfirmation");
                     }
                     else
                     {
@@ -175,8 +175,52 @@ namespace SSD_Major_Web_Project.Controllers
                 }
             }
 
-            return View("CreateNewOrder",orderConfirmation);
+            return View("CreateNewOrder", orderConfirmation);
         }
+
+
+        // POST: ShopController/CreateNewOrder
+        [HttpPost]
+        public IActionResult OrderConfirmation(string transactionId, decimal amount, string payerName, CheckoutVM checkoutVM)
+        {
+            // Create an instance of OrderConfirmationVM and populate its properties
+            var orderConfirmation = new OrderConfirmationVM
+            {
+                TransactionId = transactionId,
+                Amount = amount,
+                PayerName = payerName,
+                CheckoutVM = checkoutVM
+            };
+
+            OrderConfirmationVM orderConfirmationVM = new OrderConfirmationVM();
+            orderConfirmationVM.CheckoutVM = checkoutVM;
+
+
+
+            if (orderConfirmationVM.CheckoutVM.TransactionId != null)
+                    {         
+                        // At this point, the order is already created in the database
+                        // Change the order status to "Paid" and update the order with the transaction ID
+
+                        // Compare and get the transaction ID from PayPal, update the order with the transaction ID,
+                        // make a request to PayPal using the transaction ID to get order details from PayPal,
+                        // and compare them with the order details we received in this method
+
+                        OrderConfirmationVM orderconfirmationVM = new OrderConfirmationVM();
+                        // Populate the orderconfirmationVM with the necessary data
+
+                        return View("OrderConfirmation",orderConfirmation);
+                    }
+                    else
+                    {
+                        // Return the Checkout page with the checkout view model again
+                        return View("Checkout", checkoutVM);
+                    }
+                
+              
+            }
+
+       
 
     }
 }
