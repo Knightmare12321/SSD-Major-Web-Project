@@ -86,10 +86,11 @@
 .product-items-container {
     width: 300px;
     height: auto;
+    margin-left: 20px;
 }
 
 .product-thumbnail-wrapper {
-    width: inherit;
+    width: 300px;
     height: 400px;
     border: 1px solid black;
 }
