@@ -14,5 +14,8 @@ namespace SSD_Major_Web_Project.ViewModels
 
         public string TransactionId { get; set; }
 
+        public string Currency { get; set; }
+        public string CurrencySymbol { get; set; }
+
     }
 }

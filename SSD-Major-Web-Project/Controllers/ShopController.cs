@@ -142,13 +142,17 @@ namespace SSD_Major_Web_Project.Controllers
 
             return View(checkoutVMfromShippingContact);
         }
-        
+
+
         // POST: ShopController/ConfirmCheckout
+        // Click on the "Proceed to Payment Page" button at Enter Shipping Contact page, create order to db at this stage
         [HttpPost]
         public IActionResult ProceedPayment(string transactionId, decimal amount, string payerName, CheckoutVM checkoutVM)
         {
+            // Info for proceed paypal payment
+            checkoutVM.ShoppingCart.Currency = "CAD";
+            checkoutVM.ShoppingCart.CurrencySymbol = "$";
 
-           
             // Create an instance of OrderConfirmationVM and populate its properties
             var orderConfirmation = new OrderConfirmationVM
             {
@@ -157,6 +161,8 @@ namespace SSD_Major_Web_Project.Controllers
                 PayerName = payerName,
                 CheckoutVM = checkoutVM
             };
+
+            
 
             OrderConfirmationVM orderConfirmationVM = new OrderConfirmationVM();
             orderConfirmationVM.CheckoutVM = checkoutVM;

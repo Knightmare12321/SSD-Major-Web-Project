@@ -20,17 +20,17 @@
                     <dt class="col-sm-2">
                         @Html.DisplayNameFor(model => model.ShoppingCart.GrandTotal)
                     </dt>
-                    @if (Model?.ShoppingCart != null)
-                    {
-                        @Html.DisplayFor(model => model.ShoppingCart.CurrencySymbol)
+                       @Html.DisplayFor(model => model.ShoppingCart.CurrencySymbol)
 
                         @Model.ShoppingCart.GrandTotal
-                    }
+
 
             </div>
-        </div>
- 
-                        <div id="paypal-button-container"></div>
+    </div>               
+            <form id="RequestOrderConfirmation" asp-action="ProceedPayment" asp-controller="Shop" method="post">
+                <input type="hidden" id="itemPrice" name="itemPrice" value="@Model.ShoppingCart.GrandTotal" />
+                <div id="paypal-button-container"></div>
+            </form>
          
                 </div>
             </div>
