@@ -1,0 +1,29 @@
+﻿@model IEnumerable<SSD_Major_Web_Project.ViewModels.UserVM>
+
+@{
+    ViewData["Title"] = "User Roles";
+}
+<h1>User Roles</h1>
+<p><a asp-action="Create">Assign User Roles</a></p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Email</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Email</td>
+                <td>
+                    @Html.ActionLink(
+                             "View Roles"
+                             , "Detail"
+                             , new { userName = item.Email })
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

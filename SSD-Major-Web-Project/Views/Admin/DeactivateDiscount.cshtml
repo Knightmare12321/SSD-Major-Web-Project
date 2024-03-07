@@ -52,9 +52,8 @@
         </dd>
     </dl>
     <form asp-action="DeactivateDiscount">
-        <input type="hidden" asp-antiforgery="true" />
         <input type="hidden" name="PkDiscountCode" value="@Model.PkDiscountCode" />
         <input type="submit" value="Delete" class="btn btn-danger" /> |
-        <a asp-action="Index">Back to List</a>
+        <a asp-action="AllDiscounts">Back to List</a>
     </form>
 </div>

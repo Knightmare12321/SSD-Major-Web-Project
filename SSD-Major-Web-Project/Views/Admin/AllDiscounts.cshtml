@@ -29,7 +29,7 @@
                     <td> @Html.DisplayFor(modelItem => item.PkDiscountCode)</td>
                     <td> @Html.DisplayFor(modelItem => item.DiscountType)</td>
                     <td> @Html.DisplayFor(modelItem => item.DiscountValue)</td>
-                    <td> @Html.DisplayName(item.IsActive == "1" ? "Active" : "Inactive")</td>
+                    <td> @Html.DisplayName(item.IsActive == true? "Active" : "Inactive")</td>
                     <td>
                         <a asp-action="DeactivateDiscount" asp-route-discountCode="@item.PkDiscountCode">
                             <button class="btn btn-danger">Deactivate</button>

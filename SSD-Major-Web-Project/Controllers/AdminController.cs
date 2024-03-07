@@ -11,6 +11,7 @@ using System.Text;
 using System.Text.Encodings.Web;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using System.Drawing.Printing;
 
 
 namespace SSD_Major_Web_Project.Controllers
@@ -84,22 +85,53 @@ namespace SSD_Major_Web_Project.Controllers
             return View(vm);
         }
 
-        public IActionResult AdminOrder()
+        public IActionResult DeactivateProduct(int productId)
+        {
+            AdminRepo adminRepo = new AdminRepo(_context);
+            AdminProductVM vm = adminRepo.GetProductById(productId);
+            return View(vm);
+        }
+
+        [HttpPost]
+        public IActionResult DeactivateProduct(AdminProductVM vm)
+        {
+            AdminRepo adminRepo = new AdminRepo(_context);
+            string message = adminRepo.DeactivateProduct(vm.PkProductId);
+            return RedirectToAction("AllProducts", new { message = message });
+        }
+
+        public IActionResult AdminOrder(int pageIndex = 1, int pageSize = 10)
         {
             AdminRepo adminRepo = new AdminRepo(_context);
             ViewData["OrderStatus"] = "Paid";
 
             //show the open orders as default on the page
-            List<OrderVM> orders = adminRepo.GetFilteredOrders("Paid");
-            return View(orders);
+            List<OrderVM> orders = adminRepo.GetFilteredOrders("Paid").ToList();
+            var count = orders.Count();
+            var items = orders.Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList();
+            var paginatedOrders = new PaginatedList<OrderVM>(items
+                                                           , count
+                                                           , pageIndex
+                                                           , pageSize);
+            return View(paginatedOrders);
         }
 
-        public IActionResult GetFilteredOrders(string orderStatus = "", string searchTerm = "")
+        public IActionResult GetFilteredOrders(string orderStatus = "", string searchTerm = "", int pageIndex = 1, int pageSize = 10)
         {
             ViewData["OrderStatus"] = orderStatus;
             AdminRepo adminRepo = new AdminRepo(_context);
-            List<OrderVM> orders = adminRepo.GetFilteredOrders(orderStatus, searchTerm);
-            return PartialView("_OrderSummaryPartial", orders);
+            List<OrderVM> orders = adminRepo.GetFilteredOrders(orderStatus, searchTerm).ToList();
+
+            //determine which items to show based on current page index
+            var count = orders.Count();
+            var items = orders.Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList();
+            var paginatedOrders = new PaginatedList<OrderVM>(items
+                                                            , count
+                                                            , pageIndex
+                                                            , pageSize);
+
+            return PartialView("_OrderSummaryPartial", paginatedOrders);
+
         }
 
         [HttpPost]
@@ -243,16 +275,7 @@ namespace SSD_Major_Web_Project.Controllers
         public IActionResult DeactivateDiscount(string discountCode)
         {
             AdminRepo adminRepo = new AdminRepo(_context);
-            Discount discount = adminRepo.GetDiscountById(discountCode);
-            DiscountVM vm = new DiscountVM
-            {
-                PkDiscountCode = discountCode,
-                DiscountValue = discount.DiscountValue,
-                DiscountType = discount.DiscountType,
-                StartDate = discount.StartDate,
-                EndDate = discount.EndDate,
-                IsActive = discount.IsActive
-            };
+            DiscountVM vm = adminRepo.GetDiscountById(discountCode);
             return View(vm);
         }
 
