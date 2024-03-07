@@ -174,8 +174,6 @@ namespace SSD_Major_Web_Project.Controllers
                 orderConfirmationVM.CheckoutVM.Order.OrderStatus = "Pending";
                 string message = _shopRepo.AddOrder(orderConfirmationVM);
 
-                _logger.LogInformation("////////////////////////////");
-                _logger.LogInformation(message);
                 try
                 {
                     // Populate the checkoutVM object with the necessary data
@@ -228,8 +226,6 @@ namespace SSD_Major_Web_Project.Controllers
 
             OrderConfirmationVM orderConfirmationVM = new OrderConfirmationVM();
             orderConfirmationVM.CheckoutVM = checkoutVM;
-
-
 
             if (orderConfirmationVM.CheckoutVM.TransactionId != null)
                     {         

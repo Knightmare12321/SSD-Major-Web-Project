@@ -63,7 +63,7 @@
                     var payerName = encodeURIComponent(details.payer.name.given_name);
 
                     // Trigger the form submission to the CreateNewOrder action method
-                    var form = document.getElementById('CreateNewOrderForm');
+                var form = document.getElementById('RequestOrderConfirmation');
                     form.action = '/Shop/OrderConfirmation?transactionId=' + transactionId + '&amount=' + amount + '&payerName=' + payerName;
                     form.submit();
                 });
