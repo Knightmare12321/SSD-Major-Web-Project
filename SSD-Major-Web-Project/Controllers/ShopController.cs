@@ -70,7 +70,7 @@ namespace SSD_Major_Web_Project.Controllers
 
 
 
-        // GET: ShopController/Checkout
+        // POST: ShopController/Checkout
         // Click on the "Proceed to checkout" button at shopping cart page, pass the shopping cart data to ConfirmCheckout view
         [HttpPost]
         public IActionResult Checkout(ShoppingCartVM shoppingcartVM)
@@ -115,26 +115,34 @@ namespace SSD_Major_Web_Project.Controllers
             return View("ConfirmCheckout", checkoutVM);
         }
 
-        //// POST: ShopController/ConfirmCheckout
-        //[HttpPost]
-        //public IActionResult ConfirmCheckout(CheckoutVM checkoutVM)
-        //{
-        //    // Initialize the CheckoutVM model
-        //    var checkoutVMfromShippingContact = new CheckoutVM();
-        //    checkoutVMfromShippingContact = checkoutVM;
+        // GET: ShopController/ConfirmCheckout
+        public IActionResult ConfirmCheckout()
+        {
+            // Retrieve the CheckoutVM object from TempData or session
+            CheckoutVM checkoutVM = TempData["CheckoutVM"] as CheckoutVM;
 
-        //    // Populate the ShoppingCart object
-        //    checkoutVMfromShippingContact.ShoppingCart = new ShoppingCartVM
-        //    {
-        //        CurrencySymbol = "$", // Set the currency symbol
-        //        GrandTotal = 171 // Set the grand total
-        //                         // Set other properties of the ShoppingCart object as needed
-        //    };
+            // Calculate the subtotal, shipping fee, taxes, and grand total
+            decimal subtotal = checkoutVM.ShoppingCart.Subtotal;
+            decimal shippingFee = checkoutVM.ShoppingCart.ShippingFee;
+            decimal taxes = checkoutVM.ShoppingCart.Taxes;
+            decimal grandTotal = checkoutVM.ShoppingCart.GrandTotal;
 
-        //    // Pass the checkoutVM model to the ProceedPayment view
-        //    return View("ProceedPayment", checkoutVMfromShippingContact);
-        //}
+            ShoppingCartVM shoppingCart = new ShoppingCartVM()
+            {
+                Subtotal = subtotal,
+                ShippingFee = shippingFee,
+                Taxes = taxes,
+                GrandTotal = grandTotal
+            };
 
+            CheckoutVM checkoutVMfromShippingContact = new CheckoutVM()
+            {
+                ShoppingCart = shoppingCart
+            };
+
+            return View(checkoutVMfromShippingContact);
+        }
+        
         // POST: ShopController/ConfirmCheckout
         [HttpPost]
         public IActionResult ProceedPayment(string transactionId, decimal amount, string payerName, CheckoutVM checkoutVM)
