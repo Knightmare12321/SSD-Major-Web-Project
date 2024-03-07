@@ -11,10 +11,10 @@
 
 <div class="checkout-container">
     <div class="row">
-        <h2>checkout</h2>
+        <h2>Proceed to payment</h2>
         <div class="col-md-4">
             <div class="order-total">
-                <h3>Confirm Payment Amount</h3>
+       @*          <h3>Proceed to payment</h3> *@
                 <div class="order-total-details">
 
                     <dt class="col-sm-2">
@@ -29,6 +29,32 @@
     </div>               
             <form id="RequestOrderConfirmation" asp-action="ProceedPayment" asp-controller="Shop" method="post">
                 <input type="hidden" id="itemPrice" name="itemPrice" value="@Model.ShoppingCart.GrandTotal" />
+                <input type="hidden" name="UserId" value="@Model.DeliveryContactEmail" />
+                @foreach (var item in Model.ShoppingCart.Products)
+                {
+                    <input type="hidden" name="Products" value="@item" />
+                }
+                <input type="hidden" name="ShoppingCart.Subtotal" value="@Model.ShoppingCart.Subtotal" />
+                <input type="hidden" name="ShoppingCart.ShippingFee" value="@Model.ShoppingCart.ShippingFee" />
+                <input type="hidden" name="ShoppingCart.Taxes" value="@Model.ShoppingCart.Taxes" />
+                <input type="hidden" name="ShoppingCart.GrandTotal" value="@Model.ShoppingCart.GrandTotal" />
+                <input type="hidden" name="ShoppingCart.CurrencySymbol" value="@Model.ShoppingCart.CurrencySymbol" />
+                <input type="hidden" name="Order.Contact.FirstName" value="@Model.Order.Contact.FirstName" />
+                <input type="hidden" name="Order.Contact.LastName" value="@Model.Order.Contact.LastName" />
+                <input type="hidden" name="Order.Contact.Address" value="@Model.Order.Contact.Address" />
+                <input type="hidden" name="Order.Contact.Address2" value="@Model.Order.Contact.Address2" />
+                    
+                <input type="hidden" name="Order.Contact.City" value="@Model.Order.Contact.City" />
+                <input type="hidden" name="Order.Contact.Province" value="@Model.Order.Contact.Province" />
+                <input type="hidden" name="Order.Contact.PostalCode" value="@Model.Order.Contact.PostalCode" />
+                <input type="hidden" name="Order.Contact.Country" value="@Model.Order.Contact.Country" />
+                <input type="hidden" name="Order.Contact.PhoneNumber" value="@Model.Order.Contact.PhoneNumber" />
+                <input type="hidden" name="DeliveryContactEmail" value="@Model.DeliveryContactEmail" />
+                <input type="hidden" name="Order.OrderStatus" value="Pending" />
+                <input type="hidden" name="Order.PaymentStatus" value="Paid" />
+                <input type="hidden" name="Order.OrderDate" value="@DateTime.Now" />
+                <input type="hidden" name="Order.DeliveryDate" value="To Be Confirm" />
+                <input type="hidden" name="Order.DeliveryStatus" value="Pwnding" />
                 <div id="paypal-button-container"></div>
             </form>
          

@@ -115,33 +115,36 @@ namespace SSD_Major_Web_Project.Controllers
             return View("ConfirmCheckout", checkoutVM);
         }
 
-        // GET: ShopController/ConfirmCheckout
-        public IActionResult ConfirmCheckout()
-        {
-            // Retrieve the CheckoutVM object from TempData or session
-            CheckoutVM checkoutVM = TempData["CheckoutVM"] as CheckoutVM;
+        //// GET: ShopController/ConfirmCheckout
+        //public IActionResult ConfirmCheckout()
+        //{
+        //    // Retrieve the CheckoutVM object from TempData or session
+        //    CheckoutVM checkoutVM = TempData["CheckoutVM"] as CheckoutVM;
 
-            // Calculate the subtotal, shipping fee, taxes, and grand total
-            decimal subtotal = checkoutVM.ShoppingCart.Subtotal;
-            decimal shippingFee = checkoutVM.ShoppingCart.ShippingFee;
-            decimal taxes = checkoutVM.ShoppingCart.Taxes;
-            decimal grandTotal = checkoutVM.ShoppingCart.GrandTotal;
+        //    // Calculate the subtotal, shipping fee, taxes, and grand total
+        //    decimal subtotal = checkoutVM.ShoppingCart.Subtotal;
+        //    decimal shippingFee = checkoutVM.ShoppingCart.ShippingFee;
+        //    decimal taxes = checkoutVM.ShoppingCart.Taxes;
+        //    decimal grandTotal = checkoutVM.ShoppingCart.GrandTotal;
 
-            ShoppingCartVM shoppingCart = new ShoppingCartVM()
-            {
-                Subtotal = subtotal,
-                ShippingFee = shippingFee,
-                Taxes = taxes,
-                GrandTotal = grandTotal
-            };
+        //    ShoppingCartVM shoppingCart = new ShoppingCartVM()
+        //    {
+        //        Subtotal = subtotal,
+        //        ShippingFee = shippingFee,
+        //        Taxes = taxes,
+        //        GrandTotal = grandTotal
+        //    };
 
-            CheckoutVM checkoutVMfromShippingContact = new CheckoutVM()
-            {
-                ShoppingCart = shoppingCart
-            };
 
-            return View(checkoutVMfromShippingContact);
-        }
+        //    CheckoutVM checkoutVMfromShippingContact = new CheckoutVM()
+        //    {
+        //        ShoppingCart = shoppingCart
+        //    };
+
+        //    return View(checkoutVMfromShippingContact);
+        //}
+
+
 
 
         // POST: ShopController/ConfirmCheckout
@@ -153,6 +156,9 @@ namespace SSD_Major_Web_Project.Controllers
             checkoutVM.ShoppingCart.Currency = "CAD";
             checkoutVM.ShoppingCart.CurrencySymbol = "$";
 
+
+       
+
             // Create an instance of OrderConfirmationVM and populate its properties
             var orderConfirmation = new OrderConfirmationVM
             {
@@ -162,8 +168,7 @@ namespace SSD_Major_Web_Project.Controllers
                 CheckoutVM = checkoutVM
             };
 
-            
-
+     
             OrderConfirmationVM orderConfirmationVM = new OrderConfirmationVM();
             orderConfirmationVM.CheckoutVM = checkoutVM;
 

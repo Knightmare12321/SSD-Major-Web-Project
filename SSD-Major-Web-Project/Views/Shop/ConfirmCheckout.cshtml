@@ -11,7 +11,7 @@
 
 <div class="checkout-container">
     <div class="row">
-        <h2>checkout</h2>
+        <h2>CHECKOUT</h2>
         <div class="col-md-4">
             <div class="shipping-address-title">
                 <h3>Shipping Address</h3>
@@ -98,6 +98,20 @@
                     <input type="hidden" name="ShoppingCart.ShippingFee" value="@Model.ShoppingCart.ShippingFee" />
                     <input type="hidden" name="ShoppingCart.Taxes" value="@Model.ShoppingCart.Taxes" />
                     <input type="hidden" name="ShoppingCart.GrandTotal" value="@Model.ShoppingCart.GrandTotal" />
+
+                    <input type="hidden" name="ShoppingCart.CurrencySymbol" value="@Model.ShoppingCart.CurrencySymbol" />
+                    <input type="hidden" name="Order.Contact.FirstName" value="@Model.Order.Contact.FirstName" />
+                    <input type="hidden" name="Order.Contact.LastName" value="@Model.Order.Contact.LastName" />
+                    <input type="hidden" name="Order.Contact.Address" value="@Model.Order.Contact.Address" />
+                    <input type="hidden" name="Order.Contact.Address2" value="@Model.Order.Contact.Address2" />
+                    <input type="hidden" name="Order.Contact.City" value="@Model.Order.Contact.City" />
+                    <input type="hidden" name="Order.Contact.Province" value="@Model.Order.Contact.Province" />
+                    <input type="hidden" name="Order.Contact.PostalCode" value="@Model.Order.Contact.PostalCode" />
+                    <input type="hidden" name="Order.Contact.Country" value="@Model.Order.Contact.Country" />
+                    <input type="hidden" name="Order.Contact.PhoneNumber" value="@Model.Order.Contact.PhoneNumber" />
+                    <input type="hidden" name="DeliveryContactEmail" value="@Model.DeliveryContactEmail" />
+
+
                     <button type="submit" class="btn btn-primary">Proceed to Payment Page</button>
                     </form>
                 </div>

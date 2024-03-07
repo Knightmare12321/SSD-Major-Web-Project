@@ -151,10 +151,12 @@ main {
     gap: 10px;
     margin-bottom: 10px;
     padding: 10px;
-    border: 1px solid lightgray;
-    border-radius: 5px;
+    border-bottom: 1px solid lightgray;
 }
 
+    .shopping-cart .product:first-of-type {
+        border-top: 1px solid lightgray;
+    }
 
 /*USER CONTROLLER*/
 /*Sign in Page*/
