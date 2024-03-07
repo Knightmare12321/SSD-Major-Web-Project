@@ -30,10 +30,7 @@
             <form id="RequestOrderConfirmation" asp-action="ProceedPayment" asp-controller="Shop" method="post">
                 <input type="hidden" id="itemPrice" name="itemPrice" value="@Model.ShoppingCart.GrandTotal" />
                 <input type="hidden" name="UserId" value="@Model.DeliveryContactEmail" />
-                @foreach (var item in Model.ShoppingCart.Products)
-                {
-                    <input type="hidden" name="Products" value="@item" />
-                }
+            
                 <input type="hidden" name="ShoppingCart.Subtotal" value="@Model.ShoppingCart.Subtotal" />
                 <input type="hidden" name="ShoppingCart.ShippingFee" value="@Model.ShoppingCart.ShippingFee" />
                 <input type="hidden" name="ShoppingCart.Taxes" value="@Model.ShoppingCart.Taxes" />

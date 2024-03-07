@@ -115,34 +115,34 @@ namespace SSD_Major_Web_Project.Controllers
             return View("ConfirmCheckout", checkoutVM);
         }
 
-        //// GET: ShopController/ConfirmCheckout
-        //public IActionResult ConfirmCheckout()
-        //{
-        //    // Retrieve the CheckoutVM object from TempData or session
-        //    CheckoutVM checkoutVM = TempData["CheckoutVM"] as CheckoutVM;
+        // GET: ShopController/ConfirmCheckout
+        public IActionResult ConfirmCheckout()
+        {
+            // Retrieve the CheckoutVM object from TempData or session
+            CheckoutVM checkoutVM = TempData["CheckoutVM"] as CheckoutVM;
 
-        //    // Calculate the subtotal, shipping fee, taxes, and grand total
-        //    decimal subtotal = checkoutVM.ShoppingCart.Subtotal;
-        //    decimal shippingFee = checkoutVM.ShoppingCart.ShippingFee;
-        //    decimal taxes = checkoutVM.ShoppingCart.Taxes;
-        //    decimal grandTotal = checkoutVM.ShoppingCart.GrandTotal;
+            // Calculate the subtotal, shipping fee, taxes, and grand total
+            decimal subtotal = checkoutVM.ShoppingCart.Subtotal;
+            decimal shippingFee = checkoutVM.ShoppingCart.ShippingFee;
+            decimal taxes = checkoutVM.ShoppingCart.Taxes;
+            decimal grandTotal = checkoutVM.ShoppingCart.GrandTotal;
 
-        //    ShoppingCartVM shoppingCart = new ShoppingCartVM()
-        //    {
-        //        Subtotal = subtotal,
-        //        ShippingFee = shippingFee,
-        //        Taxes = taxes,
-        //        GrandTotal = grandTotal
-        //    };
+            ShoppingCartVM shoppingCart = new ShoppingCartVM()
+            {
+                Subtotal = subtotal,
+                ShippingFee = shippingFee,
+                Taxes = taxes,
+                GrandTotal = grandTotal
+            };
 
 
-        //    CheckoutVM checkoutVMfromShippingContact = new CheckoutVM()
-        //    {
-        //        ShoppingCart = shoppingCart
-        //    };
+            CheckoutVM checkoutVMfromShippingContact = new CheckoutVM()
+            {
+                ShoppingCart = shoppingCart
+            };
 
-        //    return View(checkoutVMfromShippingContact);
-        //}
+            return View(checkoutVMfromShippingContact);
+        }
 
 
 
@@ -152,13 +152,15 @@ namespace SSD_Major_Web_Project.Controllers
         [HttpPost]
         public IActionResult ProceedPayment(string transactionId, decimal amount, string payerName, CheckoutVM checkoutVM)
         {
-            // Info for proceed paypal payment
+          
+
+
+            // Info for proceed PayPal payment
             checkoutVM.ShoppingCart.Currency = "CAD";
             checkoutVM.ShoppingCart.CurrencySymbol = "$";
 
 
-       
-
+           
             // Create an instance of OrderConfirmationVM and populate its properties
             var orderConfirmation = new OrderConfirmationVM
             {
@@ -168,32 +170,29 @@ namespace SSD_Major_Web_Project.Controllers
                 CheckoutVM = checkoutVM
             };
 
-     
             OrderConfirmationVM orderConfirmationVM = new OrderConfirmationVM();
+
             orderConfirmationVM.CheckoutVM = checkoutVM;
+
 
 
             if (ModelState.IsValid)
             {
-                ShopRepo _shopRepo = new ShopRepo(_context);
-                orderConfirmationVM.CheckoutVM.Order.OrderStatus = "Pending";
-                string message = _shopRepo.AddOrder(orderConfirmationVM);
-
                 try
                 {
-                    // Populate the checkoutVM object with the necessary data
+                    ShopRepo _shopRepo = new ShopRepo(_context);
+                    string message = _shopRepo.AddOrder(orderConfirmation);
 
-                    if (orderConfirmationVM.CheckoutVM.TransactionId != null)
+                    // Log the order for tracking purposes
+                    _logger.LogInformation("New order created with transaction ID: {TransactionId}", transactionId);
+
+                    if (!string.IsNullOrEmpty(transactionId))
                     {
                         // Change the order status to "Paid" and update the order with the transaction ID
-
-
+                        checkoutVM.Order.OrderStatus = "Paid";
+                        checkoutVM.TransactionId = transactionId;
 
                         // At this point, the order is already created in the database
-
-                        // Compare and get the transaction ID from PayPal, update the order with the transaction ID,
-                        // make a request to PayPal using the transaction ID to get order details from PayPal,
-                        // and compare them with the order details we received in this method
 
                         OrderConfirmationVM orderconfirmationVM = new OrderConfirmationVM();
                         // Populate the orderconfirmationVM with the necessary data
@@ -215,7 +214,6 @@ namespace SSD_Major_Web_Project.Controllers
 
             return View("ProceedPayment", checkoutVM);
         }
-
 
         // GET: ShopController//orderConfirmation
         public IActionResult OrderConfirmation(string transactionId, decimal amount, string payerName, CheckoutVM checkoutVM)
