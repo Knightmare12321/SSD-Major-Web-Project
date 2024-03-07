@@ -115,24 +115,25 @@ namespace SSD_Major_Web_Project.Controllers
             return View("ConfirmCheckout", checkoutVM);
         }
 
-        // GET: ShopController/ConfirmCheckout
+        //// POST: ShopController/ConfirmCheckout
+        //[HttpPost]
+        //public IActionResult ConfirmCheckout(CheckoutVM checkoutVM)
+        //{
+        //    // Initialize the CheckoutVM model
+        //    var checkoutVMfromShippingContact = new CheckoutVM();
+        //    checkoutVMfromShippingContact = checkoutVM;
 
-        public IActionResult ConfirmCheckout()
-        {
-            // Initialize the CheckoutVM model
-            var checkoutVM = new CheckoutVM();
+        //    // Populate the ShoppingCart object
+        //    checkoutVMfromShippingContact.ShoppingCart = new ShoppingCartVM
+        //    {
+        //        CurrencySymbol = "$", // Set the currency symbol
+        //        GrandTotal = 171 // Set the grand total
+        //                         // Set other properties of the ShoppingCart object as needed
+        //    };
 
-            // Populate the ShoppingCart object
-            checkoutVM.ShoppingCart = new ShoppingCartVM
-            {
-                CurrencySymbol = "$", // Set the currency symbol
-                GrandTotal = 171 // Set the grand total
-                                 // Set other properties of the ShoppingCart object as needed
-            };
-
-            // Pass the checkoutVM model to the ProceedPayment view
-            return View("ProceedPayment", checkoutVM);
-        }
+        //    // Pass the checkoutVM model to the ProceedPayment view
+        //    return View("ProceedPayment", checkoutVMfromShippingContact);
+        //}
 
         // POST: ShopController/ConfirmCheckout
         [HttpPost]
