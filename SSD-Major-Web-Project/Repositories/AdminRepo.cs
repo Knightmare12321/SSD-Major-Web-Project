@@ -20,9 +20,9 @@ namespace SSD_Major_Web_Project.Repositories
             _context = context;
         }
 
-        public IQueryable<AdminProductVM> GetAllProducts()
+        public IQueryable<AdminProductVM> GetAllProducts(string searchTerm)
         {
-            return _context.Products
+            var query = _context.Products
                         .Select(p => new AdminProductVM
                         {
                             PkProductId = p.PkProductId,
@@ -37,14 +37,16 @@ namespace SSD_Major_Web_Project.Repositories
                                         .Where(i => i.FkProductId == p.PkProductId)
                                         .ToList()
                         });
-
+            //filter query by search term
+            query = query.Where(p => p.Name.Contains(searchTerm));
+            return query;
         }
 
-        public AdminProductVM GetProductById(int productId)
+        public Product GetProductById(int productId)
         {
             return _context.Products
                         .Where(p => p.PkProductId == productId)
-                        .Select(p => new AdminProductVM
+                        .Select(p => new Product
                         {
                             PkProductId = p.PkProductId,
                             Name = p.Name,
@@ -61,31 +63,13 @@ namespace SSD_Major_Web_Project.Repositories
                         .FirstOrDefault();
         }
 
-        public string DeactivateProduct(int productId)
-        {
-            try
-            {
-                Product product = _context.Products
-                                    .Where(p => p.PkProductId == productId)
-                                    .FirstOrDefault();
-
-                product.IsActive = false;
-                //_context.SaveChanges();
-                return "Product successfully deactivated";
-            }
-            catch (Exception ex)
-            {
-                return "An unexpected error occured while deactivating the discount";
-            }
-
-        }
 
         public async Task<string> AddProduct(string name, decimal price, string description, bool isActive, List<IFormFile> imageFiles, List<string> sizes)
         {
 
             try
             {
-                //add image to db
+                //add product to db
                 List<ProductSku> productSkus = new List<ProductSku>();
                 for (int i = 0; i < sizes.Count; i++)
                 {
@@ -119,6 +103,83 @@ namespace SSD_Major_Web_Project.Repositories
             {
                 return "An unexpected error occured while creating the new product";
             }
+        }
+
+        public async Task<string> EditProduct(int productId, string name, decimal price, string description, bool isActive, List<IFormFile> imageFiles, List<string> sizes)
+        {
+            try
+            {
+                Product product = _context.Products
+                               .Where(p => p.PkProductId == productId)
+                               .FirstOrDefault();
+
+                //edit the product in db
+                product.Name = name;
+                product.Price = price;
+                product.Description = description;
+                product.IsActive = isActive;
+
+                //delete all previous ProductSkus in db and create new ones
+                foreach (ProductSku psku in product.ProductSkus)
+                {
+                    _context.ProductSkus.Remove(psku);
+                }
+
+                List<ProductSku> productSkus = new List<ProductSku>();
+                for (int i = 0; i < sizes.Count; i++)
+                {
+                    productSkus.Add(new ProductSku { Size = sizes[i] });
+                }
+                product.ProductSkus = productSkus;
+
+                //delete all previous images in db and create new ones
+                foreach (Image img in product.Images)
+                {
+                    _context.Images.Remove(img);
+                }
+
+                //convert images to byte and add to database
+                byte[] imageData;
+                foreach (IFormFile imageFile in imageFiles)
+                {
+                    //convert image file data to byte[]
+                    using (var memoryStream = new MemoryStream())
+                    {
+                        await imageFile.CopyToAsync(memoryStream);
+                        imageData = memoryStream.ToArray();
+                    }
+
+                    //add image to db
+                    Image image = new Image { FileName = imageFile.FileName, Data = imageData, AltText = "product photo ", FkProductId = product.PkProductId };
+                    _context.Images.Add(image);
+                }
+
+                _context.SaveChanges();
+                return "";
+            }
+            catch (Exception ex)
+            {
+                return "An unexpected error occured while creating the new product";
+            }
+        }
+
+        public string DeactivateProduct(int productId)
+        {
+            try
+            {
+                Product product = _context.Products
+                                    .Where(p => p.PkProductId == productId)
+                                    .FirstOrDefault();
+
+                product.IsActive = false;
+                //_context.SaveChanges();
+                return "Product successfully deactivated";
+            }
+            catch (Exception ex)
+            {
+                return "An unexpected error occured while deactivating the discount";
+            }
+
         }
 
         public IQueryable<OrderVM> GetFilteredOrders(string orderStatus = "", string searchTerm = "")
@@ -188,26 +249,14 @@ namespace SSD_Major_Web_Project.Repositories
             });
 
             //filter based on search term
-            query.Where(o => o.OrderId.ToString().Contains(searchTerm) ||
+            query = query.Where(o => o.OrderId.ToString().Contains(searchTerm) ||
                         o.OrderDate.ToString().Contains(searchTerm) ||
                         o.BuyerNote.Contains(searchTerm) ||
-                        o.OrderDetails.Any(od => od.Quantity.ToString().Contains(searchTerm) ||
-                                                 od.UnitPrice.ToString().Contains(searchTerm) ||
-                                                 od.FkSku.FkProduct.Name.ToString().Contains(searchTerm)
+                        o.OrderDetails.Any(od => od.FkSku.FkProduct.Name.ToString().Contains(searchTerm)
                                         ) ||
                         o.Contact.FirstName.Contains(searchTerm) ||
                         o.Contact.LastName.Contains(searchTerm) ||
-                        o.Contact.Address.Contains(searchTerm) ||
-                        o.Contact.Address2.Contains(searchTerm) ||
-                        o.Contact.City.Contains(searchTerm) ||
-                        o.Contact.LastName.Contains(searchTerm) ||
-                        o.Contact.Province.Contains(searchTerm) ||
-                        o.Contact.Country.Contains(searchTerm) ||
-                        o.Contact.PostalCode.Contains(searchTerm) ||
-                        o.Contact.PhoneNumber.Contains(searchTerm) ||
-                        o.Discount.PkDiscountCode.ToString().Contains(searchTerm) ||
-                        o.Discount.DiscountValue.ToString().Contains(searchTerm) ||
-                        o.OrderTotal.ToString().Contains(searchTerm)
+                        o.Discount.PkDiscountCode.ToString().Contains(searchTerm)
                         );
 
             //apply discount to orderTotal of each order by creating a new query

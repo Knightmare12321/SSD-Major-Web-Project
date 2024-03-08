@@ -9,6 +9,8 @@ public partial class Review
 
     public int FkProductId { get; set; }
 
+    public DateOnly PkReviewDate { get; set; }
+
     public int Rating { get; set; }
 
     public string? Comment { get; set; }

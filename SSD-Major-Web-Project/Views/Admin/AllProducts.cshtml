@@ -1,12 +1,17 @@
-﻿@model List<SSD_Major_Web_Project.ViewModels.AdminProductVM>
+﻿@model PaginatedList<SSD_Major_Web_Project.ViewModels.AdminProductVM>
 
 @{
     ViewData["Title"] = "AllProducts";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div id="discount-list" class="table-responsive">
+<div id="product-list" class="table-responsive">
     <p class="message">@ViewBag.Message</p>
+    <form asp-action="AllProducts" method="get">
+        <input id="search-term" name="searchTerm" value="@ViewBag.SearchTerm" placeholder="search product name" />
+        <input name="pageIndex" value="@Model.PageIndex" hidden />
+        <button class="btn btn-secondary">Filter</button>
+    </form>
     <button class="btn btn-primary" onclick="location.href='@Url.Action("CreateProduct","Admin")'">Add Listing</button>
     <table class="table transaction-table">
         <thead>
@@ -16,6 +21,7 @@
                 <th>Price</th>
                 <th>Status</th>
                 <th></th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
@@ -23,10 +29,15 @@
             {
                 <tr>
                     <td> @Html.DisplayFor(modelItem => item.PkProductId)</td>
-                    <td> @Html.DisplayFor(modelItem => item.Name)</td>
-                    <td> @Html.DisplayFor(modelItem => item.Price)</td>
-                    <td> @Html.DisplayName(item.IsActive == true ? "Active" : "Inactive")</td>
-                    <td>
+                    <td class="name"> @Html.DisplayFor(modelItem => item.Name)</td>
+                    <td class="tight"> $@item.Price</td>
+                    <td class="tight"> @Html.DisplayName(item.IsActive == true ? "Active" : "Inactive")</td>
+                    <td class="tight">
+                        <a asp-action="EditProduct" asp-route-productId="@item.PkProductId">
+                            <button class="btn btn-secondary">Edit</button>
+                        </a>
+                    </td>
+                    <td class="tight">
                         <a asp-action="DeactivateProduct" asp-route-productId="@item.PkProductId">
                             <button class="btn btn-danger">Deactivate</button>
                         </a>
@@ -36,3 +47,35 @@
         </tbody>
     </table>
 </div>
+<nav id="all-products-pagination">
+    <ul class="pagination">
+        <li class="page-item @(Model.HasPreviousPage ? "" : "disabled")">
+            <a class="page-link"
+               href="@Url.Action("AllProducts", new { pageIndex = Model.PageIndex - 1 })">
+                Previous
+            </a>
+        </li>
+        <li class="page-item @(Model.HasNextPage ? "" : "disabled")">
+            <a class="page-link"
+               href="@Url.Action("AllProducts", new { pageIndex = Model.PageIndex + 1 })">
+                Next
+            </a>
+        </li>
+    </ul>
+</nav>
+
+<script>
+    const getFilteredAndPaginatedProducts = (pageIndex) => {
+        const searchTerm = $("#search-term").val();
+        const url = '@Url.Action("AllProducts", "Admin")';
+        $.ajax({
+            type: "GET",
+            url: url,
+            data: { "searchTerm": searchTerm, "pageIndex": pageIndex },
+            success: function (data) {
+                console.log('data: ', data);
+                $("#rendered-content").innerHTML = data;
+            }
+        });
+    }
+</script>                       
