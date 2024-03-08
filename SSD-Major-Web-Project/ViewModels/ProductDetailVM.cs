@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using SSD_Major_Web_Project.Models;
+using System.ComponentModel.DataAnnotations;
 
 namespace SSD_Major_Web_Project.ViewModels
 {
@@ -23,5 +24,7 @@ namespace SSD_Major_Web_Project.ViewModels
         public List<byte[]>? ImageByteArray { get; set; }
 
         public List<String>? Sizes { get; set; }
+
+        public List<Review> Reviews { get; set; }
     }
 }

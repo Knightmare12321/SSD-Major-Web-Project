@@ -2,6 +2,7 @@
 
 namespace SSD_Major_Web_Project.ViewModels
 {
+    // Will Delete This Class
     public class ProductDetailWithReviewVM
     {
         public ProductDetailVM _productDetailVM;
