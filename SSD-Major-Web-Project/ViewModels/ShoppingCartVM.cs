@@ -9,7 +9,7 @@ namespace SSD_Major_Web_Project.ViewModels
         // nullable UserId
         public string? UserId { get; set; }
         //public List<Product> Products { get; set; }
-        public List<ShoppingCartItem> ShoppingCatItems { get; set; }
+        public List<ShoppingCartItem> ShoppingCartItems { get; set; }
         public List<Product> Products { get; set; }
         public string? CouponCode { get; set; }
         [DisplayFormat(DataFormatString = "{0:C}")]

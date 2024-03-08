@@ -34,21 +34,19 @@ namespace SSD_Major_Web_Project.Controllers
                 }
                 else
                 {
-                    //productIdsFromDb list contains the ProductId values associated with the provided SkuIds from the database.
 
-                    var favoriteCookie = Request.Cookies["favorite"];
-                    List<int> IDList = JsonConvert.DeserializeObject<List<int>>(favoriteCookie);
+                    var shoppingCartCookie = Request.Cookies["cart"];
+                    List<int> IDList = JsonConvert.DeserializeObject<List<int>>(shoppingCartCookie);
 
-                    // conssole log IDList
-                    Console.WriteLine("///////////////////////////////////");
-                    Console.WriteLine(IDList);
 
-                    List<ShoppingCartItem> shoppingcartItems = new List<ShoppingCartItem>
+
+                    List<ShoppingCartItem> shoppingcartItems = new List<ShoppingCartItem>();
+                    for (int i = 0; i < IDList.Count; i++)
                     {
-                        new ShoppingCartItem { SkuId = 1, Quantity = 2 },
-                        new ShoppingCartItem { SkuId = 14, Quantity = 3 }
-                    };
+                        shoppingcartItems.Add(new ShoppingCartItem { SkuId = IDList[i], Quantity = 1 });
+                    }
 
+                    //productIdsFromDb list contains the ProductId values associated with the provided SkuIds from the database.
                     List<int> skuIds = shoppingcartItems.Select(s => s.SkuId).ToList();
 
                     List<ProductSku> productSkus = _context.ProductSkus
