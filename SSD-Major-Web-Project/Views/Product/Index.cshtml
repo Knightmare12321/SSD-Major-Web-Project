@@ -5,7 +5,7 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div class="product-wrapper">
+<div class="product-page-wrapper">
 
     <div class="product-title"> MEN'S Clothes</div>
 
@@ -21,48 +21,26 @@
     </div>
 
     <div class="product-container">
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>
-                        @Html.DisplayNameFor(model => model.Name)
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.Price)
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.Description)
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.IsActive)
-                    </th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody>
                 @foreach (var item in Model)
                 {
-                    <tr>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Name)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Price)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Description)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.IsActive)
-                        </td>
-                        <td>
-                            |
-                            <a asp-action="Details" asp-route-id="@item.PkProductId">Details</a> |
-                        </td>
-                    </tr>
+                <div class="product-items-container">
+                    <a asp-action="Details" asp-route-id="@item.PkProductId">
+                        <div class="product-thumbnail-wrapper">
+                            @if (item.ImageByteArray != null)
+                            {
+                            <img src="data:image/jpeg;base64,
+                                    @Convert.ToBase64String(item.ImageByteArray)"
+                                 alt="item.Name"
+                                 class="product-thumbnail" />
+                            }
+                        </div>
+                    </a>
+                    <div class="product-info">
+                        <div class="product-name"> @Html.DisplayFor(modelItem => item.Name) </div>
+                        <div class="product-price"> @Html.DisplayFor(modelItem => item.Price) </div>
+                    </div>
+                </div>
                 }
-            </tbody>
-        </table>
     </div>
 
     @* <p>
