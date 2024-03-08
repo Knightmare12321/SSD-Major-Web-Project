@@ -54,7 +54,7 @@ namespace SSD_Major_Web_Project.Controllers
                     shoppingcartVM.Taxes = _shopRepo.CalculateTaxes(shoppingcartVM.Subtotal);
                     shoppingcartVM.GrandTotal = _shopRepo.CalculateGrandTotal(shoppingcartVM.Subtotal, shoppingcartVM.Taxes, shoppingcartVM.ShippingFee);
 
-//////////////////////Assign shopping cart products to shopping cart view model
+                    //////////////////////Assign shopping cart products to shopping cart view model
                     shoppingcartVM.Products = products;
 
                     return View(shoppingcartVM);
@@ -97,7 +97,9 @@ namespace SSD_Major_Web_Project.Controllers
             checkoutVM.Order = orderVM;
 
             // Populates the Product(s) include Images property in shopping cart to Checkout view razer page
-            List<Product> products = _context.Products.Include(p => p.Images).ToList();
+            List<Product> products = _context.Products.Include(p => p.Images)
+                                                   .Take(2)
+                                                   .ToList();
 
 
             // Pass the shopping cart products data to Checkout razer view
@@ -116,10 +118,11 @@ namespace SSD_Major_Web_Project.Controllers
         }
 
         // GET: ShopController/ConfirmCheckout
+
         public IActionResult ConfirmCheckout()
         {
             // Retrieve the CheckoutVM object from TempData or session
-            CheckoutVM checkoutVM = TempData["CheckoutVM"] as CheckoutVM;
+             CheckoutVM checkoutVM = TempData["CheckoutVM"] as CheckoutVM;
 
             // Calculate the subtotal, shipping fee, taxes, and grand total
             decimal subtotal = checkoutVM.ShoppingCart.Subtotal;
@@ -141,6 +144,8 @@ namespace SSD_Major_Web_Project.Controllers
                 ShoppingCart = shoppingCart
             };
 
+            checkoutVMfromShippingContact.Order.Contact.FirstName = checkoutVM.Order.Contact.FirstName;
+
             return View(checkoutVMfromShippingContact);
         }
 
@@ -152,8 +157,16 @@ namespace SSD_Major_Web_Project.Controllers
         [HttpPost]
         public IActionResult ProceedPayment(string transactionId, decimal amount, string payerName, CheckoutVM checkoutVM)
         {
-          
+            //Create a new Checkout view model object
+            CheckoutVM checkoutVMfromShippingContact = new CheckoutVM();
 
+
+            // Log the form data
+            foreach (var key in Request.Form.Keys)
+            {
+                var value = Request.Form[key];
+                Console.WriteLine($"{key}: {value}");
+            }
 
             // Info for proceed PayPal payment
             checkoutVM.ShoppingCart.Currency = "CAD";

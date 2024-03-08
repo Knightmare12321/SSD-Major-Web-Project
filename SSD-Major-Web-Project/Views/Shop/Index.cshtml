@@ -72,12 +72,13 @@
                     @foreach (var item in Model.Products)
                     {
                         <input type="hidden" name="Products" value="@item" />
+                        <input type="hidden" name="Subtotal" value="@Model.Subtotal" />
+                        <input type="hidden" name="ShippingFee" value="@Model.ShippingFee" />
+                        <input type="hidden" name="Taxes" value="@Model.Taxes" />
+                        <input type="hidden" name="GrandTotal" value="@Model.GrandTotal" />
 
                     }
-                    <input type="hidden" name="Subtotal" value="@Model.Subtotal" />
-                    <input type="hidden" name="ShippingFee" value="@Model.ShippingFee" />
-                    <input type="hidden" name="Taxes" value="@Model.Taxes" />
-                    <input type="hidden" name="GrandTotal" value="@Model.GrandTotal" />
+                 
 
                     <button type="submit" class="btn btn-primary">Proceed to Checkout</button>
                 </form>

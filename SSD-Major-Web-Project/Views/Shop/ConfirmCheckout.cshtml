@@ -6,7 +6,6 @@
 
 }
 
-<script src="https://www.paypal.com/sdk/js?client-id=AT43uF9QHEyOHayLY0lnVVwiD6VfjG2o2NH8Ob6mo9iod3G7VftCAWwy9r8jQHLY6jizC_vHkmQCbfW8"></script>
 
 
 <div class="checkout-container">
@@ -92,12 +91,13 @@
                     @foreach (var item in Model.ShoppingCart.Products)
                     {
                         <input type="hidden" name="Products" value="@item" />
+                        <input type="hidden" name="ShoppingCart.Subtotal" value="@Model.ShoppingCart.Subtotal" />
+                        <input type="hidden" name="ShoppingCart.ShippingFee" value="@Model.ShoppingCart.ShippingFee" />
+                        <input type="hidden" name="ShoppingCart.Taxes" value="@Model.ShoppingCart.Taxes" />
+                        <input type="hidden" name="ShoppingCart.GrandTotal" value="@Model.ShoppingCart.GrandTotal" />
 
                     }
-                    <input type="hidden" name="ShoppingCart.Subtotal" value="@Model.ShoppingCart.Subtotal" />
-                    <input type="hidden" name="ShoppingCart.ShippingFee" value="@Model.ShoppingCart.ShippingFee" />
-                    <input type="hidden" name="ShoppingCart.Taxes" value="@Model.ShoppingCart.Taxes" />
-                    <input type="hidden" name="ShoppingCart.GrandTotal" value="@Model.ShoppingCart.GrandTotal" />
+           
 
                     <input type="hidden" name="ShoppingCart.CurrencySymbol" value="@Model.ShoppingCart.CurrencySymbol" />
                     <input type="hidden" name="Order.Contact.FirstName" value="@Model.Order.Contact.FirstName" />
