@@ -160,8 +160,9 @@ namespace SSD_Major_Web_Project.Controllers
             // for loop to get the product details from the shopping cart
             foreach (var product in checkoutVM.ShoppingCart.Products)
             {
-                orderDetail.FkSkuId = product.ProductSkus;
-                orderDetail.Quantity = product.Quantity;
+                orderDetail.FkSkuId = product.PkProductId;
+                // subject to chnage
+                orderDetail.Quantity = 1;
                 orderDetail.UnitPrice = product.Price;
             }
 
