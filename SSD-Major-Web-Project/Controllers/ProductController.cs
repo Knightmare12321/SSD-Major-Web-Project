@@ -29,6 +29,8 @@ namespace SSD_Major_Web_Project.Controllers
         public IActionResult Details(int id, string catagory, string method)
         {
             ProductRepo products = new ProductRepo(_context);
+            ReviewRepo reviewRepo = new ReviewRepo(_context);
+            List<Review> reviews = reviewRepo.GetReviewsForProduct(id);
             var cartCookie = Request.Cookies["cart"];
             var favoriteCookie = Request.Cookies["favorite"];
             int skuID = products.GetSkuIdById(id);
