@@ -186,19 +186,18 @@ namespace SSD_Major_Web_Project.Controllers
                 OrderTotal = checkoutVM.ShoppingCart.GrandTotal
             };
 
-            // Log the form data
-            foreach (var key in Request.Form.Keys)
-            {
-                var value = Request.Form[key];
-                Console.WriteLine($"{key}: {value}");
-            }
+            //// Log the form data
+            //foreach (var key in Request.Form.Keys)
+            //{
+            //    var value = Request.Form[key];
+            //    Console.WriteLine($"{key}: {value}");
+            //}
 
             // Info for proceed PayPal payment
             checkoutVM.ShoppingCart.Currency = "CAD";
             checkoutVM.ShoppingCart.CurrencySymbol = "$";
 
 
-           
             // Create an instance of OrderConfirmationVM and populate its properties
             var orderConfirmation = new OrderConfirmationVM
             {
@@ -211,7 +210,6 @@ namespace SSD_Major_Web_Project.Controllers
             OrderConfirmationVM orderConfirmationVM = new OrderConfirmationVM();
 
             orderConfirmationVM.CheckoutVM = checkoutVM;
-
 
 
             if (ModelState.IsValid)
