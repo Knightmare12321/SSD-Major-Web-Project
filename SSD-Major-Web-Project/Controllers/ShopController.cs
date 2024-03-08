@@ -33,11 +33,38 @@ namespace SSD_Major_Web_Project.Controllers
                 }
                 else
                 {
-                    //populates the Product(s) include Images property in shopping cart for shopping cart view
-                    // to save money, only use two items for now
-                    List<Product> products = _context.Products.Include(p => p.Images)
-                                                                .Take(2)
-                                                                .ToList();
+                   //productIdsFromDb list contains the ProductId values associated with the provided SkuIds from the database.
+
+                    List<SkuItem> skuItems = new List<SkuItem>
+                    {
+                        new SkuItem { SkuId = 1, Quantity = 2 },
+                        new SkuItem { SkuId = 2, Quantity = 3 }
+                    };
+
+                    List<int> productIds = skuItems
+                        .Select(s => s.SkuId)
+                        .ToList();
+
+                    List<ProductSku> productSkus = _context.ProductSkus
+                        .Where(ps => productIds.Contains(ps.PkSkuId))
+                        .ToList();
+
+                    List<int> productIdsFromDb = productSkus
+                        .Select(ps => ps.FkProductId)
+                        .ToList();
+
+                    List<Product> products = _context.Products
+                        .Include(p => p.Images)
+                        .Where(p => skuItems.Any(s => s.ProductId == p.PkProductId))
+                        .ToList();
+
+                    //populates the Product(s) by skuId include Images property in shopping cart for shopping cart view
+
+                    foreach (Product product in products)
+                    {
+                        List<Image> images = product.Images.ToList();
+                    
+                    }
 
                     ShoppingCartVM shoppingcartVM = new ShoppingCartVM();
 
