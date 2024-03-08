@@ -1,13 +1,17 @@
-﻿@model List<SSD_Major_Web_Project.ViewModels.DiscountVM>
+﻿@model PaginatedList<SSD_Major_Web_Project.ViewModels.DiscountVM>
 
 @{
     ViewData["Title"] = "AllDiscounts";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+<div id="admin-discount-main">
 
 <div id="discount-list" class="table-responsive">
     <p class="message">@ViewBag.Message</p>
-    <button class="btn btn-primary" onclick="location.href='@Url.Action("CreateDiscount","Admin")'">Add Discount</button>
+        <input id="search-term" name="searchTerm" value="@ViewBag.SearchTerm" placeholder="search product name" />
+        <input name="pageIndex" value="@Model.PageIndex" hidden />
+        <button class="btn btn-secondary" onClick="getFilteredAndPaginatedDiscounts(@Model.PageIndex)">Filter</button>
+        <button class="btn add-btn btn-primary" onclick="location.href='@Url.Action("CreateDiscount","Admin")'">Add Discount</button>
     <table class="table transaction-table">
         <thead>
             <tr>
@@ -40,3 +44,37 @@
         </tbody>
     </table>
 </div>
+<nav id="all-products-pagination">
+    <ul class="pagination">
+        <li class="page-item @(Model.HasPreviousPage ? "" : "disabled")">
+            <a class="page-link"
+                   onClick="getFilteredAndPaginatedDiscounts(@(Model.PageIndex - 1))">
+                Previous
+            </a>
+        </li>
+        <li class="page-item @(Model.HasNextPage ? "" : "disabled")">
+            <a class="page-link"
+                   onClick="getFilteredAndPaginatedDiscounts(@(Model.PageIndex + 1))">
+                Next
+            </a>
+        </li>
+    </ul>
+</nav>
+</div>
+
+<script>
+    const getFilteredAndPaginatedDiscounts = (pageIndex) => {
+        const searchTerm = $("#search-term").val();
+        const url = '@Url.Action("AllDiscounts", "Admin")';
+        $.ajax({
+            type: "GET",
+            url: url,
+            data: { "searchTerm": searchTerm, "pageIndex": pageIndex },
+            success: function (data) {
+                const parser = new DOMParser();
+                const newDoc = parser.parseFromString(data, 'text/html');
+                $('#admin-discount-main')[0].innerHTML = newDoc.getElementById("admin-discount-main").innerHTML;
+            }
+        });
+    }
+</script>       

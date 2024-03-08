@@ -327,12 +327,21 @@ namespace SSD_Major_Web_Project.Controllers
         }
 
 
-        public IActionResult AllDiscounts(string message = "")
+        public IActionResult AllDiscounts(string message = "", string searchTerm = "", int pageIndex = 1, int pageSize = 2)
         {
             ViewData["Message"] = message;
+            ViewData["SearchTerm"] = searchTerm;
             AdminRepo adminRepo = new AdminRepo(_context);
-            List<DiscountVM> discounts = adminRepo.GetAllDiscounts().ToList();
-            return View(discounts);
+            List<DiscountVM> discounts = adminRepo.GetAllDiscounts(searchTerm).ToList();
+
+            //determine which items to show based on current page index
+            var count = discounts.Count();
+            var items = discounts.Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList();
+            var paginatedDiscounts = new PaginatedList<DiscountVM>(items
+                                                            , count
+                                                            , pageIndex
+                                                            , pageSize);
+            return View(paginatedDiscounts);
         }
 
         public IActionResult CreateDiscount()
