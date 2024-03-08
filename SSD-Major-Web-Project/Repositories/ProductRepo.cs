@@ -43,7 +43,7 @@ namespace SSD_Major_Web_Project.Repositories
             return _context.ProductSkus.Where(p => p.FkProductId == id).FirstOrDefault().PkSkuId;
         }
 
-        public ProductDetailVM? GetByIdAndReviewVM(int pkProductId, List<Review> reviews)
+        public ProductDetailVM? GetByIdAndReviewVM(int pkProductId, List<ReviewVM> reviews)
         {
             ProductVM? productVM = _context.Products
                 .Where(u => u.PkProductId == pkProductId)

@@ -79,17 +79,17 @@
                 <button id="product-add-to-bag">
                     @{
                         if (!ViewBag.isCart)
-                            @Html.ActionLink("ADD TO BAG", "Details", new { id = Model.PkProductId, catagory = "cart", method = "add" })
+                            @Html.ActionLink("ADD TO BAG", "Details", new { id = Model.PkProductId, category = "cart", method = "add" })
                         else
-                            @Html.ActionLink("REMOVE FROM BAG", "Details", new { id = Model.PkProductId, catagory = "cart", method = "remove" })
+                            @Html.ActionLink("REMOVE FROM BAG", "Details", new { id = Model.PkProductId, category = "cart", method = "remove" })
                     }
                 </button>
                 <button id="product-add-to-wishlist">
                     @{
                         if (!ViewBag.isFav)
-                            @Html.ActionLink("ADD TO FAVORITE", "Details", new { id = Model.PkProductId, catagory = "favorite", method = "add" })
+                            @Html.ActionLink("ADD TO FAVORITE", "Details", new { id = Model.PkProductId, category = "favorite", method = "add" })
                         else
-                            @Html.ActionLink("REMOVE FROM FAVORITE", "Details", new { id = Model.PkProductId, catagory = "favorite", method = "remove" })
+                            @Html.ActionLink("REMOVE FROM FAVORITE", "Details", new { id = Model.PkProductId, category = "favorite", method = "remove" })
                     }
                 </button>
             </div>

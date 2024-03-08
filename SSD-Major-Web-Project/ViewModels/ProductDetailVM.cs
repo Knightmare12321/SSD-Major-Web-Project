@@ -25,6 +25,6 @@ namespace SSD_Major_Web_Project.ViewModels
 
         public List<String>? Sizes { get; set; }
 
-        public List<Review> Reviews { get; set; }
+        public List<ReviewVM> Reviews { get; set; }
     }
 }
