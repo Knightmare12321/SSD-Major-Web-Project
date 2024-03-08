@@ -122,10 +122,34 @@ namespace SSD_Major_Web_Project.Controllers
 
             checkoutVM.Order = orderVM;
 
-            // Populates the Product(s) include Images property in shopping cart to Checkout view razer page
-            List<Product> products = _context.Products.Include(p => p.Images)
-                                                   .Take(2)
-                                                   .ToList();
+            var shoppingCartCookie = Request.Cookies["cart"];
+            List<int> IDList = JsonConvert.DeserializeObject<List<int>>(shoppingCartCookie);
+
+            List<ShoppingCartItem> shoppingcartItems = new List<ShoppingCartItem>();
+            for (int i = 0; i < IDList.Count; i++)
+            {
+                shoppingcartItems.Add(new ShoppingCartItem { SkuId = IDList[i], Quantity = 1 });
+            }
+
+            //productIdsFromDb list contains the ProductId values associated with the provided SkuIds from the database.
+            List<int> skuIds = shoppingcartItems.Select(s => s.SkuId).ToList();
+
+            List<ProductSku> productSkus = _context.ProductSkus
+                .Where(p => skuIds.Contains(p.PkSkuId))
+                .ToList();
+
+            List<int> productIds = productSkus.Select(p => p.FkProductId ?? 0).ToList();
+
+            List<Product> products = _context.Products
+             .Include(p => p.Images)
+             .Where(p => productIds.Contains(p.PkProductId))
+             .ToList();
+
+            //populates the Product(s) by skuId include Images property in shopping cart for shopping cart view
+
+
+
+            shoppingcartVM.ShoppingCartItems = shoppingcartItems;
 
 
             // Pass the shopping cart products data to Checkout razer view
@@ -138,6 +162,7 @@ namespace SSD_Major_Web_Project.Controllers
             shoppingcartVM.CurrencySymbol = "$";
 
             checkoutVM.ShoppingCart = shoppingcartVM;    
+            checkoutVM.ShoppingCart.ShoppingCartItems = shoppingcartVM.ShoppingCartItems;
 
             
             return View("ConfirmCheckout", checkoutVM);
@@ -180,16 +205,35 @@ namespace SSD_Major_Web_Project.Controllers
                 Contact = contact,
                 OrderTotal = checkoutVM.ShoppingCart.GrandTotal
             };
-            
+
             //Order Detail
             OrderDetail orderDetail = new OrderDetail();
+
+           
+            ShoppingCartItem shoppingCartItem = new ShoppingCartItem();
+
+
             // for loop to get the product details from the shopping cart
-            foreach (var product in checkoutVM.ShoppingCart.Products)
+            foreach (var product in checkoutVM.ShoppingCart.ShoppingCartItems)
             {
-                orderDetail.FkSkuId = product.PkProductId;
-                // subject to chnage
-                orderDetail.Quantity = 1;
-                orderDetail.UnitPrice = product.Price;
+                orderDetail.FkSkuId = product.SkuId;
+                orderDetail.Quantity = product.Quantity;
+
+                // Retrieve the unit price from the database based on the SKU ID
+                var productSku = _context.ProductSkus.FirstOrDefault(p => p.PkSkuId == product.SkuId);
+                if (productSku != null)
+                {
+                    // Assign the retrieved unit price to orderDetail.UnitPrice
+                    orderDetail.UnitPrice = productSku.FkProduct?.Price ?? 0;
+                }
+                else
+                {
+                    // Handle the case when the product SKU is not found
+                    // You can set a default value or handle the exception accordingly
+                    orderDetail.UnitPrice = 0;
+                }
+
+              
             }
 
             //// Log the form data
@@ -199,8 +243,8 @@ namespace SSD_Major_Web_Project.Controllers
             //    Console.WriteLine($"{key}: {value}");
             //}
 
-         
-            
+
+
             // userId is nullable
             if (User.Identity.IsAuthenticated)
             {
