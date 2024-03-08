@@ -20,9 +20,9 @@ namespace SSD_Major_Web_Project.Repositories
             _context = context;
         }
 
-        public IQueryable<AdminProductVM> GetAllProducts()
+        public IQueryable<AdminProductVM> GetAllProducts(string searchTerm)
         {
-            return _context.Products
+            var query = _context.Products
                         .Select(p => new AdminProductVM
                         {
                             PkProductId = p.PkProductId,
@@ -37,7 +37,9 @@ namespace SSD_Major_Web_Project.Repositories
                                         .Where(i => i.FkProductId == p.PkProductId)
                                         .ToList()
                         });
-
+            //filter query by search term
+            query = query.Where(p => p.Name.Contains(searchTerm));
+            return query;
         }
 
         public Product GetProductById(int productId)
@@ -247,26 +249,14 @@ namespace SSD_Major_Web_Project.Repositories
             });
 
             //filter based on search term
-            query.Where(o => o.OrderId.ToString().Contains(searchTerm) ||
+            query = query.Where(o => o.OrderId.ToString().Contains(searchTerm) ||
                         o.OrderDate.ToString().Contains(searchTerm) ||
                         o.BuyerNote.Contains(searchTerm) ||
-                        o.OrderDetails.Any(od => od.Quantity.ToString().Contains(searchTerm) ||
-                                                 od.UnitPrice.ToString().Contains(searchTerm) ||
-                                                 od.FkSku.FkProduct.Name.ToString().Contains(searchTerm)
+                        o.OrderDetails.Any(od => od.FkSku.FkProduct.Name.ToString().Contains(searchTerm)
                                         ) ||
                         o.Contact.FirstName.Contains(searchTerm) ||
                         o.Contact.LastName.Contains(searchTerm) ||
-                        o.Contact.Address.Contains(searchTerm) ||
-                        o.Contact.Address2.Contains(searchTerm) ||
-                        o.Contact.City.Contains(searchTerm) ||
-                        o.Contact.LastName.Contains(searchTerm) ||
-                        o.Contact.Province.Contains(searchTerm) ||
-                        o.Contact.Country.Contains(searchTerm) ||
-                        o.Contact.PostalCode.Contains(searchTerm) ||
-                        o.Contact.PhoneNumber.Contains(searchTerm) ||
-                        o.Discount.PkDiscountCode.ToString().Contains(searchTerm) ||
-                        o.Discount.DiscountValue.ToString().Contains(searchTerm) ||
-                        o.OrderTotal.ToString().Contains(searchTerm)
+                        o.Discount.PkDiscountCode.ToString().Contains(searchTerm)
                         );
 
             //apply discount to orderTotal of each order by creating a new query

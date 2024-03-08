@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Drawing.Printing;
 using System.Collections;
+using static NuGet.Packaging.PackagingConstants;
 
 
 namespace SSD_Major_Web_Project.Controllers
@@ -33,12 +34,20 @@ namespace SSD_Major_Web_Project.Controllers
             return View();
         }
 
-        public IActionResult AllProducts(string message = "",)
+        public IActionResult AllProducts(string message = "", string searchTerm = "", int pageIndex = 1, int pageSize = 3)
         {
             ViewData["Message"] = message;
+            ViewData["SearchTerm"] = searchTerm;
             AdminRepo adminRepo = new AdminRepo(_context);
-            List<AdminProductVM> discounts = adminRepo.GetAllProducts().ToList();
-            return View(discounts);
+            List<AdminProductVM> products = adminRepo.GetAllProducts(searchTerm).ToList();
+            //determine which items to show based on current page index
+            var count = products.Count();
+            var items = products.Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList();
+            var paginatedProducts = new PaginatedList<AdminProductVM>(items
+                                                            , count
+                                                            , pageIndex
+                                                            , pageSize);
+            return View(paginatedProducts);
         }
 
         public IActionResult CreateProduct()
