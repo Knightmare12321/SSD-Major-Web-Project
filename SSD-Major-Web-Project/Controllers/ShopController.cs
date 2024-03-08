@@ -43,24 +43,19 @@ namespace SSD_Major_Web_Project.Controllers
                     Console.WriteLine("///////////////////////////////////");
                     Console.WriteLine(IDList);
 
-                    List<SkuItem> skuItems = new List<SkuItem>
+                    List<ShoppingCartItem> shoppingcartItems = new List<ShoppingCartItem>
                     {
-                        new SkuItem { SkuId = 1, Quantity = 2 },
-                        new SkuItem { SkuId = 14, Quantity = 3 }
+                        new ShoppingCartItem { SkuId = 1, Quantity = 2 },
+                        new ShoppingCartItem { SkuId = 14, Quantity = 3 }
                     };
 
-                    foreach (var skuItem in skuItems)
-                    {
-                        var productSku = _context.ProductSkus
-                            .FirstOrDefault(p => p.PkSkuId == skuItem.SkuId);
+                    List<int> skuIds = shoppingcartItems.Select(s => s.SkuId).ToList();
 
-                        if (productSku != null)
-                        {
-                            skuItem.ProductId = productSku.FkProductId ?? 0;
-                        }
-                    }
+                    List<ProductSku> productSkus = _context.ProductSkus
+                        .Where(p => skuIds.Contains(p.PkSkuId))
+                        .ToList();
 
-                    List<int> productIds = skuItems.Select(s => s.ProductId).ToList();
+                    List<int> productIds = productSkus.Select(p => p.FkProductId ?? 0).ToList();
 
                     List<Product> products = _context.Products
                         .Include(p => p.Images)

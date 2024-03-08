@@ -9,7 +9,7 @@ namespace SSD_Major_Web_Project.ViewModels
         // nullable UserId
         public string? UserId { get; set; }
         //public List<Product> Products { get; set; }
-        public List<SkuItem> SkuItems { get; set; }
+        public List<ShoppingCartItem> ShoppingCatItems { get; set; }
         public List<Product> Products { get; set; }
         public string? CouponCode { get; set; }
         [DisplayFormat(DataFormatString = "{0:C}")]
@@ -29,11 +29,6 @@ namespace SSD_Major_Web_Project.ViewModels
 
     }
 
-    public class SkuItem
-    {
-        public int SkuId { get; set; }
-        public int Quantity { get; set; }
 
-        public int ProductId { get; set; }
-    }
+   
 }
