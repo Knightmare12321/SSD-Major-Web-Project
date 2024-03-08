@@ -85,7 +85,7 @@ namespace SSD_Major_Web_Project.Controllers
                     Rating = r.Rating,
                     Comment = r.Comment
                 }).ToList();
-            ProductDetailVM? vm = products.GetByIdVM(id);
+            ProductDetailVM? vm = products.GetByIdAndReviewVM(id, reviewList);
             return View(vm);
         }
 
