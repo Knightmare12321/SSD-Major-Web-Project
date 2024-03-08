@@ -20,5 +20,6 @@ namespace SSD_Major_Web_Project.ViewModels
         [Required]
         public bool IsActive { get; set; }
         public byte[]? ImageByteArray { get; set; }
+        public List<ReviewVM> Reviews { get; set; }
     }
 }

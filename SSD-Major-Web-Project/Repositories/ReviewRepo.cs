@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Hosting;
 using SSD_Major_Web_Project.Models;
+using SSD_Major_Web_Project.ViewModels;
 using System.Linq;
 
 namespace SSD_Major_Web_Project.Repositories

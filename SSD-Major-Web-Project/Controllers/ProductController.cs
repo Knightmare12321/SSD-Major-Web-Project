@@ -6,6 +6,7 @@ using SSD_Major_Web_Project.ViewModels;
 using Newtonsoft.Json;
 using EllipticCurve.Utils;
 using Microsoft.CodeAnalysis.Options;
+using Microsoft.Extensions.Hosting;
 
 namespace SSD_Major_Web_Project.Controllers
 {
@@ -31,6 +32,7 @@ namespace SSD_Major_Web_Project.Controllers
             ProductRepo products = new ProductRepo(_context);
             ReviewRepo reviewRepo = new ReviewRepo(_context);
             List<Review> reviews = reviewRepo.GetReviewsForProduct(id);
+
             var cartCookie = Request.Cookies["cart"];
             var favoriteCookie = Request.Cookies["favorite"];
             int skuID = products.GetSkuIdById(id);
@@ -75,9 +77,40 @@ namespace SSD_Major_Web_Project.Controllers
                 false :
                 JsonConvert.DeserializeObject<List<int>>(favoriteCookie).Contains(skuID);
 
+
+            List<ReviewVM> reviewList = reviews
+                .Select(r => new ReviewVM
+                {
+                    PkReviewDate = r.PkReviewDate,
+                    Rating = r.Rating,
+                    Comment = r.Comment
+                }).ToList();
             ProductDetailVM? vm = products.GetByIdVM(id);
             return View(vm);
         }
+
+        public IActionResult CreateReview()
+        {
+            Review review = new Review { PkReviewDate = DateOnly.FromDateTime(DateTime.Now) };
+
+            return View(review);
+        }
+
+        [HttpPost]
+        public IActionResult CreateReview(Review review)
+        {
+            if (ModelState.IsValid)
+            {
+                ReviewRepo reviewRepo = new ReviewRepo(_context);
+
+                string addMessage = reviewRepo.Add(review);
+
+                return RedirectToAction("Index", new { message = addMessage });
+            }
+
+            return View(review);
+        }
+
 
         // This controller action is for testing only.
         // Delete this after project completes!
