@@ -117,37 +117,37 @@ namespace SSD_Major_Web_Project.Controllers
             return View("ConfirmCheckout", checkoutVM);
         }
 
-        // GET: ShopController/ConfirmCheckout
+        //// GET: ShopController/ConfirmCheckout
+        //[HttpGet]
+        //public IActionResult ConfirmCheckout()
+        //{
+        //    // Retrieve the CheckoutVM object from TempData or session
+        //     CheckoutVM checkoutVM = TempData["CheckoutVM"] as CheckoutVM;
 
-        public IActionResult ConfirmCheckout()
-        {
-            // Retrieve the CheckoutVM object from TempData or session
-             CheckoutVM checkoutVM = TempData["CheckoutVM"] as CheckoutVM;
+        //    // Calculate the subtotal, shipping fee, taxes, and grand total
+        //    decimal subtotal = checkoutVM.ShoppingCart.Subtotal;
+        //    decimal shippingFee = checkoutVM.ShoppingCart.ShippingFee;
+        //    decimal taxes = checkoutVM.ShoppingCart.Taxes;
+        //    decimal grandTotal = checkoutVM.ShoppingCart.GrandTotal;
 
-            // Calculate the subtotal, shipping fee, taxes, and grand total
-            decimal subtotal = checkoutVM.ShoppingCart.Subtotal;
-            decimal shippingFee = checkoutVM.ShoppingCart.ShippingFee;
-            decimal taxes = checkoutVM.ShoppingCart.Taxes;
-            decimal grandTotal = checkoutVM.ShoppingCart.GrandTotal;
-
-            ShoppingCartVM shoppingCart = new ShoppingCartVM()
-            {
-                Subtotal = subtotal,
-                ShippingFee = shippingFee,
-                Taxes = taxes,
-                GrandTotal = grandTotal
-            };
+        //    ShoppingCartVM shoppingCart = new ShoppingCartVM()
+        //    {
+        //        Subtotal = subtotal,
+        //        ShippingFee = shippingFee,
+        //        Taxes = taxes,
+        //        GrandTotal = grandTotal
+        //    };
 
 
-            CheckoutVM checkoutVMfromShippingContact = new CheckoutVM()
-            {
-                ShoppingCart = shoppingCart
-            };
+        //    CheckoutVM checkoutVMfromShippingContact = new CheckoutVM()
+        //    {
+        //        ShoppingCart = shoppingCart
+        //    };
 
-            checkoutVMfromShippingContact.Order.Contact.FirstName = checkoutVM.Order.Contact.FirstName;
+        //    checkoutVMfromShippingContact.Order.Contact.FirstName = checkoutVM.Order.Contact.FirstName;
 
-            return View(checkoutVMfromShippingContact);
-        }
+        //    return View(checkoutVMfromShippingContact);
+        //}
 
 
 
@@ -158,8 +158,33 @@ namespace SSD_Major_Web_Project.Controllers
         public IActionResult ProceedPayment(string transactionId, decimal amount, string payerName, CheckoutVM checkoutVM)
         {
             //Create a new Checkout view model object
-            CheckoutVM checkoutVMfromShippingContact = new CheckoutVM();
+            CheckoutVM checkoutVMfromShippingContact = checkoutVM;
 
+            // Assign Discount Code if available from the shopping cart razor view
+            Discount discount = new Discount();
+            
+            discount.PkDiscountCode = checkoutVMfromShippingContact.ShoppingCart.CouponCode != null ? checkoutVMfromShippingContact.ShoppingCart.CouponCode : null;
+
+            Contact contact = new Contact();
+            contact.FirstName = checkoutVM.Order.Contact.FirstName;
+            contact.LastName = checkoutVM.Order.Contact.LastName;
+            contact.Address = checkoutVM.Order.Contact.Address;
+            contact.Address2 = checkoutVM.Order.Contact.Address2;
+            contact.City = checkoutVM.Order.Contact.City;
+            contact.Province = checkoutVM.Order.Contact.Province;
+            contact.Country = checkoutVM.Order.Contact.Country;
+            contact.PostalCode = checkoutVM.Order.Contact.PostalCode;
+            contact.PhoneNumber = checkoutVM.Order.Contact.PhoneNumber;
+
+            // Assign the value from the Razor view to the Order property of the CheckoutVM object
+            OrderVM orderVM = new OrderVM
+            {
+                OrderDate = DateOnly.FromDateTime(DateTime.Today),
+                OrderStatus = "Pending",
+                Discount = discount,
+                Contact = contact,
+                OrderTotal = checkoutVM.ShoppingCart.GrandTotal
+            };
 
             // Log the form data
             foreach (var key in Request.Form.Keys)
