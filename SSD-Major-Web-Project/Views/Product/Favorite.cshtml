@@ -1,4 +1,4 @@
-﻿@model IEnumerable<SSD_Major_Web_Project.Models.Product>
+﻿@model IEnumerable<SSD_Major_Web_Project.Models.ProductSku>
 
 @{
     ViewData["Title"] = "Favorite";
@@ -14,16 +14,10 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Name)
+                @Html.DisplayNameFor(model => model.Size)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Price)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Description)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.IsActive)
+                @Html.DisplayNameFor(model => model.PkSkuId)
             </th>
             <th></th>
         </tr>
@@ -32,35 +26,15 @@
 @foreach (var item in Model) {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.Name)
+                @Html.DisplayFor(modelItem => item.Size)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Price)
+                    @Html.DisplayFor(modelItem => item.PkSkuId)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Description)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.IsActive)
-            </td>
-            <td>
-            </td>
-            <td>
-            </td>
-            <td>
-            </td>
-            <td>
-            </td>
-            <td>
-            </td>
-            <td>
-            </td>
-            <td>
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.PkProductId">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.PkProductId">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.PkProductId">Delete</a>
+                <a asp-action="Edit" asp-route-id="@item.PkSkuId">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.PkSkuId">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.PkSkuId">Delete</a>
             </td>
         </tr>
 }

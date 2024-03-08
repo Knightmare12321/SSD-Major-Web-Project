@@ -32,7 +32,9 @@ namespace SSD_Major_Web_Project.Controllers
             ReviewRepo reviews = new ReviewRepo(_context);
             var cartCookie = Request.Cookies["cart"];
             var favoriteCookie = Request.Cookies["favorite"];
+            int skuID = products.GetSkuIdById(id);
 
+            ViewBag.productSkuID = 0;
             if (catagory == "cart" || catagory == "favorite")
             {
                 // Set the expired date when cookie is updated/created.
@@ -47,15 +49,15 @@ namespace SSD_Major_Web_Project.Controllers
                 if (IDListCookie == null)
                 {
                     List<int> IDList = new List<int>();
-                    IDList.Add(id);
+                    IDList.Add(skuID);
                     resultJson = JsonConvert.SerializeObject(IDList);
                     Response.Cookies.Append(catagory, resultJson, option);
                 }
                 else
                 {
                     List<int> IDList = JsonConvert.DeserializeObject<List<int>>(IDListCookie);
-                    if (method == "add") IDList.Add(id);
-                    else if (method == "remove") IDList.Remove(id);
+                    if (method == "add") IDList.Add(skuID);
+                    else if (method == "remove") IDList.Remove(skuID);
                     resultJson = JsonConvert.SerializeObject(IDList);
                     Response.Cookies.Append(catagory, resultJson, option);
                 }
@@ -66,11 +68,11 @@ namespace SSD_Major_Web_Project.Controllers
             ViewBag.isCart =
                 cartCookie == null ?
                 false :
-                JsonConvert.DeserializeObject<List<int>>(cartCookie).Contains(id);
+                JsonConvert.DeserializeObject<List<int>>(cartCookie).Contains(skuID);
             ViewBag.isFav =
                 favoriteCookie == null ?
                 false :
-                JsonConvert.DeserializeObject<List<int>>(favoriteCookie).Contains(id);
+                JsonConvert.DeserializeObject<List<int>>(favoriteCookie).Contains(skuID);
 
             ProductDetailVM? vm = products.GetByIdVM(id);
             return View(vm);
@@ -81,14 +83,14 @@ namespace SSD_Major_Web_Project.Controllers
         public IActionResult Favorite()
         {
             var IDListCookie = Request.Cookies["cart"];
-            List<Product> results = new List<Product>();
+            List<ProductSku> results = new List<ProductSku>();
             if (IDListCookie != null)
             {
                 List<int> IDList = JsonConvert.DeserializeObject<List<int>>(IDListCookie);
                 ProductRepo products = new ProductRepo(_context);
                 foreach (var id in IDList)
                 {
-                    results.Add(products.GetById(id));
+                    results.Add(products.GetSkuById(id));
                 }
             }
 

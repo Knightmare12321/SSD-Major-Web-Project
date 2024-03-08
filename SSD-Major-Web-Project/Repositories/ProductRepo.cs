@@ -26,11 +26,21 @@ namespace SSD_Major_Web_Project.Repositories
             return products;
         }
 
-        // This method is for testing only.
-        // Delete this after project completes!
+        // This method is for testing only. Delete this after project completes!
         public Product? GetById(int pkProductId)
         {
             return _context.Products.Where(p => p.PkProductId == pkProductId).FirstOrDefault();
+        }
+
+        // This method is for testing only. Delete this after project completes!
+        public ProductSku GetSkuById(int id)
+        {
+            return _context.ProductSkus.Where(p => p.PkSkuId == id).FirstOrDefault();
+        }
+
+        public int GetSkuIdById(int id)
+        {
+            return _context.ProductSkus.Where(p => p.FkProductId == id).FirstOrDefault().PkSkuId;
         }
 
         public ProductDetailVM? GetByIdVM(int pkProductId)
