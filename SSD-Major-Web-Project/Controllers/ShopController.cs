@@ -56,14 +56,16 @@ namespace SSD_Major_Web_Project.Controllers
                     List<int> productIds = productSkus.Select(p => p.FkProductId ?? 0).ToList();
 
                     List<Product> products = _context.Products
-                        .Include(p => p.Images)
-                        .Where(p => productIds.Contains(p.PkProductId))
-                        .ToList();
+                     .Include(p => p.Images)
+                     .Where(p => productIds.Contains(p.PkProductId))
+                     .ToList();
 
                     //populates the Product(s) by skuId include Images property in shopping cart for shopping cart view
 
 
                     ShoppingCartVM shoppingcartVM = new ShoppingCartVM();
+
+                    shoppingcartVM.ShoppingCartItems = shoppingcartItems;
 
 //////////////////////Logic for validate if customer logged in
                     //if (User.Identity.IsAuthenticated)

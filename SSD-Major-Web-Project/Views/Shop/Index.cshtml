@@ -14,18 +14,25 @@
         <div class="col-md-4">
             <div class="shopping-cart">
                 <h4>SHOPPING CART</h4>
-                @foreach (var item in Model.Products)
+                @foreach (var item in @Model.Products)
                 {
                     <div class="product">
-              
                         @if (item.Images != null && item.Images.Count > 0)
                         {
                             <img src="data:image/jpeg;base64,@Convert.ToBase64String(item.Images.FirstOrDefault().Data)" alt="@item.Name" class="product-image" />
                         }
-
                         <div class="product-details">
                             <h5>@item.Name</h5>
                             <p>@item.Price</p>
+                            @foreach (var cartItem in Model.ShoppingCartItems)
+                            {
+                                if (cartItem.SkuId == item.ProductSkus.FirstOrDefault().PkSkuId)
+                                {
+                                    <p>Qty: @cartItem.Quantity</p>
+                                    break;
+                                }
+                            }
+
                         </div>
                     </div>
                 }
