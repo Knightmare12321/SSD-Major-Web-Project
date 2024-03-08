@@ -40,11 +40,11 @@ namespace SSD_Major_Web_Project.Repositories
 
         }
 
-        public AdminProductVM GetProductById(int productId)
+        public Product GetProductById(int productId)
         {
             return _context.Products
                         .Where(p => p.PkProductId == productId)
-                        .Select(p => new AdminProductVM
+                        .Select(p => new Product
                         {
                             PkProductId = p.PkProductId,
                             Name = p.Name,
@@ -61,31 +61,13 @@ namespace SSD_Major_Web_Project.Repositories
                         .FirstOrDefault();
         }
 
-        public string DeactivateProduct(int productId)
-        {
-            try
-            {
-                Product product = _context.Products
-                                    .Where(p => p.PkProductId == productId)
-                                    .FirstOrDefault();
-
-                product.IsActive = false;
-                //_context.SaveChanges();
-                return "Product successfully deactivated";
-            }
-            catch (Exception ex)
-            {
-                return "An unexpected error occured while deactivating the discount";
-            }
-
-        }
 
         public async Task<string> AddProduct(string name, decimal price, string description, bool isActive, List<IFormFile> imageFiles, List<string> sizes)
         {
 
             try
             {
-                //add image to db
+                //add product to db
                 List<ProductSku> productSkus = new List<ProductSku>();
                 for (int i = 0; i < sizes.Count; i++)
                 {
@@ -119,6 +101,83 @@ namespace SSD_Major_Web_Project.Repositories
             {
                 return "An unexpected error occured while creating the new product";
             }
+        }
+
+        public async Task<string> EditProduct(int productId, string name, decimal price, string description, bool isActive, List<IFormFile> imageFiles, List<string> sizes)
+        {
+            try
+            {
+                Product product = _context.Products
+                               .Where(p => p.PkProductId == productId)
+                               .FirstOrDefault();
+
+                //edit the product in db
+                product.Name = name;
+                product.Price = price;
+                product.Description = description;
+                product.IsActive = isActive;
+
+                //delete all previous ProductSkus in db and create new ones
+                foreach (ProductSku psku in product.ProductSkus)
+                {
+                    _context.ProductSkus.Remove(psku);
+                }
+
+                List<ProductSku> productSkus = new List<ProductSku>();
+                for (int i = 0; i < sizes.Count; i++)
+                {
+                    productSkus.Add(new ProductSku { Size = sizes[i] });
+                }
+                product.ProductSkus = productSkus;
+
+                //delete all previous images in db and create new ones
+                foreach (Image img in product.Images)
+                {
+                    _context.Images.Remove(img);
+                }
+
+                //convert images to byte and add to database
+                byte[] imageData;
+                foreach (IFormFile imageFile in imageFiles)
+                {
+                    //convert image file data to byte[]
+                    using (var memoryStream = new MemoryStream())
+                    {
+                        await imageFile.CopyToAsync(memoryStream);
+                        imageData = memoryStream.ToArray();
+                    }
+
+                    //add image to db
+                    Image image = new Image { FileName = imageFile.FileName, Data = imageData, AltText = "product photo ", FkProductId = product.PkProductId };
+                    _context.Images.Add(image);
+                }
+
+                _context.SaveChanges();
+                return "";
+            }
+            catch (Exception ex)
+            {
+                return "An unexpected error occured while creating the new product";
+            }
+        }
+
+        public string DeactivateProduct(int productId)
+        {
+            try
+            {
+                Product product = _context.Products
+                                    .Where(p => p.PkProductId == productId)
+                                    .FirstOrDefault();
+
+                product.IsActive = false;
+                //_context.SaveChanges();
+                return "Product successfully deactivated";
+            }
+            catch (Exception ex)
+            {
+                return "An unexpected error occured while deactivating the discount";
+            }
+
         }
 
         public IQueryable<OrderVM> GetFilteredOrders(string orderStatus = "", string searchTerm = "")
