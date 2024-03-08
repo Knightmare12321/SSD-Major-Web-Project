@@ -62,7 +62,16 @@ namespace SSD_Major_Web_Project.Repositories
             return message;
         }
 
-
+        // check if the customer has an account
+        public bool IsCustomerExist(string email)
+        {
+            var customer = _context.Customers.FirstOrDefault(c => c.PkCustomerId == email);
+            if (customer != null)
+            {
+                return true;
+            }
+            return false;
+        }
 
         // calculate taxes
         public decimal CalculateSubtotal(List<Product> products)

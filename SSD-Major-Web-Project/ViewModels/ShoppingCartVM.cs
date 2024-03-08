@@ -19,6 +19,8 @@ namespace SSD_Major_Web_Project.ViewModels
         [DisplayFormat(DataFormatString = "{0:C}")]
 
         public decimal GrandTotal { get; set; }
+
+        //for paypal payment
         public string Currency { get; set; }
         public string CurrencySymbol { get; set; }
         //public byte[]? ImageByteArray { get; set; }

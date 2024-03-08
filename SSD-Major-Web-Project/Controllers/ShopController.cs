@@ -117,55 +117,20 @@ namespace SSD_Major_Web_Project.Controllers
             return View("ConfirmCheckout", checkoutVM);
         }
 
-        //// GET: ShopController/ConfirmCheckout
-        //[HttpGet]
-        //public IActionResult ConfirmCheckout()
-        //{
-        //    // Retrieve the CheckoutVM object from TempData or session
-        //     CheckoutVM checkoutVM = TempData["CheckoutVM"] as CheckoutVM;
-
-        //    // Calculate the subtotal, shipping fee, taxes, and grand total
-        //    decimal subtotal = checkoutVM.ShoppingCart.Subtotal;
-        //    decimal shippingFee = checkoutVM.ShoppingCart.ShippingFee;
-        //    decimal taxes = checkoutVM.ShoppingCart.Taxes;
-        //    decimal grandTotal = checkoutVM.ShoppingCart.GrandTotal;
-
-        //    ShoppingCartVM shoppingCart = new ShoppingCartVM()
-        //    {
-        //        Subtotal = subtotal,
-        //        ShippingFee = shippingFee,
-        //        Taxes = taxes,
-        //        GrandTotal = grandTotal
-        //    };
-
-
-        //    CheckoutVM checkoutVMfromShippingContact = new CheckoutVM()
-        //    {
-        //        ShoppingCart = shoppingCart
-        //    };
-
-        //    checkoutVMfromShippingContact.Order.Contact.FirstName = checkoutVM.Order.Contact.FirstName;
-
-        //    return View(checkoutVMfromShippingContact);
-        //}
-
-
-
-
         // POST: ShopController/ConfirmCheckout
         // Click on the "Proceed to Payment Page" button at Enter Shipping Contact page, create order to db at this stage
         [HttpPost]
-        public IActionResult ProceedPayment(string transactionId, decimal amount, string payerName, CheckoutVM checkoutVM)
+        public IActionResult ProceedPayment(CheckoutVM checkoutVM)
         {
-            //Create a new Checkout view model object
-            CheckoutVM checkoutVMfromShippingContact = checkoutVM;
+            ShopRepo _shopRepo = new ShopRepo(_context);
 
             // Assign Discount Code if available from the shopping cart razor view
             Discount discount = new Discount();
             
-            discount.PkDiscountCode = checkoutVMfromShippingContact.ShoppingCart.CouponCode != null ? checkoutVMfromShippingContact.ShoppingCart.CouponCode : null;
+            discount.PkDiscountCode = checkoutVM.ShoppingCart.CouponCode != null ? checkoutVM.ShoppingCart.CouponCode : null;
 
             Contact contact = new Contact();
+
             contact.FirstName = checkoutVM.Order.Contact.FirstName;
             contact.LastName = checkoutVM.Order.Contact.LastName;
             contact.Address = checkoutVM.Order.Contact.Address;
@@ -176,15 +141,29 @@ namespace SSD_Major_Web_Project.Controllers
             contact.PostalCode = checkoutVM.Order.Contact.PostalCode;
             contact.PhoneNumber = checkoutVM.Order.Contact.PhoneNumber;
 
+            
+            
+
             // Assign the value from the Razor view to the Order property of the CheckoutVM object
             OrderVM orderVM = new OrderVM
             {
                 OrderDate = DateOnly.FromDateTime(DateTime.Today),
                 OrderStatus = "Pending",
+                BuyerNote = checkoutVM.Order.BuyerNote,
                 Discount = discount,
                 Contact = contact,
                 OrderTotal = checkoutVM.ShoppingCart.GrandTotal
             };
+            
+            //Order Detail
+            OrderDetail orderDetail = new OrderDetail();
+            // for loop to get the product details from the shopping cart
+            foreach (var product in checkoutVM.ShoppingCart.Products)
+            {
+                orderDetail.FkSkuId = product.ProductSkus;
+                orderDetail.Quantity = product.Quantity;
+                orderDetail.UnitPrice = product.Price;
+            }
 
             //// Log the form data
             //foreach (var key in Request.Form.Keys)
@@ -193,59 +172,53 @@ namespace SSD_Major_Web_Project.Controllers
             //    Console.WriteLine($"{key}: {value}");
             //}
 
-            // Info for proceed PayPal payment
-            checkoutVM.ShoppingCart.Currency = "CAD";
-            checkoutVM.ShoppingCart.CurrencySymbol = "$";
-
-
-            // Create an instance of OrderConfirmationVM and populate its properties
-            var orderConfirmation = new OrderConfirmationVM
+         
+            
+            // userId is nullable
+            if (User.Identity.IsAuthenticated)
             {
-                TransactionId = transactionId,
-                Amount = amount,
-                PayerName = payerName,
-                CheckoutVM = checkoutVM
-            };
+                checkoutVM.ShoppingCart.UserId = User.Identity.Name;
+            }
+            else
+            {
+                checkoutVM.ShoppingCart.UserId = null;
+            }
+
+
+            // Populates the Product(s) include Images property in shopping cart to Checkout view razer page (cookies)
+            List<Product> products = _context.Products.Include(p => p.Images)
+                                                   .Take(2)
+                                                   .ToList();
+
+
+            // Pass the shopping cart products data to Checkout razer view
+            checkoutVM.ShoppingCart.Products = products;
+
+            //// Info for proceed PayPal payment
+            //checkoutVM.ShoppingCart.Currency = "CAD";
+            //checkoutVM.ShoppingCart.CurrencySymbol = "$";
+            //checkoutVM.ShoppingCart.Currency = "CAD";
+            //checkoutVM.ShoppingCart.CurrencySymbol = "$";
+ 
+
 
             OrderConfirmationVM orderConfirmationVM = new OrderConfirmationVM();
 
             orderConfirmationVM.CheckoutVM = checkoutVM;
 
 
-            if (ModelState.IsValid)
+
+            try
             {
-                try
-                {
-                    ShopRepo _shopRepo = new ShopRepo(_context);
-                    string message = _shopRepo.AddOrder(orderConfirmation);
+                //_shopRepo
+                //string message = _shopRepo.AddOrder(orderConfirmation);
 
-                    // Log the order for tracking purposes
-                    _logger.LogInformation("New order created with transaction ID: {TransactionId}", transactionId);
 
-                    if (!string.IsNullOrEmpty(transactionId))
-                    {
-                        // Change the order status to "Paid" and update the order with the transaction ID
-                        checkoutVM.Order.OrderStatus = "Paid";
-                        checkoutVM.TransactionId = transactionId;
-
-                        // At this point, the order is already created in the database
-
-                        OrderConfirmationVM orderconfirmationVM = new OrderConfirmationVM();
-                        // Populate the orderconfirmationVM with the necessary data
-
-                        return View("OrderConfirmation", checkoutVM);
-                    }
-                    else
-                    {
-                        // Return the Checkout page with the checkout view model again
-                        return View("Checkout", checkoutVM);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError(ex, "Error inserting order into the database");
-                    return View("Error", new ErrorViewModel { RequestId = "Error inserting order into the database" });
-                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error inserting order into the database");
+                return View("Error", new ErrorViewModel { RequestId = "Error inserting order into the database" });
             }
 
             return View("ProceedPayment", checkoutVM);
