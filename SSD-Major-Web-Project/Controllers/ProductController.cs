@@ -27,7 +27,7 @@ namespace SSD_Major_Web_Project.Controllers
             return View(temp.GetAll());
         }
 
-        public IActionResult Details(int id, string category, string method)
+        public IActionResult Details(int id, string category, string method, int subID)
         {
             ProductRepo products = new ProductRepo(_context);
             ReviewRepo reviewRepo = new ReviewRepo(_context);
@@ -35,7 +35,7 @@ namespace SSD_Major_Web_Project.Controllers
 
             var cartCookie = Request.Cookies["cart"];
             var favoriteCookie = Request.Cookies["favorite"];
-            int skuID = products.GetSkuIdById(id);
+            int skuID = subID == null ? products.GetSkuIdById(id) : subID;
 
             ViewBag.productSkuID = 0;
             if (category == "cart" || category == "favorite")

@@ -58,11 +58,15 @@
                 <h4>Select Size</h4>
             </div>
             <div class="size-container">
-                @foreach (var i in Model.Sizes)
+                @for (int i = 0; i < Model.Sizes.Count; i++)
                 {
-                    <button class="size-button">i</button>
+                    if (i == 0) {
+                        <button class="size-button active" onclick="changeSize(event)">@Model.Sizes[i]</button>
+                    }
+                    else {
+                        <button class="size-button" onclick="changeSize(event)">@Model.Sizes[i]</button>
+                    }
                 }
-                
             </div>
             <hr />
             <div class="product-description">
@@ -92,6 +96,13 @@
         </div>
     </div>
 </div>
+
+<script>
+    function changeSize(e) {
+        $(".size-button").removeClass("active");
+        e.currentTarget.className += " active";
+    }
+</script>
 
 
 

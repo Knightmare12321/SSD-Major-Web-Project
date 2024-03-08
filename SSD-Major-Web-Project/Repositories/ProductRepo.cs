@@ -43,7 +43,7 @@ namespace SSD_Major_Web_Project.Repositories
             return _context.ProductSkus.Where(p => p.FkProductId == id).FirstOrDefault().PkSkuId;
         }
 
-        public ProductDetailVM? GetByIdVM(int pkProductId)
+        public ProductDetailVM? GetByIdAndReviewVM(int pkProductId, List<Review> reviews)
         {
             ProductVM? productVM = _context.Products
                 .Where(u => u.PkProductId == pkProductId)
@@ -74,7 +74,8 @@ namespace SSD_Major_Web_Project.Repositories
                 Description = productVM.Description,
                 IsActive = productVM.IsActive,
                 ImageByteArray = imageByteArray,
-                Sizes = sizes.ToList()
+                Sizes = sizes.ToList(),
+                Reviews = reviews
             };
             return productDetailVM;
         }
