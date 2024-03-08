@@ -5,10 +5,10 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Create a New Product</h1>
+<h1>@(ViewBag.Create ? "Create a New" : "Edit the") Product</h1>
 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-<form id="create-product-grid" asp-action="CreateProduct" method="post" enctype="multipart/form-data">
+<form id="create-product-grid" asp-action="@(ViewBag.Create?"CreateProduct":"EditProduct")" method="post" enctype="multipart/form-data">
     <div>
         <div class="form-group">
             <label asp-for="Name">Product Name: </label>
@@ -26,9 +26,9 @@
             <div>
             <label asp-for="Sizes">Sizes</label>
             <div class="size-grid">
-                <span>S</span><input name="Sizes" type="checkbox" value="S" />
-                    <span>M</span><input name="Sizes" type="checkbox" value="M" />
-                    <span>L</span><input name="Sizes" type="checkbox" value="L" />
+                <span>S</span><input name="Sizes" type="checkbox" value="S"  @(Model.Sizes != null && Model.Sizes.Contains("S") ? "checked" : "") />
+                    <span>M</span><input name="Sizes" type="checkbox" value="M" @(Model.Sizes != null && Model.Sizes.Contains("M") ? "checked" : "") />
+                    <span>L</span><input name="Sizes" type="checkbox" value="L" @(Model.Sizes != null && Model.Sizes.Contains("L") ? "checked" : "") />
             </div>
             </div>
             <span asp-validation-for="Sizes" class="text-danger"></span>
@@ -48,8 +48,11 @@
             <textarea asp-for="Description"></textarea>
             <span asp-validation-for="Description" class="text-danger"></span>
         </div>
+        <input asp-for="PkProductId" value="@Model.PkProductId"hidden />
+        <input asp-for="IsActive" value="@Model.IsActive" hidden />
         <div>
-            <button type="submit">Submit</button> <button asp-action="Index">Cancel</button>
+            <button class="btn btn-primary" type="submit">Submit</button>
+            <button class="btn btn-secondary" asp-action="AllProducts">Cancel</button>
         </div>
     </div>
 </form>

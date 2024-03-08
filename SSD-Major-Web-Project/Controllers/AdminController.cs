@@ -12,6 +12,7 @@ using System.Text.Encodings.Web;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Drawing.Printing;
+using System.Collections;
 
 
 namespace SSD_Major_Web_Project.Controllers
@@ -32,7 +33,7 @@ namespace SSD_Major_Web_Project.Controllers
             return View();
         }
 
-        public IActionResult AllProducts(string message = "")
+        public IActionResult AllProducts(string message = "",)
         {
             ViewData["Message"] = message;
             AdminRepo adminRepo = new AdminRepo(_context);
@@ -42,6 +43,7 @@ namespace SSD_Major_Web_Project.Controllers
 
         public IActionResult CreateProduct()
         {
+            ViewData["Create"] = true;
             CreateProductVM vm = new CreateProductVM();
             return View(vm);
         }
@@ -82,13 +84,101 @@ namespace SSD_Major_Web_Project.Controllers
                 return RedirectToAction("AllProducts", new { message = message });
 
             }
+            ViewData["Create"] = true;
             return View(vm);
         }
+
+        public IActionResult EditProduct(int productId)
+        {
+            ViewData["Create"] = false;
+            AdminRepo adminRepo = new AdminRepo(_context);
+            Product product = adminRepo.GetProductById(productId);
+            CreateProductVM vm = new CreateProductVM
+            {
+                PkProductId = product.PkProductId,
+                Name = product.Name,
+                Price = product.Price,
+                Description = product.Description,
+                IsActive = product.IsActive,
+            };
+
+            //add sizes to vm
+            List<string> sizes = new List<string>();
+            foreach (var item in product.ProductSkus)
+            {
+                sizes.Add(item.Size);
+            }
+            vm.Sizes = sizes;
+
+            //add image files to vm
+            List<IFormFile> files = new List<IFormFile>();
+            foreach (var item in product.Images)
+            {
+                var stream = new MemoryStream(item.Data);
+                IFormFile file = new FormFile(stream, 0, item.Data.Length, item.AltText, item.FileName);
+                files.Add(file);
+            }
+            vm.Images = files;
+
+            return View("CreateProduct", vm);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> EditProduct(CreateProductVM vm)
+        {
+            if (ModelState.IsValid)
+            {
+                //make sure all images are in appropriate file types
+                string contentType;
+                foreach (IFormFile image in vm.Images)
+                {
+                    contentType = image.ContentType;
+                    if (contentType != "image/png" &&
+                    contentType != "image/jpeg" &&
+                    contentType != "image/jpg")
+                    {
+                        ModelState.AddModelError("imageUpload", "Please upload a PNG, " +
+                                        "JPG, or JPEG file.");
+                        return View("CreateProduct", vm);
+
+                    }
+                }
+
+                AdminRepo adminRepo = new AdminRepo(_context);
+                string errorString = await adminRepo.EditProduct(vm.PkProductId, vm.Name, vm.Price, vm.Description, vm.IsActive, vm.Images, vm.Sizes);
+
+                string message;
+                if (errorString == "")
+                {
+                    message = "The product was successfully editted";
+                }
+                else
+                {
+                    message = errorString;
+                }
+                return RedirectToAction("AllProducts", new { message = message });
+
+            }
+
+            ViewData["Create"] = false;
+            return View("CreateProduct", vm);
+        }
+
 
         public IActionResult DeactivateProduct(int productId)
         {
             AdminRepo adminRepo = new AdminRepo(_context);
-            AdminProductVM vm = adminRepo.GetProductById(productId);
+            Product product = adminRepo.GetProductById(productId);
+            AdminProductVM vm = new AdminProductVM
+            {
+                PkProductId = product.PkProductId,
+                Name = product.Name,
+                Price = product.Price,
+                Description = product.Description,
+                IsActive = product.IsActive,
+                Images = product.Images,
+                ProductSkus = product.ProductSkus
+            };
             return View(vm);
         }
 

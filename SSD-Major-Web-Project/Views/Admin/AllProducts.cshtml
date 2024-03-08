@@ -5,7 +5,7 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div id="discount-list" class="table-responsive">
+<div id="product-list" class="table-responsive">
     <p class="message">@ViewBag.Message</p>
     <button class="btn btn-primary" onclick="location.href='@Url.Action("CreateProduct","Admin")'">Add Listing</button>
     <table class="table transaction-table">
@@ -16,6 +16,7 @@
                 <th>Price</th>
                 <th>Status</th>
                 <th></th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
@@ -23,10 +24,15 @@
             {
                 <tr>
                     <td> @Html.DisplayFor(modelItem => item.PkProductId)</td>
-                    <td> @Html.DisplayFor(modelItem => item.Name)</td>
-                    <td> @Html.DisplayFor(modelItem => item.Price)</td>
-                    <td> @Html.DisplayName(item.IsActive == true ? "Active" : "Inactive")</td>
-                    <td>
+                    <td class="name"> @Html.DisplayFor(modelItem => item.Name)</td>
+                    <td class="tight"> $@item.Price</td>
+                    <td class="tight"> @Html.DisplayName(item.IsActive == true ? "Active" : "Inactive")</td>
+                    <td class="tight">
+                        <a asp-action="EditProduct" asp-route-productId="@item.PkProductId">
+                            <button class="btn btn-secondary">Edit</button>
+                        </a>
+                    </td>
+                    <td class="tight">
                         <a asp-action="DeactivateProduct" asp-route-productId="@item.PkProductId">
                             <button class="btn btn-danger">Deactivate</button>
                         </a>
