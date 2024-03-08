@@ -25,6 +25,19 @@
     width: 50vw;
     height: 400px;
 }
+
+.size-button {
+    transition: 0.3s;
+}
+
+.size-button:hover {
+    background-color: #ddd;
+}
+
+.size-button.active {
+    background-color: #ccc;
+}
+
 .product-description {
     height: auto;
     margin-bottom: 20px;
@@ -53,3 +66,4 @@
     background-color: lightgrey;
 }
 
+/* Review Styling */

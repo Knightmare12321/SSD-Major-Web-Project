@@ -10,7 +10,6 @@ namespace SSD_Major_Web_Project.ViewModels
         public ProductDetailWithReviewVM(ProductDetailVM productDetailVM, List<Review> reviews)
         {
             _productDetailVM = productDetailVM;
-
         }
     }
 }
