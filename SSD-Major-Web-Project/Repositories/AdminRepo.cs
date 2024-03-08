@@ -402,9 +402,9 @@ namespace SSD_Major_Web_Project.Repositories
             }
         }
 
-        public IQueryable<DiscountVM> GetAllDiscounts()
+        public IQueryable<DiscountVM> GetAllDiscounts(string searchTerm)
         {
-            return _context.Discounts.Select(d =>
+            var query = _context.Discounts.Select(d =>
                 new DiscountVM
                 {
                     PkDiscountCode = d.PkDiscountCode,
@@ -414,6 +414,10 @@ namespace SSD_Major_Web_Project.Repositories
                     EndDate = d.EndDate,
                     IsActive = d.IsActive
                 }); ;
+
+            //filter query by search term
+            query = query.Where(d => d.PkDiscountCode.Contains(searchTerm));
+            return query;
         }
 
 

@@ -4,15 +4,14 @@
     ViewData["Title"] = "AllProducts";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+<div id="admin-product-main">
 
 <div id="product-list" class="table-responsive">
     <p class="message">@ViewBag.Message</p>
-    <form asp-action="AllProducts" method="get">
-        <input id="search-term" name="searchTerm" value="@ViewBag.SearchTerm" placeholder="search product name" />
-        <input name="pageIndex" value="@Model.PageIndex" hidden />
-        <button class="btn btn-secondary">Filter</button>
-    </form>
-    <button class="btn btn-primary" onclick="location.href='@Url.Action("CreateProduct","Admin")'">Add Listing</button>
+    <input id="search-term" name="searchTerm" value="@ViewBag.SearchTerm" placeholder="search product name" />
+    <input name="pageIndex" value="@Model.PageIndex" hidden />
+    <button class="btn btn-secondary" onClick="getFilteredAndPaginatedProducts(@Model.PageIndex)">Filter</button>
+    <button class=" add-btn btn btn-primary" onclick="location.href='@Url.Action("CreateProduct","Admin")'">Add Listing</button>
     <table class="table transaction-table">
         <thead>
             <tr>
@@ -51,18 +50,20 @@
     <ul class="pagination">
         <li class="page-item @(Model.HasPreviousPage ? "" : "disabled")">
             <a class="page-link"
-               href="@Url.Action("AllProducts", new { pageIndex = Model.PageIndex - 1 })">
+               onClick="getFilteredAndPaginatedProducts(@(Model.PageIndex - 1))">
                 Previous
             </a>
         </li>
         <li class="page-item @(Model.HasNextPage ? "" : "disabled")">
             <a class="page-link"
-               href="@Url.Action("AllProducts", new { pageIndex = Model.PageIndex + 1 })">
+               onClick="getFilteredAndPaginatedProducts(@(Model.PageIndex + 1))">
                 Next
             </a>
         </li>
     </ul>
 </nav>
+</div>
+
 
 <script>
     const getFilteredAndPaginatedProducts = (pageIndex) => {
@@ -73,8 +74,9 @@
             url: url,
             data: { "searchTerm": searchTerm, "pageIndex": pageIndex },
             success: function (data) {
-                console.log('data: ', data);
-                $("#rendered-content").innerHTML = data;
+                const parser = new DOMParser();
+                const newDoc = parser.parseFromString(data, 'text/html');
+                $('#admin-product-main')[0].innerHTML = newDoc.getElementById("admin-product-main").innerHTML;
             }
         });
     }
