@@ -55,6 +55,13 @@
                     <input type="text" name="Order.Contact.BuyerNote" placeholder="Special Instructions" />
                     </div>
 
+                    @foreach (var item in Model.ShoppingCart.ShoppingCartItems)
+                    {
+                        <input name="ShopingCart.ShoppingCartItems.SkuId" value="item.SkuId" hidden/>
+                        <input name="ShoppingCart.ShoppingCartItems.Quanity" value="item.quanity" hidden/>
+                    }
+
+     
                     <button type="submit" class="btn btn-primary">Proceed to Payment Page</button>
                 </form>
 
