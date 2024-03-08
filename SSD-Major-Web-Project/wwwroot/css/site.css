@@ -36,15 +36,11 @@ body {
     flex-direction: column
 }
 
-.container {
+.main-wrapper {
     padding: var(--page-padding);
     margin: 0;
     flex: 1;
 }
-
-main {
-}
-
 
 .navbar {
     background-color: #FDF0F0;
@@ -224,70 +220,128 @@ button {
     }
 }
 
+/*Admin AllProducts*/
+#product-list .message {
+    color: red;
+}
+#product-list td{
+    max-width:300px;
+}
+#product-list td.tight {
+    width: 1%; /* Make the cell shrink to fit its contents */
+}
+#product-list td.name {
+    min-width: 300px;
+}
+#product-list button{
+    margin:5px;
+}
+#product-list button:hover {
+    background-color: var(--theme-color) !important;
+    color: black !important;
+}
+
+
 /*Admin CreateProduct*/
 #create-product-grid {
+    margin: 0px auto;
     display: grid;
     grid-template-columns: 1fr;
     grid-column-gap: 20px;
-    label
+    max-width: 800px;
 
-{
-    display: block;
-    font-size: var(--label-font-size);
+    label{
+        display: block;
+        font-size: var(--label-font-size);
+    }
+
+    .size-grid {
+        display: grid;
+        grid-template-rows: 1fr 1fr;
+        grid-auto-flow: column;
+        text-align: center;
+        width: 100px;
+        margin-bottom: 10px;
+    }
+
+    input[name="Name"],
+    textarea[name="Description"] {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+
+    textarea[name="Description"] {
+        height: 200px;
+        resize: none;
+    }
+
+    input[type="file"]{
+        border:none;
+        width:250px;
+    }
+    input[type="file"]:focus {
+        box-shadow: none;
+    }
+    input::file-selector-button {
+        color: black;
+        padding: 0.5em;
+        border: thin solid grey;
+        border-radius: 3px;
+    }
+
+    .price {
+        display: flex;
+        margin-bottom: 10px;
+        input{
+            margin-right: 5px;
+        }
+
+    }
+
+    button:hover {
+        background-color: var(--theme-color) !important;
+        color: black !important;
+    }
+
 }
 
-.size-grid {
-    display: grid;
-    grid-template-rows: 1fr 1fr;
-    grid-auto-flow: column;
-    text-align: center;
-    width: 100px;
-    margin-bottom: 10px;
-}
-
-input[name="Name"],
-textarea[name="Description"] {
-    width: 100%;
-    max-width: 450px;
-    margin-bottom: 10px;
-}
-
-textarea[name="Description"] {
-    height: 200px;
-    resize: none;
-}
-
-.price {
-    display: flex;
-    margin-bottom: 10px;
-    input
-
-{
-    margin-right: 5px;
-}
-
-}
-}
-
-@media(min-width:550px) {
+@media(min-width:768px) {
     #create-product-grid {
         grid-template-columns: 2fr 1fr;
     }
 }
 
 /*Admin DeactivateProduct*/
-#delete-product-page img{
-    width:200px;
+#delete-product-page .info-panel{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    margin-bottom:20px;
+}
+
+#delete-product-page img {
+    display: inline-block;
+    height:auto;
+    width: 200px;
 }
 #delete-product-page .info-block{
     display:inline-block;
 }
 #delete-product-page dt{
     display:inline-block;
-    width:130px;
+    width:20%;
+    min-width:100px;
+    vertical-align:top;
 }
 #delete-product-page dd {
     display:inline-block;
+    max-width:65%;
+}
+
+@media(min-width:600px){
+    #delete-product-page .info-panel {
+        flex-direction:row
+    }
 }
 
 /*Admin AdminOrder*/
@@ -310,19 +364,22 @@ textarea[name="Description"] {
         cursor: pointer;
     }
 
-        .side-bar li:hover, .side-bar li.active {
-            background-color: var(--theme-color);
-        }
+    .side-bar li:hover, .side-bar li.active {
+        background-color: var(--theme-color);
+    }
 
     .summary {
         display: block
     }
 
-
     button {
         white-space: nowrap;
         background-color: royalblue;
         color: white;
+    }
+    button:hover{
+        background-color: var(--theme-color);
+        color: black;
     }
 
     button.deactivated {
@@ -385,7 +442,20 @@ textarea[name="Description"] {
     border-bottom: solid 1px black;
 }
 
-/*Discount List Page*/
+/*AllDiscounts Page*/
 #discount-list .message{
     color:red;
+}
+#discount-list button{
+    margin:5px;
+}
+#discount-list button:hover {
+    background-color: var(--theme-color) !important;
+    color: black !important;
+}
+
+/*CreateDiscount Page*/
+#create-discount-form button:hover {
+    background-color: var(--theme-color) !important;
+    color: black !important;
 }

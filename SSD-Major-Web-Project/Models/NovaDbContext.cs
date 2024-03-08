@@ -40,7 +40,7 @@ public partial class NovaDbContext : DbContext
     {
         modelBuilder.Entity<Contact>(entity =>
         {
-            entity.HasKey(e => e.PkContactId).HasName("PK__Contact__5D8CD4C0CF5C48EF");
+            entity.HasKey(e => e.PkContactId).HasName("PK__Contact__5D8CD4C06595E06D");
 
             entity.ToTable("Contact");
 
@@ -85,7 +85,7 @@ public partial class NovaDbContext : DbContext
 
         modelBuilder.Entity<Customer>(entity =>
         {
-            entity.HasKey(e => e.PkCustomerId).HasName("PK__Customer__1FD9D5A246E3F139");
+            entity.HasKey(e => e.PkCustomerId).HasName("PK__Customer__1FD9D5A20CB69903");
 
             entity.ToTable("Customer");
 
@@ -103,7 +103,7 @@ public partial class NovaDbContext : DbContext
 
         modelBuilder.Entity<Discount>(entity =>
         {
-            entity.HasKey(e => e.PkDiscountCode).HasName("PK__Discount__79BE3D84ADFC1A6C");
+            entity.HasKey(e => e.PkDiscountCode).HasName("PK__Discount__79BE3D84BAAFCA85");
 
             entity.ToTable("Discount");
 
@@ -125,7 +125,7 @@ public partial class NovaDbContext : DbContext
 
         modelBuilder.Entity<Image>(entity =>
         {
-            entity.HasKey(e => e.PkImageId).HasName("PK__Image__03FC437698C16F5B");
+            entity.HasKey(e => e.PkImageId).HasName("PK__Image__03FC4376632796A1");
 
             entity.ToTable("Image");
 
@@ -149,7 +149,7 @@ public partial class NovaDbContext : DbContext
 
         modelBuilder.Entity<Order>(entity =>
         {
-            entity.HasKey(e => e.PkOrderId).HasName("PK__Order__C196130B2469C083");
+            entity.HasKey(e => e.PkOrderId).HasName("PK__Order__C196130B260D274E");
 
             entity.ToTable("Order");
 
@@ -199,7 +199,7 @@ public partial class NovaDbContext : DbContext
 
         modelBuilder.Entity<OrderDetail>(entity =>
         {
-            entity.HasKey(e => new { e.FkOrderId, e.FkSkuId }).HasName("PK__OrderDet__1F82522DC93A69F0");
+            entity.HasKey(e => new { e.FkOrderId, e.FkSkuId }).HasName("PK__OrderDet__1F82522D37E449E5");
 
             entity.ToTable("OrderDetail");
 
@@ -221,7 +221,7 @@ public partial class NovaDbContext : DbContext
 
         modelBuilder.Entity<OrderStatus>(entity =>
         {
-            entity.HasKey(e => e.PkOrderStatusId).HasName("PK__OrderSta__ABDB6887299196B7");
+            entity.HasKey(e => e.PkOrderStatusId).HasName("PK__OrderSta__ABDB6887C008B250");
 
             entity.ToTable("OrderStatus");
 
@@ -234,7 +234,7 @@ public partial class NovaDbContext : DbContext
 
         modelBuilder.Entity<Product>(entity =>
         {
-            entity.HasKey(e => e.PkProductId).HasName("PK__Product__4492A4B57E5AE656");
+            entity.HasKey(e => e.PkProductId).HasName("PK__Product__4492A4B5D1C26E1C");
 
             entity.ToTable("Product");
 
@@ -245,7 +245,7 @@ public partial class NovaDbContext : DbContext
                 .HasColumnName("description");
             entity.Property(e => e.IsActive).HasColumnName("isActive");
             entity.Property(e => e.Name)
-                .HasMaxLength(150)
+                .HasMaxLength(255)
                 .IsUnicode(false)
                 .HasColumnName("name");
             entity.Property(e => e.Price)
@@ -255,7 +255,7 @@ public partial class NovaDbContext : DbContext
 
         modelBuilder.Entity<ProductSku>(entity =>
         {
-            entity.HasKey(e => e.PkSkuId).HasName("PK__ProductS__B7ADEE3B4BF7C05C");
+            entity.HasKey(e => e.PkSkuId).HasName("PK__ProductS__B7ADEE3BE27B8D64");
 
             entity.ToTable("ProductSku");
 
@@ -274,7 +274,7 @@ public partial class NovaDbContext : DbContext
 
         modelBuilder.Entity<Review>(entity =>
         {
-            entity.HasKey(e => new { e.FkCustomerId, e.FkProductId }).HasName("PK__Review__598FD3896B1A509B");
+            entity.HasKey(e => new { e.FkCustomerId, e.FkProductId, e.PkReviewDate }).HasName("PK__Review__D33188289843F8BE");
 
             entity.ToTable("Review");
 
@@ -283,6 +283,7 @@ public partial class NovaDbContext : DbContext
                 .IsUnicode(false)
                 .HasColumnName("fkCustomerId");
             entity.Property(e => e.FkProductId).HasColumnName("fkProductId");
+            entity.Property(e => e.PkReviewDate).HasColumnName("pkReviewDate");
             entity.Property(e => e.Comment)
                 .HasMaxLength(100)
                 .IsUnicode(false)
