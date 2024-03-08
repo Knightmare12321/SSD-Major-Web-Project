@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using SSD_Major_Web_Project.Models;
 using SSD_Major_Web_Project.Repositories;
 using SSD_Major_Web_Project.ViewModels;
@@ -33,38 +34,41 @@ namespace SSD_Major_Web_Project.Controllers
                 }
                 else
                 {
-                   //productIdsFromDb list contains the ProductId values associated with the provided SkuIds from the database.
+                    //productIdsFromDb list contains the ProductId values associated with the provided SkuIds from the database.
+
+                    var favoriteCookie = Request.Cookies["favorite"];
+                    List<int> IDList = JsonConvert.DeserializeObject<List<int>>(favoriteCookie);
+
+                    // conssole log IDList
+                    Console.WriteLine("///////////////////////////////////");
+                    Console.WriteLine(IDList);
 
                     List<SkuItem> skuItems = new List<SkuItem>
                     {
                         new SkuItem { SkuId = 1, Quantity = 2 },
-                        new SkuItem { SkuId = 2, Quantity = 3 }
+                        new SkuItem { SkuId = 14, Quantity = 3 }
                     };
 
-                    List<int> productIds = skuItems
-                        .Select(s => s.SkuId)
-                        .ToList();
+                    foreach (var skuItem in skuItems)
+                    {
+                        var productSku = _context.ProductSkus
+                            .FirstOrDefault(p => p.PkSkuId == skuItem.SkuId);
 
-                    List<ProductSku> productSkus = _context.ProductSkus
-                        .Where(ps => productIds.Contains(ps.PkSkuId))
-                        .ToList();
+                        if (productSku != null)
+                        {
+                            skuItem.ProductId = productSku.FkProductId ?? 0;
+                        }
+                    }
 
-                    List<int> productIdsFromDb = productSkus
-                        .Select(ps => ps.FkProductId)
-                        .ToList();
+                    List<int> productIds = skuItems.Select(s => s.ProductId).ToList();
 
                     List<Product> products = _context.Products
                         .Include(p => p.Images)
-                        .Where(p => skuItems.Any(s => s.ProductId == p.PkProductId))
+                        .Where(p => productIds.Contains(p.PkProductId))
                         .ToList();
 
                     //populates the Product(s) by skuId include Images property in shopping cart for shopping cart view
 
-                    foreach (Product product in products)
-                    {
-                        List<Image> images = product.Images.ToList();
-                    
-                    }
 
                     ShoppingCartVM shoppingcartVM = new ShoppingCartVM();
 
