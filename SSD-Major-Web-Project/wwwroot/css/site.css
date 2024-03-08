@@ -343,9 +343,11 @@ button {
 }
 
 /*Admin AdminOrder*/
-
-
 #admin-orders {
+    display: none;
+}
+
+#admin-orders.active {
     display: flex;
     grid-column-gap: 10px;
 
