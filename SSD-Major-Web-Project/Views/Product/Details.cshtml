@@ -58,7 +58,11 @@
                 <h4>Select Size</h4>
             </div>
             <div class="size-container">
-                @Html.DisplayFor(model => model.Sizes)
+                @foreach (var i in Model.Sizes)
+                {
+                    <button class="size-button">i</button>
+                }
+                
             </div>
             <hr />
             <div class="product-description">
@@ -86,8 +90,6 @@
                 </button>
             </div>
         </div>
-
-
     </div>
 </div>
 

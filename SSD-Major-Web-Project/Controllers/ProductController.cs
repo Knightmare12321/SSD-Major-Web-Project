@@ -26,7 +26,7 @@ namespace SSD_Major_Web_Project.Controllers
             return View(temp.GetAll());
         }
 
-        public IActionResult Details(int id, string catagory, string method)
+        public IActionResult Details(int id, string category, string method)
         {
             ProductRepo products = new ProductRepo(_context);
             ReviewRepo reviewRepo = new ReviewRepo(_context);
@@ -36,14 +36,14 @@ namespace SSD_Major_Web_Project.Controllers
             int skuID = products.GetSkuIdById(id);
 
             ViewBag.productSkuID = 0;
-            if (catagory == "cart" || catagory == "favorite")
+            if (category == "cart" || category == "favorite")
             {
                 // Set the expired date when cookie is updated/created.
                 CookieOptions option = new CookieOptions();
                 option.Expires = DateTime.Now.AddDays(365);
                 string resultJson;
 
-                var IDListCookie = catagory == "cart" ? cartCookie : favoriteCookie;
+                var IDListCookie = category == "cart" ? cartCookie : favoriteCookie;
                 /* If the cookie doesn't exist, create a new cookie.
                    If the cookie exists, deserialize the ID list and and add/delete ID in the list.
                    Pass in cookie with serialized ID list. */
@@ -52,7 +52,7 @@ namespace SSD_Major_Web_Project.Controllers
                     List<int> IDList = new List<int>();
                     IDList.Add(skuID);
                     resultJson = JsonConvert.SerializeObject(IDList);
-                    Response.Cookies.Append(catagory, resultJson, option);
+                    Response.Cookies.Append(category, resultJson, option);
                 }
                 else
                 {
@@ -60,9 +60,9 @@ namespace SSD_Major_Web_Project.Controllers
                     if (method == "add") IDList.Add(skuID);
                     else if (method == "remove") IDList.Remove(skuID);
                     resultJson = JsonConvert.SerializeObject(IDList);
-                    Response.Cookies.Append(catagory, resultJson, option);
+                    Response.Cookies.Append(category, resultJson, option);
                 }
-                if (catagory == "cart") cartCookie = resultJson;
+                if (category == "cart") cartCookie = resultJson;
                 else favoriteCookie = resultJson;
             }
 
