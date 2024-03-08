@@ -5,6 +5,8 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
+
+
 <div class="shoppingcart-container">
 
     <div class="row">
@@ -12,23 +14,21 @@
         <div class="col-md-4">
             <div class="shopping-cart">
                 <h4>SHOPPING CART</h4>
-                @*                 @foreach (var item in Model.Products)
+                @foreach (var item in Model.Products)
                 {
-                <div class="product">
-                @if (item.Image != null && item.Image.Length > 0)
-                {
-                <img src="data:image/jpeg;base64,
-                @Convert.ToBase64String(@item.Image)"
-                alt="Model.Name"
-                class="product-image" />
-                }
+                    <div class="product">
+              
+                        @if (item.Images != null && item.Images.Count > 0)
+                        {
+                            <img src="data:image/jpeg;base64,@Convert.ToBase64String(item.Images.FirstOrDefault().Data)" alt="@item.Name" class="product-image" />
+                        }
 
-                <div class="product-details">
-                <h5>@item.Name</h5>
-                <p>@item.Price</p>
-                </div>
-                </div>
-                } *@
+                        <div class="product-details">
+                            <h5>@item.Name</h5>
+                            <p>@item.Price</p>
+                        </div>
+                    </div>
+                }
             </div>
             <div class="my-wishlist">
                 <h4>MY WISHLIST </h4>
@@ -38,7 +38,7 @@
 
         <div class="col-md-6 col-md-offset-2">
             <div class="coupon-code">
-                <input type="text" placeholder="Coupon Code" />
+                <input type="text"  placeholder="Coupon Code" />
                 <input type="submit" value="Apply Code" class="btn btn-primary" />
             </div>
             <dt class="col-sm-3">
@@ -72,7 +72,14 @@
                     @foreach (var item in Model.Products)
                     {
                         <input type="hidden" name="Products" value="@item" />
+                        <input type="hidden" name="Subtotal" value="@Model.Subtotal" />
+                        <input type="hidden" name="ShippingFee" value="@Model.ShippingFee" />
+                        <input type="hidden" name="Taxes" value="@Model.Taxes" />
+                        <input type="hidden" name="GrandTotal" value="@Model.GrandTotal" />
+
                     }
+                 
+
                     <button type="submit" class="btn btn-primary">Proceed to Checkout</button>
                 </form>
             </div>

@@ -1,0 +1,109 @@
+﻿@model SSD_Major_Web_Project.ViewModels.CheckoutVM
+
+@{
+    ViewData["Title"] = "Checkout";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+}
+
+<script src="https://www.paypal.com/sdk/js?client-id=AT43uF9QHEyOHayLY0lnVVwiD6VfjG2o2NH8Ob6mo9iod3G7VftCAWwy9r8jQHLY6jizC_vHkmQCbfW8"></script>
+
+
+<div class="checkout-container">
+    <div class="row">
+        <h2>Proceed to payment</h2>
+        <div class="col-md-4">
+            <div class="order-total">
+       @*          <h3>Proceed to payment</h3> *@
+                <div class="order-total-details">
+
+                    <dt class="col-sm-2">
+                        @Html.DisplayNameFor(model => model.ShoppingCart.GrandTotal)
+                    </dt>
+                       @Html.DisplayFor(model => model.ShoppingCart.CurrencySymbol)
+
+                        @Model.ShoppingCart.GrandTotal
+
+
+            </div>
+    </div>               
+            <form id="RequestOrderConfirmation" asp-action="ProceedPayment" asp-controller="Shop" method="post">
+                <input type="hidden" id="itemPrice" name="itemPrice" value="@Model.ShoppingCart.GrandTotal" />
+                <input type="hidden" name="UserId" value="@Model.DeliveryContactEmail" />
+            
+                <input type="hidden" name="ShoppingCart.Subtotal" value="@Model.ShoppingCart.Subtotal" />
+                <input type="hidden" name="ShoppingCart.ShippingFee" value="@Model.ShoppingCart.ShippingFee" />
+                <input type="hidden" name="ShoppingCart.Taxes" value="@Model.ShoppingCart.Taxes" />
+                <input type="hidden" name="ShoppingCart.GrandTotal" value="@Model.ShoppingCart.GrandTotal" />
+                <input type="hidden" name="ShoppingCart.CurrencySymbol" value="@Model.ShoppingCart.CurrencySymbol" />
+                <input type="hidden" name="Order.Contact.FirstName" value="@Model.Order.Contact.FirstName" />
+                <input type="hidden" name="Order.Contact.LastName" value="@Model.Order.Contact.LastName" />
+                <input type="hidden" name="Order.Contact.Address" value="@Model.Order.Contact.Address" />
+                <input type="hidden" name="Order.Contact.Address2" value="@Model.Order.Contact.Address2" />
+                    
+                <input type="hidden" name="Order.Contact.City" value="@Model.Order.Contact.City" />
+                <input type="hidden" name="Order.Contact.Province" value="@Model.Order.Contact.Province" />
+                <input type="hidden" name="Order.Contact.PostalCode" value="@Model.Order.Contact.PostalCode" />
+                <input type="hidden" name="Order.Contact.Country" value="@Model.Order.Contact.Country" />
+                <input type="hidden" name="Order.Contact.PhoneNumber" value="@Model.Order.Contact.PhoneNumber" />
+                <input type="hidden" name="DeliveryContactEmail" value="@Model.DeliveryContactEmail" />
+                <input type="hidden" name="Order.OrderStatus" value="Pending" />
+                <input type="hidden" name="Order.PaymentStatus" value="Paid" />
+                <input type="hidden" name="Order.OrderDate" value="@DateTime.Now" />
+                <input type="hidden" name="Order.DeliveryDate" value="To Be Confirm" />
+                <input type="hidden" name="Order.DeliveryStatus" value="Pwnding" />
+                <div id="paypal-button-container"></div>
+            </form>
+         
+                </div>
+            </div>
+      
+    </div>
+
+
+
+    <script>
+        paypal.Buttons({
+            // Set up the transaction
+            createOrder: function (data, actions) {
+                return actions.order.create({
+                    purchase_units: [{
+                        amount: {
+                            value: document.getElementById('itemPrice').value,
+                            currency: 'CAD'
+                        }
+                    }]
+                });
+            },
+
+            // Finalize the transaction
+            onApprove: function (data, actions) {
+                // Capture the PayPal transaction details
+                return actions.order.capture().then(function (details) {
+                    // Prepare the query parameters
+                    var transactionId = encodeURIComponent(details.id);
+                    var amount = encodeURIComponent(details.purchase_units[0].amount.value);
+                    var payerName = encodeURIComponent(details.payer.name.given_name);
+
+                    // Trigger the form submission to the CreateNewOrder action method
+                var form = document.getElementById('RequestOrderConfirmation');
+                    form.action = '/Shop/OrderConfirmation?transactionId=' + transactionId + '&amount=' + amount + '&payerName=' + payerName;
+                    form.submit();
+                });
+            },
+
+
+            onCancel: function (data) {
+                alert('Transaction was cancelled.');
+            },
+            onError: function (err) {
+                alert('An error occurred during the transaction. Error ==> ' + err);
+            },
+            style: {
+                layout: 'vertical', // 'vertical', 'horizontal'
+                color: 'blue',      // 'gold', 'blue', 'silver', 'black'
+                shape: 'rect',      // 'rect', 'pill'
+                label: 'paypal'     // 'checkout', 'pay', 'buynow', 'paypal'
+            }
+        }).render('#paypal-button-container');
+    </script>

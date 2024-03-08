@@ -147,10 +147,12 @@ body {
     gap: 10px;
     margin-bottom: 10px;
     padding: 10px;
-    border: 1px solid lightgray;
-    border-radius: 5px;
+    border-bottom: 1px solid lightgray;
 }
 
+    .shopping-cart .product:first-of-type {
+        border-top: 1px solid lightgray;
+    }
 
 /*USER CONTROLLER*/
 /*Sign in Page*/
@@ -238,7 +240,9 @@ button {
     background-color: var(--theme-color) !important;
     color: black !important;
 }
-
+#product-list button.add-btn{
+    display:block;
+}
 
 /*Admin CreateProduct*/
 #create-product-grid {
@@ -247,7 +251,6 @@ button {
     grid-template-columns: 1fr;
     grid-column-gap: 20px;
     max-width: 800px;
-
     label{
         display: block;
         font-size: var(--label-font-size);
@@ -450,6 +453,9 @@ button {
 #discount-list button:hover {
     background-color: var(--theme-color) !important;
     color: black !important;
+}
+#discount-list button.add-btn {
+    display: block;
 }
 
 /*CreateDiscount Page*/
