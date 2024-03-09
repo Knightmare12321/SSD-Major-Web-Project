@@ -16,16 +16,39 @@ namespace SSD_Major_Web_Project.Repositories
             _context = context;
         }
 
-        public string AddOrder(OrderConfirmationVM orderConfirmationEntity)
+
+        // create new contact for customer
+        public string AddContact(Contact contact)
         {
             // Placeholder to return message
             string message = string.Empty;
             try
             {
-                Order order = new Order
+                _context.Add(contact);
+                _context.SaveChanges();
+
+                message = "";
+            }
+            catch (System.Exception ex)
+            {
+                message = $"Error adding new contact: {contact.PkContactId}";
+
+                // Log error
+                Console.WriteLine(ex.Message);
+            }
+            return message;
+        }
+
+        public string AddOrder(CheckoutVM checkoutVMentity)
+        {
+            // Placeholder to return message
+            string message = string.Empty;
+            try
+            {
+                Order order = new()
                 {
                     // Entity attribute mapping
-                    FkCustomerId = orderConfirmationEntity.CheckoutVM.DeliveryContactEmail,
+                    FkCustomerId = checkoutVMentity.DeliveryContactEmail,
 
                     // FkOrderStatusId 
                     // 1 : Pending
@@ -35,7 +58,7 @@ namespace SSD_Major_Web_Project.Repositories
                     // 5 : Cancelled
 
                     // Use case to determine which status are we using and assign status id accordingly
-                    FkOrderStatusId = orderConfirmationEntity.CheckoutVM.Order.OrderStatus switch
+                    FkOrderStatusId = checkoutVMentity.Order.OrderStatus switch
                     {
                         "Pending" => 1,
                         "Paid" => 2,
@@ -44,20 +67,25 @@ namespace SSD_Major_Web_Project.Repositories
                         "Cancelled" => 5,
                         _ => 0
                     },
-                    FkDiscountCode = orderConfirmationEntity.CheckoutVM.Order.Discount.PkDiscountCode,
-                    FkContactId = orderConfirmationEntity.CheckoutVM.Order.Contact.PkContactId,
-                    TransactionId = orderConfirmationEntity.CheckoutVM.TransactionId,
-                    BuyerNote = orderConfirmationEntity.CheckoutVM.Order.BuyerNote,
-                    OrderDate = orderConfirmationEntity.CheckoutVM.Order.OrderDate,
+                    FkDiscountCode = checkoutVMentity.Order.Discount.PkDiscountCode,
+                    
+
+                    TransactionId = checkoutVMentity.TransactionId,
+                    BuyerNote = checkoutVMentity.Order.BuyerNote,
+                    OrderDate = checkoutVMentity.Order.OrderDate,
                 };
 
                 _context.Add(order);
                 _context.SaveChanges();
-                message = $"Order {orderConfirmationEntity.CheckoutVM.Order.OrderId} has been placed, you will get an email confirmation shortly.";
+
+                message = "";
             }
             catch (Exception ex)
             {
-                message = $"Error placing new order: {orderConfirmationEntity.CheckoutVM.Order.OrderId}";
+                message = $"Error placing new order: {checkoutVMentity.Order.OrderId}";
+
+                // Log error
+                Console.WriteLine(ex.Message);
             }
             return message;
         }

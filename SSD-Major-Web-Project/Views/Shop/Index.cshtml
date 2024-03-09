@@ -74,7 +74,7 @@
 
             </dd>
             <div>
-                <form asp-action="Checkout" asp-controller="Shop" method="post">
+                <form asp-action="CheckoutShippingContact" asp-controller="Shop" method="post">
                     <input type="hidden" asp-for="@Model.UserId" />
                     @foreach (var item in Model.ShoppingCartItems)
                     {
