@@ -89,9 +89,9 @@ namespace SSD_Major_Web_Project.Controllers
             return View(vm);
         }
 
-        public IActionResult CreateReview()
+        public IActionResult CreateReview(int id)
         {
-            Review review = new Review { PkReviewDate = DateOnly.FromDateTime(DateTime.Now) };
+            Review review = new Review { PkReviewDate = DateOnly.FromDateTime(DateTime.Now), Rating = 1, FkProductId = id };
 
             return View(review);
         }
@@ -99,16 +99,12 @@ namespace SSD_Major_Web_Project.Controllers
         [HttpPost]
         public IActionResult CreateReview(Review review)
         {
-            if (ModelState.IsValid)
-            {
-                ReviewRepo reviewRepo = new ReviewRepo(_context);
+            ReviewRepo reviewRepo = new ReviewRepo(_context);
 
-                string addMessage = reviewRepo.Add(review);
+            string addMessage = reviewRepo.Add(review);
 
-                return RedirectToAction("Index", new { message = addMessage });
-            }
+            return RedirectToAction("Index", new { message = addMessage });
 
-            return View(review);
         }
 
 
