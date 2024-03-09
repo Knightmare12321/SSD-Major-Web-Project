@@ -310,40 +310,38 @@ namespace SSD_Major_Web_Project.Controllers
 
             orderConfirmationVM.CheckoutVM = checkoutVM;
 
-            string errorAddContact
-                = _shopRepo.AddContact(checkoutVM.Order.Contact);
+            var result = _shopRepo.AddContact(checkoutVM.Order.Contact);
+            string message = result.Item1;
+            int contactId = result.Item2;
 
-
-            if (errorAddContact == "")
-            {
-                ViewBag.Message = $"Contact id - {checkoutVM.Order.Contact.PkContactId} has been placed, you will get an email confirmation shortly once payment confirmed.";
-                return View("CheckoutShippingContact", checkoutVM);
-
-            }
-            else
-            {
-                ViewBag.Message = $"Error create new contact: {checkoutVM.Order.Contact.PkContactId}"; ;
-                return View("CheckoutShippingContact", checkoutVM);
-                
-            }
-
-            //string errorAddOrder = _shopRepo.AddOrder(checkoutVM);
-
-            ////string message;
-            //if (errorAddOrder == null)
+            //if (string.IsNullOrEmpty(message))
             //{
-            //    message = $"Order {checkoutVM.Order.OrderId} has been placed, you will get an email confirmation shortly once prcoeed payment.";
-            //    return View("Paypal", checkoutVM);
+            //    ViewBag.Message = $"Contact ID - {contactId} has been added.";
+            //    return View("CheckoutShippingContact", checkoutVM);
             //}
             //else
             //{
-            //    message = $"Error placing new order: {checkoutVM.Order.OrderId}";
-            //    ViewBag.Message = message;
+            //    ViewBag.Message = $"Error creating new contact: {message}";
             //    return View("CheckoutShippingContact", checkoutVM);
             //}
 
+            string errorAddOrder = _shopRepo.AddOrder(checkoutVM, contactId);
 
-            
+            //string message;
+            if (errorAddOrder == null)
+            {
+                message = $"Order {checkoutVM.Order.OrderId} has been placed, you will get an email confirmation shortly once prcoeed payment.";
+                return View("Paypal", checkoutVM);
+            }
+            else
+            {
+                message = $"Error placing new order: {checkoutVM.Order.OrderId}";
+                ViewBag.Message = message;
+                return View("CheckoutShippingContact", checkoutVM);
+            }
+
+
+
         }
 
         // GET: ShopController//orderConfirmation

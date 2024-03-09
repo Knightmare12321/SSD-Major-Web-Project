@@ -18,28 +18,33 @@ namespace SSD_Major_Web_Project.Repositories
 
 
         // create new contact for customer
-        public string AddContact(Contact contact)
+        public Tuple<string, int> AddContact(Contact contact)
         {
-            // Placeholder to return message
+            // Placeholder to return message and contact ID
             string message = string.Empty;
+            int contactId = 0;
+
             try
             {
                 _context.Add(contact);
                 _context.SaveChanges();
 
+                // Retrieve the contact ID
+                contactId = contact.PkContactId;
+
                 message = "";
             }
             catch (System.Exception ex)
             {
-                message = $"Error adding new contact: {contact.PkContactId}";
+                message = $"Error adding new contact: {ex.Message}";
 
                 // Log error
                 Console.WriteLine(ex.Message);
             }
-            return message;
-        }
 
-        public string AddOrder(CheckoutVM checkoutVMentity)
+            return Tuple.Create(message, contactId);
+        }
+        public string AddOrder(CheckoutVM checkoutVMentity, int contactId)
         {
             // Placeholder to return message
             string message = string.Empty;
@@ -68,7 +73,7 @@ namespace SSD_Major_Web_Project.Repositories
                         _ => 0
                     },
                     FkDiscountCode = checkoutVMentity.Order.Discount.PkDiscountCode,
-                    
+                    FkContactId = contactId,
 
                     TransactionId = checkoutVMentity.TransactionId,
                     BuyerNote = checkoutVMentity.Order.BuyerNote,
