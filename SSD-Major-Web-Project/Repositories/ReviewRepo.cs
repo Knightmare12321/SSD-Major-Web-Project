@@ -34,9 +34,16 @@ namespace SSD_Major_Web_Project.Repositories
         public string Add(Review entity)
         {
             string message = string.Empty;
+            Review review = new Review
+            {
+                PkReviewDate = DateOnly.FromDateTime(DateTime.Now),
+                Rating = entity.Rating,
+                FkProductId = entity.FkProductId,
+                Comment = entity.Comment,
+            };
             try
             {
-                _context.Add(entity);
+                _context.Add(review);
                 _context.SaveChanges();
                 message = $"Review for {entity.FkProductId} saved successfully";
             }
