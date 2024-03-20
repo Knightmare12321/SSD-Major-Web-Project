@@ -328,9 +328,14 @@ namespace SSD_Major_Web_Project.Controllers
             //}
 
 
-            string errorAddOrder = _shopRepo.AddOrder(checkoutVM, contactId);
+            Tuple<string, int> result = _shopRepo.AddOrder(checkoutVM, contactId);
 
+            string errorAddOrder = result.Item1;
+            int orderId = result.Item2;
 
+            // add order details
+            string errorAddOrderDetails = _shopRepo.AddOrderDetails(checkoutVM, orderId);
+            
 
             //string message;
             if (errorAddOrder == "")
@@ -354,6 +359,7 @@ namespace SSD_Major_Web_Project.Controllers
         // GET: ShopController//orderConfirmation
         public IActionResult OrderConfirmation(string transactionId, decimal amount, string payerName, CheckoutVM checkoutVM)
         {
+            
             // Create an instance of OrderConfirmationVM and populate its properties
             var orderConfirmation = new OrderConfirmationVM
             {

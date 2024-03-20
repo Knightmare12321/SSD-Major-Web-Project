@@ -52,6 +52,9 @@
                 <input type="hidden" name="Order.OrderDate" value="@DateTime.Now" />
                 <input type="hidden" name="Order.DeliveryDate" value="To Be Confirm" />
                 <input type="hidden" name="Order.DeliveryStatus" value="To Be Confirm" />
+                <input type="hidden" name="Order.TrackingNumber" value="" />
+                <input type="hidden" name="Order.OrderTotal" value="@Model.ShoppingCart.GrandTotal" />
+
                 <div id="paypal-button-container"></div>
             </form>
          

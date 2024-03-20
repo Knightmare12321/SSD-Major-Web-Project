@@ -47,54 +47,10 @@ namespace SSD_Major_Web_Project.Repositories
 
        
 
-        // create new order details
-        public string AddOrderDetails(CheckoutVM checkoutVMentity, int orderId)
+     
+        public Tuple<string, int> AddOrder(CheckoutVM checkoutVMentity, int contactId)
         {
-            // Placeholder to return message
-            string message = string.Empty;
-            try
-            {
-                foreach (var product in checkoutVMentity.ShoppingCart.ShoppingCartItems)
-                {
-                    // Retrieve the productId and get price by inqury the SkuId
-                    var sku = _context.ProductSkus.FirstOrDefault(s => s.PkSkuId == product.SkuId);
-                    if (sku != null)
-                    {
-                           var parentProduct = _context.Products.FirstOrDefault(p => p.PkProductId == sku.FkProductId);
-
-                        if (parentProduct == null)
-                        {
-                            message = $"Error adding new order details: No Price found for the SkuId {checkoutVMentity.Order.OrderId}";
-                            return message;
-                        }
-                        OrderDetail orderDetail = new()
-                        {
-                            FkOrderId = orderId,
-                            FkSkuId = product.SkuId,
-                            Quantity = product.Quantity,
-                            UnitPrice = parentProduct.Price,
-                        };
-
-                        _context.Add(orderDetail);
-                    }
-                }
-
-                // Save all order details to the database in a single transaction
-                _context.SaveChanges();
-
-                message = "";
-            }
-            catch (Exception ex)
-            {
-                message = $"Error adding new order details: {checkoutVMentity.Order.OrderId}";
-
-                // Log error
-                Console.WriteLine(ex.Message);
-            }
-            return message;
-        }
-        public string AddOrder(CheckoutVM checkoutVMentity, int contactId)
-        {
+            int orderId = 0;
             string message = string.Empty;
             try
             {
@@ -149,13 +105,13 @@ namespace SSD_Major_Web_Project.Repositories
 
                     _context.Add(customer);
                     _context.SaveChanges();
-                    
+
                 }
                 
 
                 _context.Add(order);
                 _context.SaveChanges();
-
+                orderId = order.PkOrderId;
                 message = "";
             }
             catch (Exception ex)
@@ -166,8 +122,55 @@ namespace SSD_Major_Web_Project.Repositories
                 Console.WriteLine(ex.Message);
             }
 
+            return Tuple.Create(message, orderId);
+        }
+        // create new order details
+        public string AddOrderDetails(CheckoutVM checkoutVMentity, int orderId)
+        {
+            // Placeholder to return message
+            string message = string.Empty;
+            try
+            {
+                foreach (var product in checkoutVMentity.ShoppingCart.ShoppingCartItems)
+                {
+                    // Retrieve the productId and get price by inqury the SkuId
+                    var sku = _context.ProductSkus.FirstOrDefault(s => s.PkSkuId == product.SkuId);
+                    if (sku != null)
+                    {
+                        var parentProduct = _context.Products.FirstOrDefault(p => p.PkProductId == sku.FkProductId);
+
+                        if (parentProduct == null)
+                        {
+                            message = $"Error adding new order details: No Price found for the SkuId {checkoutVMentity.Order.OrderId}";
+                            return message;
+                        }
+                        OrderDetail orderDetail = new()
+                        {
+                            FkOrderId = orderId,
+                            FkSkuId = product.SkuId,
+                            Quantity = product.Quantity,
+                            UnitPrice = parentProduct.Price,
+                        };
+
+                        _context.Add(orderDetail);
+                    }
+                }
+
+                // Save all order details to the database in a single transaction
+                _context.SaveChanges();
+
+                message = "";
+            }
+            catch (Exception ex)
+            {
+                message = $"Error adding new order details: {checkoutVMentity.Order.OrderId}";
+
+                // Log error
+                Console.WriteLine(ex.Message);
+            }
             return message;
         }
+
 
         // check if the customer has an account
         public bool IsCustomerExist(string email)
