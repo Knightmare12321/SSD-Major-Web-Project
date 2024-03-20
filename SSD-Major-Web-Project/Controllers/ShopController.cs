@@ -310,9 +310,11 @@ namespace SSD_Major_Web_Project.Controllers
 
             orderConfirmationVM.CheckoutVM = checkoutVM;
 
-            var result = _shopRepo.AddContact(checkoutVM.Order.Contact);
-            string message = result.Item1;
-            int contactId = result.Item2;
+
+            // Add the contact to the database
+            var addContactResult = _shopRepo.AddContact(checkoutVM.Order.Contact);
+            string message = addContactResult.Item1;
+            int contactId = addContactResult.Item2;
 
             //if (string.IsNullOrEmpty(message))
             //{
@@ -325,10 +327,13 @@ namespace SSD_Major_Web_Project.Controllers
             //    return View("CheckoutShippingContact", checkoutVM);
             //}
 
+
             string errorAddOrder = _shopRepo.AddOrder(checkoutVM, contactId);
 
+
+
             //string message;
-            if (errorAddOrder == null)
+            if (errorAddOrder == "")
             {
                 message = $"Order {checkoutVM.Order.OrderId} has been placed, you will get an email confirmation shortly once prcoeed payment.";
                 return View("Paypal", checkoutVM);
@@ -340,6 +345,8 @@ namespace SSD_Major_Web_Project.Controllers
                 return View("CheckoutShippingContact", checkoutVM);
             }
 
+            //// Add the Order Detail to the database
+            //var addOrderDetailResult = _shopRepo.AddOrderDetails(checkoutVM.Order.OrderDetails);
 
 
         }
@@ -363,6 +370,8 @@ namespace SSD_Major_Web_Project.Controllers
                     {         
                         // At this point, the order is already created in the database
                         // Change the order status to "Paid" and update the order with the transaction ID
+                        
+                        
 
                         // Compare and get the transaction ID from PayPal, update the order with the transaction ID,
                         // make a request to PayPal using the transaction ID to get order details from PayPal,

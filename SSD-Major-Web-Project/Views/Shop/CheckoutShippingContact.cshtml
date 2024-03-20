@@ -68,6 +68,12 @@
                         <input name="ShopingCart.ShoppingCartItems.SkuId" value="item.SkuId" hidden/>
                         <input name="ShoppingCart.ShoppingCartItems.Quanity" value="item.quanity" hidden/>
                     }
+                    
+                    
+                    <input type="hidden" name="Order.OrderDate" value="@Model.Order.OrderDate" />          
+                    <input type="hidden" name="Order.OrderStatus" value="@Model.Order.OrderStatus" />
+                    <input type="hidden" name="Order.OrderDetails" value="@Model.Order.OrderDetails" />
+                    
 
      
                     <button type="submit" class="btn btn-primary">Proceed to Payment Page</button>
