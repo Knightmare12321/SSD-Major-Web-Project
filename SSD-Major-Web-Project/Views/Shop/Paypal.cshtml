@@ -56,6 +56,12 @@
 
 
 
+                @foreach (var item in Model.ShoppingCart.ShoppingCartItems)
+                {
+                    <input name="ShopingCart.ShoppingCartItems.SkuId" value="item.SkuId" hidden />
+                    <input name="ShoppingCart.ShoppingCartItems.Quanity" value="item.quanity" hidden />
+                }
+
 
                 <div id="paypal-button-container"></div>
             </form>
