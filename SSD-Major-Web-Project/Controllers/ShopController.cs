@@ -376,8 +376,8 @@ namespace SSD_Major_Web_Project.Controllers
             OrderConfirmationVM orderConfirmationVM = new OrderConfirmationVM();
             orderConfirmationVM.CheckoutVM = checkoutVM;
 
-            if (orderConfirmationVM.CheckoutVM.TransactionId != null)
-                    {
+            if (!string.IsNullOrEmpty(orderConfirmationVM.CheckoutVM.TransactionId) && !orderConfirmationVM.CheckoutVM.TransactionId.Contains("not_valid"))
+            {
                 // At this point, the order is already created in the database
                 // Select the order from the database using the order ID
                 // Change the order status to "Paid" and update the order with the transaction ID

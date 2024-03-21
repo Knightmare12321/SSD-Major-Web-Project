@@ -87,7 +87,7 @@ namespace SSD_Major_Web_Project.Repositories
 
                 order.FkContactId = contactId;
                 // Null is duplicated, using a fake transactionId here
-                order.TransactionId = contactId.ToString();
+                order.TransactionId = "not_valid" + contactId.ToString();
     
                 //order.TransactionId = checkoutVMentity.TransactionId;
                 order.ShipDate = null;
