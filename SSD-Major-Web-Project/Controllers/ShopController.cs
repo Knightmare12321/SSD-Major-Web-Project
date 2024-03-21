@@ -332,6 +332,7 @@ namespace SSD_Major_Web_Project.Controllers
 
             string errorAddOrder = result.Item1;
             int orderId = result.Item2;
+            checkoutVM.Order.OrderId = orderId;
 
             // add order details
             string errorAddOrderDetails = _shopRepo.AddOrderDetails(checkoutVM, orderId);
@@ -360,6 +361,7 @@ namespace SSD_Major_Web_Project.Controllers
         public IActionResult OrderConfirmation(string transactionId, decimal amount, string payerName, CheckoutVM checkoutVM)
         {
             
+
             // Create an instance of OrderConfirmationVM and populate its properties
             var orderConfirmation = new OrderConfirmationVM
             {
@@ -369,21 +371,36 @@ namespace SSD_Major_Web_Project.Controllers
                 CheckoutVM = checkoutVM
             };
 
+            
+
             OrderConfirmationVM orderConfirmationVM = new OrderConfirmationVM();
             orderConfirmationVM.CheckoutVM = checkoutVM;
 
             if (orderConfirmationVM.CheckoutVM.TransactionId != null)
-                    {         
-                        // At this point, the order is already created in the database
-                        // Change the order status to "Paid" and update the order with the transaction ID
-                        
-                        
+                    {
+                // At this point, the order is already created in the database
+                // Select the order from the database using the order ID
+                // Change the order status to "Paid" and update the order with the transaction ID
 
-                        // Compare and get the transaction ID from PayPal, update the order with the transaction ID,
-                        // make a request to PayPal using the transaction ID to get order details from PayPal,
-                        // and compare them with the order details we received in this method
+                Order order = _context.Orders.FirstOrDefault(o => o.PkOrderId == checkoutVM.Order.OrderId);
+                if (order != null)
+                {
+                    // Change the order status to "Paid"
+                    order.FkOrderStatusId = 2; // Assuming 2 represents the "Paid" status
 
-                        OrderConfirmationVM orderconfirmationVM = new OrderConfirmationVM();
+                    // Update the order with the transaction ID
+                    order.TransactionId = orderConfirmationVM.CheckoutVM.TransactionId;
+
+                    _context.SaveChanges();
+                }
+
+
+
+                // Compare and get the transaction ID from PayPal, update the order with the transaction ID,
+                // make a request to PayPal using the transaction ID to get order details from PayPal,
+                // and compare them with the order details we received in this method
+
+                OrderConfirmationVM orderconfirmationVM = new OrderConfirmationVM();
                         // Populate the orderconfirmationVM with the necessary data
 
                         return View("OrderConfirmation",orderConfirmation);

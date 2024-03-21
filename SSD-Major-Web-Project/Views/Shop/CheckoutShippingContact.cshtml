@@ -4,10 +4,7 @@
     ViewData["Title"] = "Checkout";
     Layout = "~/Views/Shared/_Layout.cshtml";
  
-
 }
-
-
 
 <div class="checkout-container">
     <div class="row">
@@ -38,6 +35,12 @@
                         <input type="hidden" name="ShoppingCart.Currency" value="@Model.ShoppingCart.Currency" />
 
                     }
+                    <input type="hidden" name="Order.OrderDate" value="@Model.Order.OrderDate" />
+                    <input type="hidden" name="Order.OrderStatus" value="@Model.Order.OrderStatus" />
+                    <input type="hidden" name="Order.OrderDetails" value="@Model.Order.OrderDetails" />
+                 
+                    <input type="hidden" name="Order.OrderId" value="@Model.Order.OrderId" />
+
 
                     <div>
                     <input type="text" name="Order.Contact.FirstName" placeholder="First Name" />
@@ -69,12 +72,6 @@
                         <input name="ShoppingCart.ShoppingCartItems.Quanity" value="item.quanity" hidden/>
                     }
                     
-                    
-                    <input type="hidden" name="Order.OrderDate" value="@Model.Order.OrderDate" />          
-                    <input type="hidden" name="Order.OrderStatus" value="@Model.Order.OrderStatus" />
-                    <input type="hidden" name="Order.OrderDetails" value="@Model.Order.OrderDetails" />
-                    
-
      
                     <button type="submit" class="btn btn-primary">Proceed to Payment Page</button>
                 </form>
