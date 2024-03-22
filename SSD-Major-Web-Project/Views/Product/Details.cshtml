@@ -1,4 +1,8 @@
 ﻿@model SSD_Major_Web_Project.ViewModels.ProductDetailVM
+@using Microsoft.AspNetCore.Identity
+@using Microsoft.AspNetCore.Identity.EntityFrameworkCore
+@inject UserManager<IdentityUser> UserManager
+@inject SignInManager<IdentityUser> SignInManager
 
 @{
     ViewData["Title"] = "Details";
@@ -11,7 +15,11 @@
 </div>
 
 <h1>@Html.DisplayFor(model => model.Name)</h1>
-
+@if (User.IsInRole("Admin") || User.IsInRole("Manager"))
+{
+    
+    
+}
 <div class="product-details-container">
     <div class="product-details-left">
         <div class="product-image-container">
@@ -96,13 +104,21 @@
         </div>
         <div class="reviews-container">
             <h4>Reviews</h4>
-            <p>
-                <a asp-action="CreateReview" asp-route-id="@Model.PkProductId">Rate this Product</a>
-            </p>
+            @if (SignInManager.IsSignedIn(User))
+            {
+                <p>
+                    <a asp-action="CreateReview" asp-route-id="@Model.PkProductId">Rate this Product</a>
+                </p>
+            } else
+            {
+                <a class="nav-link text-dark" href="~/Identity/Account/Login">
+                    <img src="~/images/icon/icon-login.png" alt="login" />
+                    Sign in to create a Review
+                </a>
+            }
             <div class="reviews-list">
-                @for (int i = 0; i < Model.Reviews.Count; i++)
-                {
-                    if (i == 0)
+
+                    @if (Model.Reviews.Count == 0)
                     {
                         <p>This product has not yet been reviewed.</p>
                     }
@@ -111,6 +127,7 @@
                         <table>
                             <thead>
                                 <tr>
+                                    <th>User</th>
                                     <th>Rating</th>
                                     <th>Comment</th>
                                     <th>Date</th>
@@ -120,7 +137,8 @@
                                 @foreach (var review in Model.Reviews)
                                 {
                                     <tr>
-                                        <td>@review.Rating</td>
+                                        <td>@review.FkCustomerId</td>
+                                        <td>@GenerateStarRating(review.Rating)</td>
                                         <td>@review.Comment</td>
                                         <td>@review.PkReviewDate</td>
                                     </tr>
@@ -128,7 +146,6 @@
                             </tbody>
                         </table>
                     }
-                }
             </div>
         </div>
     </div>
@@ -142,4 +159,19 @@
 </script>
 
 
+@functions {
+    public string GenerateStarRating(int rating)
+    {
+        // Initialize an empty string to hold the star emojis
+        string stars = "";
+
+        // Loop through the rating value and add a star emoji for each rating
+        for (int i = 0; i < rating; i++)
+        {
+            stars += "⭐"; // Add a star emoji
+        }
+
+        return stars; // Return the concatenated star emojis
+    }
+}
 
