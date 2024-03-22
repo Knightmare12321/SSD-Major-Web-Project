@@ -63,6 +63,34 @@ namespace SSD_Major_Web_Project.Repositories
                         .FirstOrDefault();
         }
 
+        public bool checkProductHasImage(int productId, List<IFormFile> newImages, List<string> ImagesToDelete)
+        {
+            //variable to track the list of images
+            List<string> imgList = new List<string>();
+
+            //add all images currently related in the product to list
+            IQueryable<Image> currentImages = _context.Images
+                               .Where(i => i.FkProductId == productId);
+            foreach (Image img in currentImages)
+            {
+                imgList.Add(img.FileName);
+            }
+
+            //add newly uploaded image to list
+            foreach (IFormFile img in newImages)
+            {
+                imgList.Add(img.FileName);
+            }
+
+            //remove deleted image from list
+            foreach (string fileName in ImagesToDelete)
+            {
+                imgList.Remove(fileName);
+            }
+
+            return imgList.Count > 0;
+
+        }
 
         public async Task<string> AddProduct(string name, decimal price, string description, bool isActive, List<IFormFile> imageFiles, List<string> sizes)
         {
@@ -172,7 +200,7 @@ namespace SSD_Major_Web_Project.Repositories
                                     .FirstOrDefault();
 
                 product.IsActive = false;
-                //_context.SaveChanges();
+                _context.SaveChanges();
                 return "Product successfully deactivated";
             }
             catch (Exception ex)
@@ -376,7 +404,7 @@ namespace SSD_Major_Web_Project.Repositories
                 order.FkOrderStatusId = shippedStatus.PkOrderStatusId;
                 order.Tracking = tracking;
                 order.ShipDate = today;
-                //_context.SaveChanges();
+                _context.SaveChanges();
 
                 return "";
             }

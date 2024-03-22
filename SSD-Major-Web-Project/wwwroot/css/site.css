@@ -288,6 +288,35 @@ button {
         border-radius: 3px;
     }
 
+
+    .img-container {
+        position: relative;
+        display:inline-block;
+        width: 100px;
+        height:100px;
+        overflow:hidden;
+    }
+    .img-container img{
+        width:100%;
+        object-fit:contain;
+    }
+    .img-container .img-delete-btn {
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 20px;
+        height: 20px;
+        line-height: 20px;
+        text-align: center;
+        vertical-align: middle;
+        cursor: pointer;
+        font-size: 10px;
+        font-weight: 800;
+        border-radius: 50%;
+        color: white;
+        background-color: black;
+    }
+
     .price {
         display: flex;
         margin-bottom: 10px;

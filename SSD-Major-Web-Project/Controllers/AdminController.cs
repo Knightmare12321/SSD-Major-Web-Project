@@ -34,7 +34,7 @@ namespace SSD_Major_Web_Project.Controllers
             return View();
         }
 
-        public IActionResult AllProducts(string message = "", string searchTerm = "", int pageIndex = 1, int pageSize = 3)
+        public IActionResult AllProducts(string message = "", string searchTerm = "", int pageIndex = 1, int pageSize = 10)
         {
             ViewData["Message"] = message;
             ViewData["SearchTerm"] = searchTerm;
@@ -135,6 +135,36 @@ namespace SSD_Major_Web_Project.Controllers
         [HttpPost]
         public async Task<IActionResult> EditProduct(CreateProductVM vm)
         {
+            ViewData["Create"] = false;
+
+            AdminRepo adminRepo = new AdminRepo(_context);
+            bool hasImage = adminRepo.checkProductHasImage(vm.PkProductId, vm.Images, vm.DeletedImageNames);
+
+            if (!hasImage)
+            {
+                ModelState.AddModelError("imageUpload", "The listing needs at least one image added");
+                Product product = adminRepo.GetProductById(vm.PkProductId);
+                //add sizes to vm
+                List<string> sizes = new List<string>();
+                foreach (var item in product.ProductSkus)
+                {
+                    sizes.Add(item.Size);
+                }
+                vm.Sizes = sizes;
+
+                //add image files to vm
+                List<IFormFile> files = new List<IFormFile>();
+                foreach (var item in product.Images)
+                {
+                    var stream = new MemoryStream(item.Data);
+                    IFormFile file = new FormFile(stream, 0, item.Data.Length, item.AltText, item.FileName);
+                    files.Add(file);
+                }
+                vm.Images = files;
+
+                return View("CreateProduct", vm);
+            }
+
             if (ModelState.IsValid)
             {
                 //make sure all images are in appropriate file types
@@ -153,7 +183,6 @@ namespace SSD_Major_Web_Project.Controllers
                     }
                 }
 
-                AdminRepo adminRepo = new AdminRepo(_context);
                 string errorString = await adminRepo.EditProduct(vm.PkProductId, vm.Name, vm.Price, vm.Description, vm.IsActive, vm.Images, vm.Sizes);
 
                 string message;
@@ -300,7 +329,8 @@ namespace SSD_Major_Web_Project.Controllers
                     FirstName = "Nova",
                     LastName = "Clothing",
                     Subject = $"Nova Fashion Order (#{orderId}) Cancelled",
-                    Email = order.Contact.Customers.ToList()[0].PkCustomerId,
+                    //Email = order.Contact.Customers.ToList()[0].PkCustomerId,
+                    Email = "afang324@gmail.com",
                     Body = $"Your order (#{order.OrderId}) of {order.OrderTotal:C} has been " +
                     $"refunded. The credit has been added to the discount code {discountCode} and will " +
                     $"expire on {endDate}."
@@ -327,7 +357,7 @@ namespace SSD_Major_Web_Project.Controllers
         }
 
 
-        public IActionResult AllDiscounts(string message = "", string searchTerm = "", int pageIndex = 1, int pageSize = 2)
+        public IActionResult AllDiscounts(string message = "", string searchTerm = "", int pageIndex = 1, int pageSize = 10)
         {
             ViewData["Message"] = message;
             ViewData["SearchTerm"] = searchTerm;
