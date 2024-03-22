@@ -371,27 +371,6 @@ namespace SSD_Major_Web_Project.Controllers
                 CheckoutVM = checkoutVM
             };
 
-            // use transactionId to find the order from the database
-            // update checkoutVM
-            Order orderBytransactionId = _context.Orders.FirstOrDefault(o => o.TransactionId == transactionId);
-            ShoppingCartItem orderConfirmationCheckoutItemlist = new ShoppingCartItem();
-            if (orderBytransactionId != null)
-            {
-                ShoppingCartItem shoppingCartItem = new ShoppingCartItem();
-                // using the orderId to get all the cart item from db ( get the order id then use the order id to get the cart item)
-
-                List<OrderDetail> orderDetails = _context.OrderDetails.Where(o => o.FkOrderId == orderBytransactionId.PkOrderId).ToList();
-                foreach (var orderDetail in orderDetails)
-                {
-                    shoppingCartItem.SkuId = orderDetail.FkSkuId;
-                    shoppingCartItem.Quantity = orderDetail.Quantity;
-            
-                }
-                // print out shoppingCartItem;
-                Console.WriteLine(shoppingCartItem);
-
-                
-            }
             
             OrderConfirmationVM orderConfirmationVM = new OrderConfirmationVM();
             orderConfirmationVM.CheckoutVM = checkoutVM;
@@ -412,18 +391,42 @@ namespace SSD_Major_Web_Project.Controllers
                     order.TransactionId = orderConfirmationVM.CheckoutVM.TransactionId;
 
                     _context.SaveChanges();
+                    checkoutVM.Order.OrderStatus = "Paid";
+             
                 }
 
+                // use transactionId to find the order from the database
+                // update checkoutVM
+                Order orderBytransactionId = _context.Orders.FirstOrDefault(o => o.TransactionId == transactionId);
+                ShoppingCartItem orderConfirmationCheckoutItemlist = new ShoppingCartItem();
+                if (orderBytransactionId != null)
+                {
+                    ShoppingCartItem shoppingCartItem = new ShoppingCartItem();
+                    // using the orderId to get all the cart item from db ( get the order id then use the order id to get the cart item)
 
+                    List<OrderDetail> orderDetails = _context.OrderDetails.Where(o => o.FkOrderId == orderBytransactionId.PkOrderId).ToList();
+                    List<ShoppingCartItem> shoppingCartItemList = new List<ShoppingCartItem>();
+                    foreach (var orderDetail in orderDetails)
+                    {
+                        shoppingCartItem.SkuId = orderDetail.FkSkuId;
+                        shoppingCartItem.Quantity = orderDetail.Quantity;
+                        shoppingCartItemList.Add(shoppingCartItem);
+                    }
+                    // print out shoppingCartItemList
+                    Console.WriteLine(shoppingCartItemList);
+
+                    checkoutVM.ShoppingCart.ShoppingCartItems = shoppingCartItemList;
+
+                }
 
                 // Compare and get the transaction ID from PayPal, update the order with the transaction ID,
                 // make a request to PayPal using the transaction ID to get order details from PayPal,
                 // and compare them with the order details we received in this method
 
-                OrderConfirmationVM orderconfirmationVM = new OrderConfirmationVM();
-                        // Populate the orderconfirmationVM with the necessary data
 
-                        return View("OrderConfirmation",orderConfirmationVM);
+                // Populate the orderconfirmationVM with the necessary data
+
+                return View("OrderConfirmation",orderConfirmationVM);
                     }
                     else
                     {
