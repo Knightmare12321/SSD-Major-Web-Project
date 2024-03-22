@@ -138,8 +138,11 @@ namespace SSD_Major_Web_Project.Controllers
             ViewData["Create"] = false;
 
             AdminRepo adminRepo = new AdminRepo(_context);
+
+            //check if user has uploaded new image or decide to keep any previous one from the database
             bool hasImage = adminRepo.checkProductHasImage(vm.PkProductId, vm.Images, vm.DeletedImageNames);
 
+            //if no image is left to associate with the product, return the view with error 
             if (!hasImage)
             {
                 ModelState.AddModelError("imageUpload", "The listing needs at least one image added");
@@ -165,6 +168,7 @@ namespace SSD_Major_Web_Project.Controllers
                 return View("CreateProduct", vm);
             }
 
+            //check if view model content is valid
             if (ModelState.IsValid)
             {
                 //make sure all images are in appropriate file types
@@ -183,7 +187,7 @@ namespace SSD_Major_Web_Project.Controllers
                     }
                 }
 
-                string errorString = await adminRepo.EditProduct(vm.PkProductId, vm.Name, vm.Price, vm.Description, vm.IsActive, vm.Images, vm.Sizes);
+                string errorString = await adminRepo.EditProduct(vm.PkProductId, vm.Name, vm.Price, vm.Description, vm.IsActive, vm.Images, vm.Sizes, vm.DeletedImageNames);
 
                 string message;
                 if (errorString == "")

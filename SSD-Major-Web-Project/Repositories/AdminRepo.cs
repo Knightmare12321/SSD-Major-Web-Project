@@ -133,12 +133,13 @@ namespace SSD_Major_Web_Project.Repositories
             }
         }
 
-        public async Task<string> EditProduct(int productId, string name, decimal price, string description, bool isActive, List<IFormFile> imageFiles, List<string> sizes)
+        public async Task<string> EditProduct(int productId, string name, decimal price, string description, bool isActive, List<IFormFile> newImageFiles, List<string> sizes, List<string> DeletedImageNames)
         {
             try
             {
                 Product product = _context.Products
                                .Where(p => p.PkProductId == productId)
+                               .Include(p => p.Images)
                                .FirstOrDefault();
 
                 //edit the product in db
@@ -160,15 +161,19 @@ namespace SSD_Major_Web_Project.Repositories
                 }
                 product.ProductSkus = productSkus;
 
-                //delete all previous images in db and create new ones
-                foreach (Image img in product.Images)
+                //delete old image from database if it's in DeletedImageNames
+                foreach (string imageName in DeletedImageNames)
                 {
-                    _context.Images.Remove(img);
+                    var img = product.Images.FirstOrDefault(i => i.FileName == imageName);
+                    if (img != null)
+                    {
+                        _context.Images.Remove(img);
+                    }
                 }
 
                 //convert images to byte and add to database
                 byte[] imageData;
-                foreach (IFormFile imageFile in imageFiles)
+                foreach (IFormFile imageFile in newImageFiles)
                 {
                     //convert image file data to byte[]
                     using (var memoryStream = new MemoryStream())
@@ -242,7 +247,16 @@ namespace SSD_Major_Web_Project.Repositories
                                             Size = fsku.Size,
                                             FkProduct = _context.Products
                                                 .Where(p => p.PkProductId == fsku.FkProductId)
-                                                .Include(p => p.Images)
+                                                .Select(p => new Product
+                                                {
+                                                    PkProductId = p.PkProductId,
+                                                    Name = p.Name,
+                                                    Price = p.Price,
+                                                    Description = p.Description,
+                                                    IsActive = p.IsActive,
+                                                    Images = _context.Images
+                                                                .Where(i => i.FkProductId == p.PkProductId).ToList()
+                                                })
                                                 .FirstOrDefault()
                                         }).FirstOrDefault()
                                 }).ToList(),
