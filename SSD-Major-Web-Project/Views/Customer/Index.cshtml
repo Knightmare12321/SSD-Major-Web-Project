@@ -1,0 +1,30 @@
+﻿@model SSD_Major_Web_Project.ViewModels.CustomerVM
+
+@{
+    ViewData["Title"] = "Customer Home Page";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div>
+
+    <p>First Name, Last Name</p>
+
+    <p>Welcome FirstName, LastName</p>
+
+    <div id="customer-index-grid">
+        <div class="grid-item">
+            <button onclick="location.href='@Url.Action("PersonalOrderHistory","Customer")'">Order History</button>
+            <p>Review your recent purchases</p>
+        </div>
+        <div class="grid-item">
+            <button onclick="location.href='@Url.Action("OrderTracking","Customer")'">Order Tracking</button>
+            <p>Check the status of your shipment</p>
+        </div>
+        <div class="grid-item">
+            <button onclick="location.href='@Url.Action("Profile","Customer")'">Profile</button>
+            <p>Manage your contact details</p>
+        </div>
+    </div>
+
+</div>
+

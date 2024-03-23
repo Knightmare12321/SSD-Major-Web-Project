@@ -1,0 +1,66 @@
+﻿@model SSD_Major_Web_Project.ViewModels.CustomerVM
+
+@{
+    ViewData["Title"] = "Profile";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Contact Details</h1>
+
+
+@if (Model.DefaultContact == null)
+{
+    <a asp-action="CreateContact">
+        <button class="btn btn-secondary">Create Contact</button>
+    </a>
+}
+else {
+    <a asp-action="EditProfile" asp-route-contactId="@Model.DefaultContact.PkContactId">
+    <button class="btn btn-secondary">Edit</button>
+    </a>
+
+<div id="customer-profile-grid">
+    <div class="grid-item">
+        <p>First Name</p>
+        <p>@Model.DefaultContact.FirstName</p>
+    </div>
+    <div class="grid-item">
+        <p>Last Name</p>
+        <p>@Model.DefaultContact.LastName</p>
+    </div>
+    <div class="grid-item">
+        <p>Address</p>
+        <p>@Model.DefaultContact.Address</p>
+    </div>
+    <div class="grid-item">
+        <p>Unit No.</p>
+        <p>@Model.DefaultContact.Address2</p>
+    </div>
+    <div class="grid-item">
+        <p>City</p>
+        <p>@Model.DefaultContact.City</p>
+    </div>
+    <div class="grid-item">
+        <p>Province</p>
+        <p>@Model.DefaultContact.Province</p>
+    </div>
+    <div class="grid-item">
+        <p>Postal Code</p>
+        <p>@Model.DefaultContact.PostalCode</p>
+    </div>
+    <div class="grid-item">
+        <p>Country</p>
+        <p>@Model.DefaultContact.Country</p>
+    </div>
+    <div class="grid-item">
+        <p>Email</p>
+        <p>@User.Identity.Name</p>
+    </div>
+    <div class="grid-item">
+        <p>Phone Number</p>
+        <p>@Model.DefaultContact.PhoneNumber</p>
+    </div>
+</div>
+}
+
+

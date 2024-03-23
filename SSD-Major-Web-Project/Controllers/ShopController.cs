@@ -2,6 +2,7 @@
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using SSD_Major_Web_Project.Data.Services;
 using SSD_Major_Web_Project.Models;
 using SSD_Major_Web_Project.Repositories;
 using SSD_Major_Web_Project.ViewModels;
@@ -16,11 +17,13 @@ namespace SSD_Major_Web_Project.Controllers
 
         private readonly ILogger<ShopController> _logger;
         private readonly NovaDbContext _context;
+        private readonly IEmailService _emailService;
 
-        public ShopController(ILogger<ShopController> logger, NovaDbContext context)
+        public ShopController(ILogger<ShopController> logger, NovaDbContext context, IEmailService emailService)
         {
             _logger = logger;
             _context = context;
+            _emailService = emailService;
         }
 
         public IActionResult Index()
@@ -112,6 +115,7 @@ namespace SSD_Major_Web_Project.Controllers
             Contact contact = new Contact();
 
             // Assign the value from the Razor view to the Order property of the CheckoutVM object
+
             OrderVM orderVM = new OrderVM
             {
                 OrderDate = DateOnly.FromDateTime(DateTime.Today),
@@ -371,7 +375,12 @@ namespace SSD_Major_Web_Project.Controllers
                 CheckoutVM = checkoutVM
             };
 
-            
+            // Compare and get the transaction ID from PayPal, update the order with the transaction ID,
+            // make a request to PayPal using the transaction ID to get order details from PayPal,
+            // and compare them with the order details we received in this method
+            // compare amount and payername
+
+
             OrderConfirmationVM orderConfirmationVM = new OrderConfirmationVM();
             orderConfirmationVM.CheckoutVM = checkoutVM;
 
@@ -419,10 +428,8 @@ namespace SSD_Major_Web_Project.Controllers
 
                 }
 
-                // Compare and get the transaction ID from PayPal, update the order with the transaction ID,
-                // make a request to PayPal using the transaction ID to get order details from PayPal,
-                // and compare them with the order details we received in this method
-
+                //
+    
 
                 // Populate the orderconfirmationVM with the necessary data
 

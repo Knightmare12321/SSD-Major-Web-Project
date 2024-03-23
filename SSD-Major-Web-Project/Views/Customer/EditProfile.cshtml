@@ -1,0 +1,76 @@
+﻿@model SSD_Major_Web_Project.ViewModels.CustomerVM
+
+@{
+    ViewData["Title"] = "Profile";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Contact Details</h1>
+
+<div id="create-discount-form" class="row">
+    <div class="col-md-4">
+        <form asp-action="EditProfile" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="DefaultContact.FirstName" class="control-label"></label>
+                <input asp-for="DefaultContact.FirstName" class="form-control" />
+                <span asp-validation-for="DefaultContact.FirstName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="DefaultContact.LastName" class="control-label"></label>
+                <input asp-for="DefaultContact.LastName" class="form-control" />
+                <span asp-validation-for="DefaultContact.LastName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="DefaultContact.Address" class="control-label"></label>
+                <input asp-for="DefaultContact.Address" class="form-control" />
+                <span asp-validation-for="DefaultContact.Address" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="DefaultContact.Address2" class="control-label"></label>
+                <input asp-for="DefaultContact.Address2" class="form-control" />
+                <span asp-validation-for="DefaultContact.Address2" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="DefaultContact.City" class="control-label"></label>
+                <input asp-for="DefaultContact.City" class="form-control" />
+                <span asp-validation-for="DefaultContact.City" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="DefaultContact.Province" class="control-label"></label>
+                <input asp-for="DefaultContact.Province" class="form-control" />
+                <span asp-validation-for="DefaultContact.Province" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="DefaultContact.PostalCode" class="control-label"></label>
+                <input asp-for="DefaultContact.PostalCode" class="form-control" />
+                <span asp-validation-for="DefaultContact.PostalCode" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="DefaultContact.Country" class="control-label"></label>
+                <input asp-for="DefaultContact.Country" class="form-control" />
+                <span asp-validation-for="DefaultContact.Country" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="DefaultContact.PhoneNumber" class="control-label"></label>
+                <input asp-for="DefaultContact.PhoneNumber" class="form-control" />
+                <span asp-validation-for="DefaultContact.PhoneNumber" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Customer.PkCustomerId" class="control-label"></label>
+                <input asp-for="Customer.PkCustomerId" class="form-control" readonly />
+            </div>
+   
+         
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary">Save</button>
+            </div>
+            <div class="form-group">
+                <a asp-action="Profile" class="btn btn-danger">Cancel</a>
+            </div>
+        </form>
+     
+    </div>
+</div>
+
