@@ -91,7 +91,7 @@
             url: url,
             data: { "orderStatus": sheetType },
             success: function (data) {
-                $("#orders-title").html(sheetTitle)
+                $("#orders-title").html(sheetTitle);
                 $("#orders-data").html(data);
             }
         });
