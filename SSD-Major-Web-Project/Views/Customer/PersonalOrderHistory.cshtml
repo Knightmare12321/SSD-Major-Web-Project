@@ -11,6 +11,26 @@
     <p>Past Orders</p>
 
     <div id="customer-order-history-grid">
+        <div class="d-flex flex-row">
+            <p class="mx-2">Order Date</p>
+            <p class="mx-2">Order Id</p>
+        </div>
+        @foreach (var order in Model.Orders)
+        {
+            <div class="d-flex flex-row">
+                <p class="mx-2">@order.OrderDate</p>
+                <p class="mx-2">@order.PkOrderId</p>
+                @if (Model.OrdersDetails.ContainsKey(order.PkOrderId))
+                {
+                    var orderDetails = Model.OrdersDetails[order.PkOrderId];
+                    foreach (var item in orderDetails)
+                    {
+                        <p>@item.FkSkuId</p>
+                    }
+                }
+            </div>
+        }
+    </div>
 
 
 </div>

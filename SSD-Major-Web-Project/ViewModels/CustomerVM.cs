@@ -10,6 +10,8 @@ namespace SSD_Major_Web_Project.ViewModels
         public Contact? DefaultContact { get; set; }
 
         public List <Order>?Orders { get; set; }
-      
+
+        public Dictionary<int, List<OrderDetail>>? OrdersDetails { get; set; }
+
     }
 }

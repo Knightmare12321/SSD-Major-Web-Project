@@ -20,13 +20,48 @@ namespace SSD_Major_Web_Project.Controllers
         // GET: CustomerController
         public ActionResult Index()
         {
-            return View();
+            // get customerVM
+            CustomerVM customerVM = new CustomerVM();
+            // get current user by contactId
+            var userId = User.Identity.Name;
+            // Get the user details
+            var customer = _context.Customers.Find(userId);
+            customerVM.Customer = customer;
+            customerVM.DefaultContact = _context.Contacts.Find(customer.FkContactId);
+
+            return View(customerVM);
         }
 
         // GET: CustomerController/PersonalOrderHistory
         public ActionResult PersonalOrderHistory()
         {
-            return View();
+   
+            // Get customerVM
+            CustomerVM customerVM = new CustomerVM();
+
+            // Get current user by contactId
+            var userId = User.Identity.Name;
+
+            // Get the user details
+            var customer = _context.Customers.Find(userId);
+            customerVM.Customer = customer;
+
+            // Get the user's orders
+            var orders = _context.Orders.Where(o => o.FkCustomerId == userId).ToList();
+            customerVM.Orders = orders;
+
+            // Retrieve order details for each order
+            Dictionary<int, List<OrderDetail>> orderDetailsDictionary = new Dictionary<int, List<OrderDetail>>();
+
+            foreach (var order in orders)
+            {
+                var orderDetails = _context.OrderDetails.Where(od => od.FkOrderId == order.PkOrderId).ToList();
+                orderDetailsDictionary.Add(order.PkOrderId, orderDetails);
+            }
+
+            customerVM.OrdersDetails = orderDetailsDictionary;
+
+            return View(customerVM);
         }
 
         // GET: CustomerController/OrderTracking
