@@ -8,6 +8,8 @@ namespace SSD_Major_Web_Project.ViewModels
     {
         // nullable UserId
         public string? UserId { get; set; }
+        //public List<Product> Products { get; set; }
+        public List<ShoppingCartItem> ShoppingCartItems { get; set; }
         public List<Product> Products { get; set; }
         public string? CouponCode { get; set; }
         [DisplayFormat(DataFormatString = "{0:C}")]
@@ -16,12 +18,17 @@ namespace SSD_Major_Web_Project.ViewModels
         public decimal ShippingFee { get; set; }
         [DisplayFormat(DataFormatString = "{0:C}")]
         public decimal Taxes { get; set; }
-        // [DisplayFormat(DataFormatString = "{0:C}")]
+        [DisplayFormat(DataFormatString = "{0:C}")]
 
         public decimal GrandTotal { get; set; }
+
+        //for paypal payment
         public string Currency { get; set; }
         public string CurrencySymbol { get; set; }
         //public byte[]? ImageByteArray { get; set; }
 
     }
+
+
+   
 }

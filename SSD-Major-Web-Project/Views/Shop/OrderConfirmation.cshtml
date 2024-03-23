@@ -1,0 +1,79 @@
+﻿@model SSD_Major_Web_Project.ViewModels.OrderConfirmationVM
+@inject SSD_Major_Web_Project.Models.NovaDbContext _context
+
+@{
+    ViewData["Title"] = "Payment Confirmation";
+}
+
+<h2>Order Confirmation</h2>
+<div>
+    <p>Your Order is confirmed.</p>
+    <p>Order No. @Model.CheckoutVM.Order.OrderId</p>
+    <p>Order Status: @Model.CheckoutVM.Order.OrderStatus</p>
+    <p>Delivery Status: </p>
+    <p>Tracking Number: </p>
+@*     <p>Transaction ID: @Model.TransactionId</p> *@
+@*     <p>Amount Paid: @Model.Amount</p>
+    <p>Payer Name: @Model.PayerName</p>
+    <p>Delivery email: @Model.CheckoutVM.DeliveryContactEmail</p> *@
+    @* for each item in the Model.checkout.shopingitem, display image, product name, and prouct id, qty, and unit price and subtotal *@
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Product</th>
+                <th>Product ID</th>
+                <th>Quantity</th>
+                <th>Unit Price</th>
+                <th>Subtotal</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.CheckoutVM.ShoppingCart.ShoppingCartItems)
+            {
+                // Retrieve the product price based on the SKU ID
+                var productSku = _context.ProductSkus.FirstOrDefault(p => p.PkSkuId == item.SkuId);
+                var productSkuId = productSku?.FkProductId;
+                var product = _context.Products.FirstOrDefault(p => p.PkProductId == productSkuId);
+                var unitPrice = product?.Price;
+                // Retrieve imageId by product id and display the image
+                var imageId = _context.Images?.FirstOrDefault(p => p.FkProductId == productSku.FkProductId).PkImageId;
+                <tr>
+                    <td>
+
+                        <img src="@imageId" alt="Product Image" style="width: 100px; height: 100px;" />
+                        <p>product.</p>
+
+                    </td>
+                    <td>
+                        @item.SkuId
+                    </td>
+                    <td>
+                        @item.Quantity
+                    </td>
+                    <td>
+                        @unitPrice
+                    </td>
+                    <td>
+                        @(unitPrice * item.Quantity)
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+
+@* <h2>Payment Confirmation for customer</h2>
+<div class="order-confirm">
+    <p>Your order is confirmed!</p>
+
+    <p>Order ID: @Model.CheckoutVM.Order.OrderId</p>
+    <p>Order Status: @Model.CheckoutVM.Order.OrderStatus</p>
+    <p>Delivery Status: To be confirmed.</p>
+    <p>Tracking Number: 123456789</p>
+    <p>Total Amount Paid: @Model.Amount</p>
+    <p>Transaction ID: @Model.TransactionId</p> 
+</div> *@
+
+
+

@@ -1,4 +1,8 @@
 ﻿@model SSD_Major_Web_Project.ViewModels.ProductDetailVM
+@using Microsoft.AspNetCore.Identity
+@using Microsoft.AspNetCore.Identity.EntityFrameworkCore
+@inject UserManager<IdentityUser> UserManager
+@inject SignInManager<IdentityUser> SignInManager
 
 @{
     ViewData["Title"] = "Details";
@@ -11,7 +15,11 @@
 </div>
 
 <h1>@Html.DisplayFor(model => model.Name)</h1>
-
+@if (User.IsInRole("Admin") || User.IsInRole("Manager"))
+{
+    
+    
+}
 <div class="product-details-container">
     <div class="product-details-left">
         <div class="product-image-container">
@@ -58,7 +66,15 @@
                 <h4>Select Size</h4>
             </div>
             <div class="size-container">
-                @Html.DisplayFor(model => model.Sizes)
+                @for (int i = 0; i < Model.Sizes.Count; i++)
+                {
+                    if (i == 0) {
+                        <button class="size-button active" onclick="changeSize(event)">@Model.Sizes[i]</button>
+                    }
+                    else {
+                        <button class="size-button" onclick="changeSize(event)">@Model.Sizes[i]</button>
+                    }
+                }
             </div>
             <hr />
             <div class="product-description">
@@ -71,25 +87,91 @@
                 <button id="product-add-to-bag">
                     @{
                         if (!ViewBag.isCart)
-                            @Html.ActionLink("ADD TO BAG", "Details", new { id = Model.PkProductId, catagory = "cart", method = "add" })
+                            @Html.ActionLink("ADD TO BAG", "Details", new { id = Model.PkProductId, category = "cart", method = "add" })
                         else
-                            @Html.ActionLink("REMOVE FROM BAG", "Details", new { id = Model.PkProductId, catagory = "cart", method = "remove" })
+                            @Html.ActionLink("REMOVE FROM BAG", "Details", new { id = Model.PkProductId, category = "cart", method = "remove" })
                     }
                 </button>
                 <button id="product-add-to-wishlist">
                     @{
                         if (!ViewBag.isFav)
-                            @Html.ActionLink("ADD TO FAVORITE", "Details", new { id = Model.PkProductId, catagory = "favorite", method = "add" })
+                            @Html.ActionLink("ADD TO FAVORITE", "Details", new { id = Model.PkProductId, category = "favorite", method = "add" })
                         else
-                            @Html.ActionLink("REMOVE FROM FAVORITE", "Details", new { id = Model.PkProductId, catagory = "favorite", method = "remove" })
+                            @Html.ActionLink("REMOVE FROM FAVORITE", "Details", new { id = Model.PkProductId, category = "favorite", method = "remove" })
                     }
                 </button>
             </div>
         </div>
+        <div class="reviews-container">
+            <h4>Reviews</h4>
+            @if (SignInManager.IsSignedIn(User))
+            {
+                <p>
+                    <a asp-action="CreateReview" asp-route-id="@Model.PkProductId">Rate this Product</a>
+                </p>
+            } else
+            {
+                <a class="nav-link text-dark" href="~/Identity/Account/Login">
+                    <img src="~/images/icon/icon-login.png" alt="login" />
+                    Sign in to create a Review
+                </a>
+            }
+            <div class="reviews-list">
 
-
+                    @if (Model.Reviews.Count == 0)
+                    {
+                        <p>This product has not yet been reviewed.</p>
+                    }
+                    else
+                    {
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>User</th>
+                                    <th>Rating</th>
+                                    <th>Comment</th>
+                                    <th>Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var review in Model.Reviews)
+                                {
+                                    <tr>
+                                        <td>@review.FkCustomerId</td>
+                                        <td>@GenerateStarRating(review.Rating)</td>
+                                        <td>@review.Comment</td>
+                                        <td>@review.PkReviewDate</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    }
+            </div>
+        </div>
     </div>
 </div>
 
+<script>
+    function changeSize(e) {
+        $(".size-button").removeClass("active");
+        e.currentTarget.className += " active";
+    }
+</script>
 
+
+@functions {
+    public string GenerateStarRating(int rating)
+    {
+        // Initialize an empty string to hold the star emojis
+        string stars = "";
+
+        // Loop through the rating value and add a star emoji for each rating
+        for (int i = 0; i < rating; i++)
+        {
+            stars += "⭐"; // Add a star emoji
+        }
+
+        return stars; // Return the concatenated star emojis
+    }
+}
 

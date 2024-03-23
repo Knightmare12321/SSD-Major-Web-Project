@@ -8,31 +8,35 @@
 <div class="shoppingcart-container">
 
     <div class="row">
-
-        <div class="col-md-4">
+        <h2>My Shopping Bag</h2>
+        <div class="col-md-5">
             <div class="shopping-cart">
-                <h4>SHOPPING CART</h4>
-                @*                 @foreach (var item in Model.Products)
+     
+                @foreach (var item in @Model.Products)
                 {
-                <div class="product">
-                @if (item.Image != null && item.Image.Length > 0)
-                {
-                <img src="data:image/jpeg;base64,
-                @Convert.ToBase64String(@item.Image)"
-                alt="Model.Name"
-                class="product-image" />
-                }
+                    <div class="product">
+                        @if (item.Images != null && item.Images.Count > 0)
+                        {
+                            <img src="data:image/jpeg;base64,@Convert.ToBase64String(item.Images.FirstOrDefault().Data)" alt="@item.Name" class="product-image" />
+                        }
+                        <div class="product-details">
+                            <p>@item.Name</p>
+                            <p>@item.Price</p>
+                            @foreach (var cartItem in Model.ShoppingCartItems)
+                            {
+                                if (cartItem.SkuId == item.ProductSkus.FirstOrDefault().PkSkuId)
+                                {
+                                    <p>Qty: @cartItem.Quantity</p>
+                                    break;
+                                }
+                            }
 
-                <div class="product-details">
-                <h5>@item.Name</h5>
-                <p>@item.Price</p>
-                </div>
-                </div>
-                } *@
+                        </div>
+                    </div> 
+                }
             </div>
             <div class="my-wishlist">
-                <h4>MY WISHLIST </h4>
-
+                <h2>My Favourites</h2>
             </div>
         </div>
 
@@ -41,38 +45,57 @@
                 <input type="text" placeholder="Coupon Code" />
                 <input type="submit" value="Apply Code" class="btn btn-primary" />
             </div>
-            <dt class="col-sm-3">
-                @Html.DisplayNameFor(model => model.Subtotal)
-            </dt>
-            <dd class="col-sm-10">
-                @Html.DisplayFor(model => model.Subtotal)
-            </dd>
-            <dt class="col-sm-2">
-                @Html.DisplayNameFor(model => model.ShippingFee)
-            </dt>
-            <dd class="col-sm-10">
-                @Html.DisplayFor(model => model.ShippingFee)
-            </dd>
-            <dt class="col-sm-2">
-                @Html.DisplayNameFor(model => model.Taxes)
-            </dt>
-            <dd class="col-sm-10">
-                @Html.DisplayFor(model => model.Taxes)
-            </dd>
-            <dt class="col-sm-2">
-                @Html.DisplayNameFor(model => model.GrandTotal)
-            </dt>
-            <dd class="col-sm-10">
-                @Html.DisplayFor(model => model.GrandTotal)
-
-            </dd>
-            <div>
-                <form asp-action="Checkout" asp-controller="Shop" method="post">
+            <div class="shopping-cart-total-form">
+                <div>
+                    <dt class="col-sm-3">
+                        <p>@Html.DisplayNameFor(model => model.Subtotal)</p>
+                    </dt>
+                </div>
+                <div>
+                    <dd class="col-sm-10">
+                        <p>@Html.DisplayFor(model => model.Subtotal)</p>
+                    </dd>
+                </div>
+             </div>
+             <div class="shopping-cart-total-form">
+                    <dt class="col-sm-2">
+                        <p>@Html.DisplayNameFor(model => model.ShippingFee)</p>
+                    </dt>
+                    <dd class="col-sm-10">
+                        <p>@Html.DisplayFor(model => model.ShippingFee)</p>
+                    </dd>
+             </div>
+             <div class="shopping-cart-total-form">
+                    <dt class="col-sm-2">
+                        <p>@Html.DisplayNameFor(model => model.Taxes)</p>
+                    </dt>
+                    <dd class="col-sm-10">
+                        <p>@Html.DisplayFor(model => model.Taxes)</p>
+                    </dd>
+             </div>
+             <div class="shopping-cart-total-form">
+                    <dt class="col-sm-2">
+                        <p>@Html.DisplayNameFor(model => model.GrandTotal)</p>
+                    </dt>
+                    <dd class="col-sm-10">
+                        <p>@Html.DisplayFor(model => model.GrandTotal)</p>
+                    </dd>
+             </div>
+   
+            <div class="shopping-cart-total-submit">
+                <form asp-action="CheckoutShippingContact" asp-controller="Shop" method="post">
                     <input type="hidden" asp-for="@Model.UserId" />
-                    @foreach (var item in Model.Products)
+                    @foreach (var item in Model.ShoppingCartItems)
                     {
-                        <input type="hidden" name="Products" value="@item" />
+                        <input type="hidden" name="ShoppingCartItems.SkuId" value="@item.SkuId"/>
+                      
+
                     }
+                    <input type="hidden" name="Subtotal" value="@Model.Subtotal" />
+                    <input type="hidden" name="ShippingFee" value="@Model.ShippingFee" />
+                    <input type="hidden" name="Taxes" value="@Model.Taxes" />
+                    <input type="hidden" name="GrandTotal" value="@Model.GrandTotal" />  
+
                     <button type="submit" class="btn btn-primary">Proceed to Checkout</button>
                 </form>
             </div>

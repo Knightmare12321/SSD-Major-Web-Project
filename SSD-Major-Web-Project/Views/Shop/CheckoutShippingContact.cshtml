@@ -1,0 +1,114 @@
+﻿@model SSD_Major_Web_Project.ViewModels.CheckoutVM
+
+@{
+    ViewData["Title"] = "Checkout";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+ 
+}
+
+<div class="checkout-container">
+    <div class="row">
+        @* add viewBag message *@
+        @if (ViewBag.Message != null)
+        {
+            <div class="alert" role="alert">
+                @ViewBag.Message
+            </div>
+        }
+        <h2>CHECKOUT</h2>
+        <div class="col-md-4">
+            <div class="shipping-address-title">
+                <h3>Shipping Address</h3>
+            </div>
+            <div class="shipping-address">
+                <form method="post" action="/Shop/ProceedPayment">
+                    <input type="hidden" id="itemPrice" name="itemPrice" value="@Model.ShoppingCart.GrandTotal" />
+                    @foreach (var item in Model.ShoppingCart.Products)
+                    {
+                        <input type="hidden" name="Products" value="@item" />
+                        <input type="hidden" name="ShoppingCart.Subtotal" value="@Model.ShoppingCart.Subtotal" />
+                        <input type="hidden" name="ShoppingCart.ShippingFee" value="@Model.ShoppingCart.ShippingFee" />
+                        <input type="hidden" name="ShoppingCart.Taxes" value="@Model.ShoppingCart.Taxes" />
+                        <input type="hidden" name="ShoppingCart.GrandTotal" value="@Model.ShoppingCart.GrandTotal" />
+
+                        <input type="hidden" name="ShoppingCart.CurrencySymbol" value="@Model.ShoppingCart.CurrencySymbol" />
+                        <input type="hidden" name="ShoppingCart.Currency" value="@Model.ShoppingCart.Currency" />
+
+                    }
+                    <input type="hidden" name="Order.OrderDate" value="@Model.Order.OrderDate" />
+                    <input type="hidden" name="Order.OrderStatus" value="@Model.Order.OrderStatus" />
+                    <input type="hidden" name="Order.OrderDetails" value="@Model.Order.OrderDetails" />
+                 
+                    <input type="hidden" name="Order.OrderId" value="@Model.Order.OrderId" />
+
+
+                    <div>
+                    <input type="text" name="Order.Contact.FirstName" placeholder="First Name" />
+                    <input type="text" name="Order.Contact.LastName" placeholder="Last Name" />
+                    </div>
+                    <div>
+                    <input type="text" name="Order.Contact.Address" placeholder="Address" />
+                    <input type="text" name="Order.Contact.Address2" placeholder="Address 2" />
+                    </div>
+                    <div>
+                    <input type="text" name="Order.Contact.City" placeholder="City" />
+                    <input type="text" name="Order.Contact.Province" placeholder="Province" />
+                    </div>
+                    <div>
+                    <input type="text" name="Order.Contact.PostalCode" placeholder="Postal Code" />
+                    <input type="text" name="Order.Contact.Country" placeholder="Country" />
+                    </div>
+                    <div>
+                    <input type="text" name="DeliveryContactEmail" placeholder="Email" />
+                    <input type="text" name="Order.Contact.PhoneNumber" placeholder="Phone Number" />
+                    </div>
+                    <div>
+                    <input type="text" name="Order.Contact.BuyerNote" placeholder="Special Instructions" />
+                    </div>
+
+                    @foreach (var item in Model.ShoppingCart.ShoppingCartItems)
+                    {
+                        <input name="ShopingCart.ShoppingCartItems.SkuId" value="item.SkuId" hidden/>
+                        <input name="ShoppingCart.ShoppingCartItems.Quanity" value="item.quanity" hidden/>
+                    }
+                    
+     
+                    <button type="submit" class="btn btn-primary">Proceed to Payment Page</button>
+                </form>
+
+            </div>
+        </div>
+
+            <div class="col-md-6 col-md-offset-2">
+                <dt class="col-sm-3">
+                    @Html.DisplayNameFor(model => model.ShoppingCart.Subtotal)
+                </dt>
+                <dd class="col-sm-10">
+                    @Html.DisplayFor(model => model.ShoppingCart.Subtotal)
+                </dd>
+                <dt class="col-sm-2">
+                    @Html.DisplayNameFor(model => model.ShoppingCart.ShippingFee)
+                </dt>
+                <dd class="col-sm-10">
+                    @Html.DisplayFor(model => model.ShoppingCart.ShippingFee)
+                </dd>
+                <dt class="col-sm-2">
+                    @Html.DisplayNameFor(model => model.ShoppingCart.Taxes)
+                </dt>
+                <dd class="col-sm-10">
+                    @Html.DisplayFor(model => model.ShoppingCart.Taxes)
+                </dd>
+                <dt class="col-sm-2">
+                    @Html.DisplayNameFor(model => model.ShoppingCart.GrandTotal)
+                </dt>
+                <dd class="col-sm-10">
+                    @Html.DisplayFor(model => model.ShoppingCart.CurrencySymbol)@Model.ShoppingCart.GrandTotal
+                </dd>
+                <div>
+              
+                </div>
+            </div>
+      
+    </div>
+
+

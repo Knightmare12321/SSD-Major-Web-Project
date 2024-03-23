@@ -56,5 +56,67 @@ namespace SSD_Major_Web_Project.Repositories
                                                       "Text");
             return roleSelectList;
         }
+
+        public string GetContactId(string email)
+        {
+            Customer customer = _db.Customers.Find(email);
+            return $"{customer.FkContactId}";
+        }
+
+        public string GetUserFIrstName(string email)
+        {
+            Customer customer = _db.Customers.Find(email);
+            Contact contact = _db.Contacts.Find(customer.FkContactId);
+
+            return $"{contact.FirstName}";
+        }
+
+        public string GetUserLastName(string email)
+        {
+            Customer customer = _db.Customers.Find(email);
+            Contact contact = _db.Contacts.Find(customer.FkContactId);
+
+            return $"{contact.LastName}";
+        }
+
+        public Contact GetUserContact(string email)
+        {
+            Customer customer = _db.Customers.Find(email);
+            Contact contact = _db.Contacts.Find(customer.FkContactId);
+
+            return contact;
+        }
+
+        // update user contact, create new if not exists
+        public void UpdateUserContact(string email, Contact contact)
+        {
+            Customer customer = _db.Customers.Find(email);
+            if (customer.FkContactId == null)
+            {
+                _db.Contacts.Add(contact);
+                _db.SaveChanges();
+                customer.FkContactId = contact.PkContactId;
+                _db.SaveChanges();
+            }
+            else
+            {
+                Contact currentContact = _db.Contacts.Find(customer.FkContactId);
+                currentContact.FirstName = contact.FirstName;
+                currentContact.LastName = contact.LastName;
+                currentContact.Address = contact.Address;
+                currentContact.Address2 = contact.Address2;
+                currentContact.City = contact.City;
+                currentContact.Province = contact.Province;
+                currentContact.Country = contact.Country;
+                currentContact.PostalCode = contact.PostalCode;
+                currentContact.PhoneNumber = contact.PhoneNumber;
+                
+
+                _db.SaveChanges();
+            }
+        }
+
+
+        
     }
 }

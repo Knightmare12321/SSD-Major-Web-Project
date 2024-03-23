@@ -6,6 +6,9 @@ using SSD_Major_Web_Project.ViewModels;
 using Newtonsoft.Json;
 using EllipticCurve.Utils;
 using Microsoft.CodeAnalysis.Options;
+using Microsoft.Extensions.Hosting;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNet.Identity.Owin;
 
 namespace SSD_Major_Web_Project.Controllers
 {
@@ -26,22 +29,25 @@ namespace SSD_Major_Web_Project.Controllers
             return View(temp.GetAll());
         }
 
-        public IActionResult Details(int id, string catagory, string method)
+        public IActionResult Details(int id, string category, string method, int subID)
         {
             ProductRepo products = new ProductRepo(_context);
+            ReviewRepo reviewRepo = new ReviewRepo(_context);
+            List<Review> reviews = reviewRepo.GetReviewsForProduct(id);
+
             var cartCookie = Request.Cookies["cart"];
             var favoriteCookie = Request.Cookies["favorite"];
-            int skuID = products.GetSkuIdById(id);
+            int skuID = subID == null ? products.GetSkuIdById(id) : subID;
 
             ViewBag.productSkuID = 0;
-            if (catagory == "cart" || catagory == "favorite")
+            if (category == "cart" || category == "favorite")
             {
                 // Set the expired date when cookie is updated/created.
                 CookieOptions option = new CookieOptions();
                 option.Expires = DateTime.Now.AddDays(365);
                 string resultJson;
 
-                var IDListCookie = catagory == "cart" ? cartCookie : favoriteCookie;
+                var IDListCookie = category == "cart" ? cartCookie : favoriteCookie;
                 /* If the cookie doesn't exist, create a new cookie.
                    If the cookie exists, deserialize the ID list and and add/delete ID in the list.
                    Pass in cookie with serialized ID list. */
@@ -50,7 +56,7 @@ namespace SSD_Major_Web_Project.Controllers
                     List<int> IDList = new List<int>();
                     IDList.Add(skuID);
                     resultJson = JsonConvert.SerializeObject(IDList);
-                    Response.Cookies.Append(catagory, resultJson, option);
+                    Response.Cookies.Append(category, resultJson, option);
                 }
                 else
                 {
@@ -58,9 +64,9 @@ namespace SSD_Major_Web_Project.Controllers
                     if (method == "add") IDList.Add(skuID);
                     else if (method == "remove") IDList.Remove(skuID);
                     resultJson = JsonConvert.SerializeObject(IDList);
-                    Response.Cookies.Append(catagory, resultJson, option);
+                    Response.Cookies.Append(category, resultJson, option);
                 }
-                if (catagory == "cart") cartCookie = resultJson;
+                if (category == "cart") cartCookie = resultJson;
                 else favoriteCookie = resultJson;
             }
 
@@ -73,9 +79,37 @@ namespace SSD_Major_Web_Project.Controllers
                 false :
                 JsonConvert.DeserializeObject<List<int>>(favoriteCookie).Contains(skuID);
 
-            ProductDetailVM? vm = products.GetByIdVM(id);
+
+            List<ReviewVM> reviewList = reviews
+                .Select(r => new ReviewVM
+                {
+                    FkCustomerId = r.FkCustomerId,
+                    PkReviewDate = r.PkReviewDate,
+                    Rating = r.Rating,
+                    Comment = r.Comment
+                }).ToList();
+            ProductDetailVM? vm = products.GetByIdAndReviewVM(id, reviewList);
             return View(vm);
         }
+
+        public IActionResult CreateReview(int id)
+        {
+            ReviewVM reviewVM = new ReviewVM { FkCustomerId = User.Identity.Name, PkReviewDate = DateOnly.FromDateTime(DateTime.Now), Rating = 5, FkProductId = id };
+
+            return View(reviewVM);
+        }
+
+        [HttpPost]
+        public IActionResult CreateReview(ReviewVM reviewVM)
+        {
+            ReviewRepo reviewRepo = new ReviewRepo(_context);
+
+            string addMessage = reviewRepo.Add(reviewVM);
+
+            return RedirectToAction("Index", new { message = addMessage });
+
+        }
+
 
         // This controller action is for testing only.
         // Delete this after project completes!
