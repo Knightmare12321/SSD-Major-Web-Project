@@ -11,35 +11,36 @@
 <form id="create-product-grid" asp-action="@(ViewBag.Create?"CreateProduct":"EditProduct")" method="post" enctype="multipart/form-data">
     <div>
         <div class="form-group">
-            <label asp-for="Name">Product Name: </label>
+            <label asp-for="Name">Product Name </label>
             <input asp-for="Name" type="text" />
             <span asp-validation-for="Name" class="text-danger"></span>
         </div>
         <div class="form-group">
-            <label asp-for="Images">Image</label>
-            <input type="file" asp-for="Images" accept="image/*" multiple
-                   class="form-control" onChange="addImages(this.files)" />
-            <span asp-validation-for="Images" class="text-danger"></span>
-
-            <div id="images">
-                @if (Model.Images != null && Model.Images.Count > 0)
-                {
-                    byte[] imageData;
-                    foreach (IFormFile imageFile in Model.Images)
-                    {   
-                        //convert image file data to byte[]
-                        using (var memoryStream = new MemoryStream())
+            <span>Images</span>
+                <div id="images-container">
+                    @if (Model.Images != null && Model.Images.Count > 0)
+                    {
+                        byte[] imageData;
+                        foreach (IFormFile imageFile in Model.Images)
                         {
-                            await imageFile.CopyToAsync(memoryStream);
-                            imageData = memoryStream.ToArray();
+                            //convert image file data to byte[]
+                            using (var memoryStream = new MemoryStream())
+                            {
+                                await imageFile.CopyToAsync(memoryStream);
+                                imageData = memoryStream.ToArray();
+                            }
+                            <div id=@imageFile.FileName class="img-container">
+                                <img src="data:image;base64,@Convert.ToBase64String(imageData)" />
+                                <span class="img-delete-btn" onClick="deleteImage('@imageFile.FileName')">X</span>
+                            </div>
                         }
-                        <div id=@imageFile.FileName class="img-container">
-                            <img src="data:image;base64,@Convert.ToBase64String(imageData)" />
-                            <span class="img-delete-btn" onClick="deleteImage('@imageFile.FileName')">X</span>
-                        </div>
                     }
-                }
-            </div>
+                <label asp-for="Images" class="add-img-btn">+</label>
+                <input type="file" asp-for="Images" accept="image/*" multiple
+                       onChange="addImages(this.files)" hidden />
+                </div>
+                
+            <span asp-validation-for="Images" class="text-danger"></span>
         </div>
     </div>
     <div>
@@ -93,10 +94,10 @@
                 const byteData = event.target.result;
                 //add image to view
                 imageContainer = `<div id=${file.name} class="img-container">
-                    <img id=${file.name} src=${byteData} alt=${file.name}/>
-                        <span class="img-delete-btn" onClick = "deleteImage('${file.name}')">X</span>
-                    </div>`
-                $("#images").append(imageContainer);
+                        <img id=${file.name} src=${byteData} alt=${file.name}/>
+                            <span class="img-delete-btn" onClick = "deleteImage('${file.name}')">X</span>
+                        </div>`
+                $("#images-container").prepend(imageContainer);
 
             };
 

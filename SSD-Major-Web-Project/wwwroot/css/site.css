@@ -274,20 +274,23 @@ button {
         resize: none;
     }
 
-    input[type="file"]{
-        border:none;
-        width:250px;
-    }
-    input[type="file"]:focus {
-        box-shadow: none;
-    }
-    input::file-selector-button {
-        color: black;
-        padding: 0.5em;
-        border: thin solid grey;
-        border-radius: 3px;
+    #images-container {
+        display: inline-block;
     }
 
+    .add-img-btn{
+        display:inline-block;
+        vertical-align:top;
+        width:100px;
+        height:100px;
+        border:solid 2px var(--theme-color);
+        color:var(--theme-color);
+        cursor:pointer;
+        font-size:40px;
+        text-align:center;
+        line-height:100px;
+        padding:0;
+    }
 
     .img-container {
         position: relative;
