@@ -4,7 +4,7 @@ namespace SSD_Major_Web_Project.ViewModels
 {
     public class ReviewVM
     {
-        public string FkCustomerId { get; set; } = null!;
+        public string FkCustomerId { get; set; }
 
         public int FkProductId { get; set; }
 
