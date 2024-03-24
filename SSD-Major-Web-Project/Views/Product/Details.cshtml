@@ -79,17 +79,17 @@
                 <button id="product-add-to-bag">
                     @{
                         if (!ViewBag.isCart)
-                            @Html.ActionLink("ADD TO BAG", "Details", new { id = Model.PkProductId, category = "cart", method = "add" })
+                                    @Html.ActionLink("ADD TO BAG", "Details", new { id = Model.PkProductId, category = "cart", method = "add" })
                         else
-                            @Html.ActionLink("REMOVE FROM BAG", "Details", new { id = Model.PkProductId, category = "cart", method = "remove" })
+                                    @Html.ActionLink("REMOVE FROM BAG", "Details", new { id = Model.PkProductId, category = "cart", method = "remove" })
                     }
                 </button>
                 <button id="product-add-to-wishlist">
                     @{
                         if (!ViewBag.isFav)
-                            @Html.ActionLink("ADD TO FAVORITE", "Details", new { id = Model.PkProductId, category = "favorite", method = "add" })
+                                    @Html.ActionLink("ADD TO FAVORITE", "Details", new { id = Model.PkProductId, category = "favorite", method = "add" })
                         else
-                            @Html.ActionLink("REMOVE FROM FAVORITE", "Details", new { id = Model.PkProductId, category = "favorite", method = "remove" })
+                                    @Html.ActionLink("REMOVE FROM FAVORITE", "Details", new { id = Model.PkProductId, category = "favorite", method = "remove" })
                     }
                 </button>
             </div>
@@ -138,6 +138,28 @@
     function changeSize(e) {
         $(".size-button").removeClass("active");
         e.currentTarget.className += " active";
+    }
+    function addCart(id) {
+        const url = '@Url.Action("AddToCart", "Product")';
+        $.ajax({
+            type: "POST",
+            url: url,
+            data: { "id": id },
+            success: function (data) {
+                $("product-add-to-bag")
+            }
+        });
+    }
+    function addFav(id) {
+        const url = '@Url.Action("AddToCart", "Product")';
+        $.ajax({
+            type: "POST",
+            url: url,
+            data: { "id": id },
+            success: function (data) {
+
+            }
+        });
     }
 </script>
 

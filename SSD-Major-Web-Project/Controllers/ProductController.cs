@@ -7,6 +7,7 @@ using Newtonsoft.Json;
 using EllipticCurve.Utils;
 using Microsoft.CodeAnalysis.Options;
 using Microsoft.Extensions.Hosting;
+using System;
 
 namespace SSD_Major_Web_Project.Controllers
 {
@@ -87,6 +88,27 @@ namespace SSD_Major_Web_Project.Controllers
                 }).ToList();
             ProductDetailVM? vm = products.GetByIdAndReviewVM(id, reviewList);
             return View(vm);
+        }
+
+        [HttpPost]
+        public JsonResult AddToCart(int id)
+        {
+            var cartCookie = Request.Cookies["cart"];
+            CookieOptions option = new CookieOptions();
+            option.Expires = DateTime.Now.AddDays(365);
+            string resultJson;
+            if ()
+            {
+                
+            }
+            return Json(new { success = true, error = "" });
+        }
+
+        [HttpPost]
+        public JsonResult AddToFavorite(int id)
+        {
+            var favoriteCookie = Request.Cookies["favorite"];
+            return Json(new { success = true, error = "" });
         }
 
         public IActionResult CreateReview(int id)
