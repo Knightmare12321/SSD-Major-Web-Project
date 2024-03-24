@@ -100,10 +100,10 @@ namespace SSD_Major_Web_Project.Controllers
             CookieOptions option = new CookieOptions();
             option.Expires = DateTime.Now.AddDays(365);
             string resultJson;
-            if ()
-            {
+            //if ()
+            //{
                 
-            }
+            //}
             return Json(new { success = true, error = "" });
         }
 
