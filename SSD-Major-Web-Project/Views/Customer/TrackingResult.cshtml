@@ -1,0 +1,45 @@
+﻿@model SSD_Major_Web_Project.ViewModels.TrackingResultVM
+
+
+
+@* Order detail *@
+<div id="tracking-order-detail">
+
+
+    <a asp-action="OrderTracking">
+        <button class="btn btn-secondary">Back</button>
+    </a>
+    <table>
+        <tr>
+            <td>Order Id</td>
+            <td class="order-id">
+                @Model.OrderId
+            </td>
+        </tr>
+        <tr>
+            <td>Order Status</td>
+            <td class="order-status">
+                @Model.OrderStatus
+            </td>
+        </tr>
+        <tr>
+            <td>Shipped Date: </td>
+            <td class="date">
+                @Model.ShippedDate
+            </td>
+        </tr>
+        <tr>
+            <td>Delivery Date: </td>
+            <td class="status">
+                @Model.DeliveryDate
+            </td>
+        </tr>
+        <tr>
+            <td>Tracking Number#  </td>
+            <td class="tra2cking-number">
+                @Model.TrackingNumber
+            </td>
+        </tr>
+
+    </table>
+</div>
