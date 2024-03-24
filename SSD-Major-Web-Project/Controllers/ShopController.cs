@@ -178,7 +178,7 @@ namespace SSD_Major_Web_Project.Controllers
 
             // Assign Discount Code if available from the shopping cart razor view
             Discount discount = new Discount();
-            
+
             discount.PkDiscountCode = checkoutVM.ShoppingCart.CouponCode != null ? checkoutVM.ShoppingCart.CouponCode : null;
 
             Contact contact = new Contact();
@@ -192,8 +192,8 @@ namespace SSD_Major_Web_Project.Controllers
             contact.Country = checkoutVM.Order.Contact.Country;
             contact.PostalCode = checkoutVM.Order.Contact.PostalCode;
             contact.PhoneNumber = checkoutVM.Order.Contact.PhoneNumber;
-        
-            
+
+
 
             // Assign the value from the Razor view to the Order property of the CheckoutVM object
             OrderVM orderVM = new OrderVM
@@ -209,7 +209,7 @@ namespace SSD_Major_Web_Project.Controllers
             //Order Detail
             OrderDetail orderDetail = new OrderDetail();
 
-           
+
             ShoppingCartItem shoppingCartItem = new ShoppingCartItem();
 
 
@@ -218,7 +218,7 @@ namespace SSD_Major_Web_Project.Controllers
             {
                 orderDetail.FkSkuId = product.SkuId;
                 orderDetail.Quantity = product.Quantity;
-           
+
 
                 // Retrieve the unit price from the database based on the SKU ID
                 var productSku = _context.ProductSkus.FirstOrDefault(p => p.PkSkuId == product.SkuId);
@@ -234,9 +234,8 @@ namespace SSD_Major_Web_Project.Controllers
                     orderDetail.UnitPrice = 0;
                 }
 
-              
-            }
 
+            }
 
             // userId is nullable
             if (User.Identity.IsAuthenticated)
@@ -279,7 +278,7 @@ namespace SSD_Major_Web_Project.Controllers
 
             // initialize the list of order details
             List<OrderDetail> listOfOrderDetails = new List<OrderDetail>();
-            
+
             // for each product in the shopping cart, create an order detail and add it to the list of order details
             foreach (var product in checkoutVM.ShoppingCart.ShoppingCartItems)
             {
@@ -308,54 +307,42 @@ namespace SSD_Major_Web_Project.Controllers
 
             checkoutVM.Order.OrderDetails = listOfOrderDetails;
 
- 
+
             OrderConfirmationVM orderConfirmationVM = new OrderConfirmationVM();
 
             orderConfirmationVM.CheckoutVM = checkoutVM;
 
-
-            // Add the contact to the database
-            var addContactResult = _shopRepo.AddContact(checkoutVM.Order.Contact);
-            string message = addContactResult.Item1;
-            int contactId = addContactResult.Item2;
-
-            //if (string.IsNullOrEmpty(message))
-            //{
-            //    ViewBag.Message = $"Contact ID - {contactId} has been added.";
-            //    return View("CheckoutShippingContact", checkoutVM);
-            //}
-            //else
-            //{
-            //    ViewBag.Message = $"Error creating new contact: {message}";
-            //    return View("CheckoutShippingContact", checkoutVM);
-            //}
+    
+        
+         
+                // Add the contact to the database
+                var addContactResult = _shopRepo.AddContact(checkoutVM.Order.Contact);
+                string message = addContactResult.Item1;
+                int contactId = addContactResult.Item2;
 
 
-            Tuple<string, int> result = _shopRepo.AddOrder(checkoutVM, contactId);
+                Tuple<string, int> result = _shopRepo.AddOrder(checkoutVM, contactId);
 
-            string errorAddOrder = result.Item1;
-            int orderId = result.Item2;
-            checkoutVM.Order.OrderId = orderId;
+                string errorAddOrder = result.Item1;
+                int orderId = result.Item2;
+                checkoutVM.Order.OrderId = orderId;
 
-            // add order details
-            string errorAddOrderDetails = _shopRepo.AddOrderDetails(checkoutVM, orderId);
-            
+                // add order details
+                string errorAddOrderDetails = _shopRepo.AddOrderDetails(checkoutVM, orderId);
 
-            //string message;
-            if (errorAddOrder == "")
-            {
-                message = $"Order {checkoutVM.Order.OrderId} has been placed, you will get an email confirmation shortly once prcoeed payment.";
-                return View("Paypal", checkoutVM);
-            }
-            else
-            {
-                message = $"Error placing new order: {checkoutVM.Order.OrderId}";
-                ViewBag.Message = message;
-                return View("CheckoutShippingContact", checkoutVM);
-            }
 
-            //// Add the Order Detail to the database
-            //var addOrderDetailResult = _shopRepo.AddOrderDetails(checkoutVM.Order.OrderDetails);
+                //string message;
+                if (errorAddOrder == "")
+                {
+                    message = $"Order {checkoutVM.Order.OrderId} has been placed, you will get an email confirmation shortly once prcoeed payment.";
+                    return View("Paypal", checkoutVM);
+                }
+                else
+                {
+                    message = $"Error placing new order. Please try again.";
+                    ViewBag.Message = message;
+                    return View("CheckoutShippingContact", checkoutVM);
+                }
 
 
         }
