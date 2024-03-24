@@ -14,10 +14,13 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Drawing.Printing;
 using System.Collections;
 using static NuGet.Packaging.PackagingConstants;
+using Microsoft.AspNetCore.Authorization;
 
 
 namespace SSD_Major_Web_Project.Controllers
 {
+    [Authorize(Roles = "Admin, Manager")]
+
     public class AdminController : Controller
     {
         private readonly NovaDbContext _context;
