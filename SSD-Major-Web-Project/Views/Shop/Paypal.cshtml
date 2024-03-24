@@ -28,9 +28,9 @@
             </div>
     </div>               
             <form id="RequestOrderConfirmation" asp-action="ProceedPayment" asp-controller="Shop" method="post">
-                <input type="hidden" id="itemPrice" name="itemPrice" value="@Model.ShoppingCart.GrandTotal" />
-                <input type="hidden" name="UserId" value="@Model.DeliveryContactEmail" />
-            
+                <input id="itemPrice" name="itemPrice" value="@Model.ShoppingCart.GrandTotal" hidden/>
+                <input name="UserId" value="@Model.DeliveryContactEmail" hidden />
+
                 <input type="hidden" name="ShoppingCart.Subtotal" value="@Model.ShoppingCart.Subtotal" />
                 <input type="hidden" name="ShoppingCart.ShippingFee" value="@Model.ShoppingCart.ShippingFee" />
                 <input type="hidden" name="ShoppingCart.Taxes" value="@Model.ShoppingCart.Taxes" />
@@ -48,10 +48,21 @@
                 <input type="hidden" name="Order.Contact.PhoneNumber" value="@Model.Order.Contact.PhoneNumber" />
                 <input type="hidden" name="DeliveryContactEmail" value="@Model.DeliveryContactEmail" />
                 <input type="hidden" name="Order.OrderStatus" value="Pending" />
-                <input type="hidden" name="Order.PaymentStatus" value="Paid" />
-                <input type="hidden" name="Order.OrderDate" value="@DateTime.Now" />
-                <input type="hidden" name="Order.DeliveryDate" value="To Be Confirm" />
-                <input type="hidden" name="Order.DeliveryStatus" value="Pwnding" />
+                <input type="hidden" name="Order.PaymentStatus" value="" />
+                <input type="hidden" name="Order.OrderDate" value= "@Model.Order.OrderDate" />
+                <input type="hidden" name="Order.OrderTotal" value="@Model.ShoppingCart.GrandTotal" />
+                <input type="hidden" name="Order.OrderDetails" value="@Model.Order.OrderDetails" />
+                <input type="hidden" name="Order.OrderId" value="@Model.Order.OrderId" />
+
+
+
+                @foreach (var item in Model.ShoppingCart.ShoppingCartItems)
+                {
+                    <input name="ShopingCart.ShoppingCartItems.SkuId" value="item.SkuId" hidden />
+                    <input name="ShoppingCart.ShoppingCartItems.Quanity" value="item.quanity" hidden />
+                }
+
+
                 <div id="paypal-button-container"></div>
             </form>
          

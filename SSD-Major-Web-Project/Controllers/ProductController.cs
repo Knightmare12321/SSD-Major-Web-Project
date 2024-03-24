@@ -7,6 +7,8 @@ using Newtonsoft.Json;
 using EllipticCurve.Utils;
 using Microsoft.CodeAnalysis.Options;
 using Microsoft.Extensions.Hosting;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNet.Identity.Owin;
 using System;
 
 namespace SSD_Major_Web_Project.Controllers
@@ -82,6 +84,7 @@ namespace SSD_Major_Web_Project.Controllers
             List<ReviewVM> reviewList = reviews
                 .Select(r => new ReviewVM
                 {
+                    FkCustomerId = r.FkCustomerId,
                     PkReviewDate = r.PkReviewDate,
                     Rating = r.Rating,
                     Comment = r.Comment
@@ -113,17 +116,17 @@ namespace SSD_Major_Web_Project.Controllers
 
         public IActionResult CreateReview(int id)
         {
-            Review review = new Review { PkReviewDate = DateOnly.FromDateTime(DateTime.Now), Rating = 1, FkProductId = id };
+            ReviewVM reviewVM = new ReviewVM { FkCustomerId = User.Identity.Name, PkReviewDate = DateOnly.FromDateTime(DateTime.Now), Rating = 5, FkProductId = id };
 
-            return View(review);
+            return View(reviewVM);
         }
 
         [HttpPost]
-        public IActionResult CreateReview(Review review)
+        public IActionResult CreateReview(ReviewVM reviewVM)
         {
             ReviewRepo reviewRepo = new ReviewRepo(_context);
 
-            string addMessage = reviewRepo.Add(review);
+            string addMessage = reviewRepo.Add(reviewVM);
 
             return RedirectToAction("Index", new { message = addMessage });
 

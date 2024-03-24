@@ -6,30 +6,52 @@
 }
 
 <h1>@(ViewBag.Create ? "Create a New" : "Edit the") Product</h1>
-<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+<div asp-validation-summary="All" class="text-danger"></div>
 
 <form id="create-product-grid" asp-action="@(ViewBag.Create?"CreateProduct":"EditProduct")" method="post" enctype="multipart/form-data">
     <div>
         <div class="form-group">
-            <label asp-for="Name">Product Name: </label>
+            <label asp-for="Name">Product Name </label>
             <input asp-for="Name" type="text" />
             <span asp-validation-for="Name" class="text-danger"></span>
         </div>
         <div class="form-group">
-            <label asp-for="Images">Image</label>
-            <input type="file" asp-for="Images" accept="image/*" multiple class="form-control" />
+            <span>Images</span>
+                <div id="images-container">
+                    @if (Model.Images != null && Model.Images.Count > 0)
+                    {
+                        byte[] imageData;
+                        foreach (IFormFile imageFile in Model.Images)
+                        {
+                            //convert image file data to byte[]
+                            using (var memoryStream = new MemoryStream())
+                            {
+                                await imageFile.CopyToAsync(memoryStream);
+                                imageData = memoryStream.ToArray();
+                            }
+                            <div id=@imageFile.FileName class="img-container">
+                                <img src="data:image;base64,@Convert.ToBase64String(imageData)" />
+                                <span class="img-delete-btn" onClick="deleteImage('@imageFile.FileName')">X</span>
+                            </div>
+                        }
+                    }
+                <label asp-for="Images" class="add-img-btn">+</label>
+                <input type="file" asp-for="Images" accept="image/*" multiple
+                       onChange="addImages(this.files)" hidden />
+                </div>
+                
             <span asp-validation-for="Images" class="text-danger"></span>
         </div>
     </div>
     <div>
         <div class="form-group">
             <div>
-            <label asp-for="Sizes">Sizes</label>
-            <div class="size-grid">
-                <span>S</span><input name="Sizes" type="checkbox" value="S"  @(Model.Sizes != null && Model.Sizes.Contains("S") ? "checked" : "") />
+                <label asp-for="Sizes">Sizes</label>
+                <div class="size-grid">
+                    <span>S</span><input name="Sizes" type="checkbox" value="S" @(Model.Sizes != null && Model.Sizes.Contains("S") ? "checked" : "") />
                     <span>M</span><input name="Sizes" type="checkbox" value="M" @(Model.Sizes != null && Model.Sizes.Contains("M") ? "checked" : "") />
                     <span>L</span><input name="Sizes" type="checkbox" value="L" @(Model.Sizes != null && Model.Sizes.Contains("L") ? "checked" : "") />
-            </div>
+                </div>
             </div>
             <span asp-validation-for="Sizes" class="text-danger"></span>
 
@@ -37,7 +59,7 @@
         <div class="form-group">
             <label asp-for="Price">Price</label>
             <div class="price">
-                <input asp-for="Price" type="number" step="0.01"  /> <span> CAD</span>
+                <input asp-for="Price" type="number" step="0.01" /> <span> CAD</span>
             </div>
             <span asp-validation-for="Price" class="text-danger"></span>
         </div>
@@ -48,7 +70,7 @@
             <textarea asp-for="Description"></textarea>
             <span asp-validation-for="Description" class="text-danger"></span>
         </div>
-        <input asp-for="PkProductId" value="@Model.PkProductId"hidden />
+        <input asp-for="PkProductId" value="@Model.PkProductId" hidden />
         <input asp-for="IsActive" value="@Model.IsActive" hidden />
         <div>
             <button class="btn btn-primary" type="submit">Submit</button>
@@ -56,3 +78,44 @@
         </div>
     </div>
 </form>
+
+<script>
+
+    const addImages = (files) => {
+        for (let i = 0; i < files.length; i++) {
+            const file = files[i];
+
+            // Create a new FileReader object for each file
+            const reader = new FileReader();
+
+            // Define a function to be executed when the file is read
+            reader.onload = function (event) {
+                // Access the byte data of the file from the result property
+                const byteData = event.target.result;
+                //add image to view
+                imageContainer = `<div id=${file.name} class="img-container">
+                        <img id=${file.name} src=${byteData} alt=${file.name}/>
+                            <span class="img-delete-btn" onClick = "deleteImage('${file.name}')">X</span>
+                        </div>`
+                $("#images-container").prepend(imageContainer);
+
+            };
+
+            // Read the file as a data URL (base64 encoded string)
+            reader.readAsDataURL(file);
+        }
+    };
+
+    const deleteImage = (fileName) => {
+        //remove img from view (not sure why JQuery won't work here)
+        document.getElementById(fileName).remove();
+
+        //take note on delete img and pass it to backend for handling
+        var hiddenInputElement = $('<input>');
+        hiddenInputElement.attr('type', 'hidden');
+        hiddenInputElement.attr('value', fileName);
+        hiddenInputElement.attr('name', 'DeletedImageNames');
+        $('#create-product-grid').append(hiddenInputElement);
+    };
+
+</script>

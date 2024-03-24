@@ -3,13 +3,18 @@
 @{
     ViewData["Title"] = "Checkout";
     Layout = "~/Views/Shared/_Layout.cshtml";
-
+ 
 }
-
-
 
 <div class="checkout-container">
     <div class="row">
+        @* add viewBag message *@
+        @if (ViewBag.Message != null)
+        {
+            <div class="alert" role="alert">
+                @ViewBag.Message
+            </div>
+        }
         <h2>CHECKOUT</h2>
         <div class="col-md-4">
             <div class="shipping-address-title">
@@ -30,6 +35,12 @@
                         <input type="hidden" name="ShoppingCart.Currency" value="@Model.ShoppingCart.Currency" />
 
                     }
+                    <input type="hidden" name="Order.OrderDate" value="@Model.Order.OrderDate" />
+                    <input type="hidden" name="Order.OrderStatus" value="@Model.Order.OrderStatus" />
+                    <input type="hidden" name="Order.OrderDetails" value="@Model.Order.OrderDetails" />
+                 
+                    <input type="hidden" name="Order.OrderId" value="@Model.Order.OrderId" />
+
 
                     <div>
                     <input type="text" name="Order.Contact.FirstName" placeholder="First Name" />
@@ -60,7 +71,7 @@
                         <input name="ShopingCart.ShoppingCartItems.SkuId" value="item.SkuId" hidden/>
                         <input name="ShoppingCart.ShoppingCartItems.Quanity" value="item.quanity" hidden/>
                     }
-
+                    
      
                     <button type="submit" class="btn btn-primary">Proceed to Payment Page</button>
                 </form>

@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Hosting;
+using SSD_Major_Web_Project.Data;
 using SSD_Major_Web_Project.Models;
 using SSD_Major_Web_Project.ViewModels;
 using System.Linq;
@@ -31,11 +32,12 @@ namespace SSD_Major_Web_Project.Repositories
             return _context.Reviews.Where(r => r.FkProductId == id).ToList();
         }
 
-        public string Add(Review entity)
+        public string Add(ReviewVM entity)
         {
             string message = string.Empty;
             Review review = new Review
             {
+                FkCustomerId = entity.FkCustomerId,
                 PkReviewDate = DateOnly.FromDateTime(DateTime.Now),
                 Rating = entity.Rating,
                 FkProductId = entity.FkProductId,
@@ -43,13 +45,13 @@ namespace SSD_Major_Web_Project.Repositories
             };
             try
             {
-                _context.Add(review);
+                _context.Reviews.Add(review);
                 _context.SaveChanges();
                 message = $"Review for {entity.FkProductId} saved successfully";
             }
             catch (Exception e)
             {
-                message = $" Error saving review for {entity.FkProductId}: {e.Message}";
+                message = $" Error saving review for {entity.FkProductId}: {e}";
             }
             return message;
         }

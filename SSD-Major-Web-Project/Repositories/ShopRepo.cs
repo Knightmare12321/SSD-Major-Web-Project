@@ -16,51 +16,161 @@ namespace SSD_Major_Web_Project.Repositories
             _context = context;
         }
 
-        public string AddOrder(OrderConfirmationVM orderConfirmationEntity)
+
+        // create new contact for customer
+        public Tuple<string, int> AddContact(Contact contact)
         {
-            // Placeholder to return message
+            // Placeholder to return message and contact ID
+            string message = string.Empty;
+            int contactId = 0;
+
+            try
+            {
+                _context.Add(contact);
+                _context.SaveChanges();
+
+                // Retrieve the contact ID
+                contactId = contact.PkContactId;
+
+                message = "";
+            }
+            catch (System.Exception ex)
+            {
+                message = $"Error adding new contact: {ex.Message}";
+
+                // Log error
+                Console.WriteLine(ex.Message);
+            }
+
+            return Tuple.Create(message, contactId);
+        }
+
+       
+
+     
+        public Tuple<string, int> AddOrder(CheckoutVM checkoutVMentity, int contactId)
+        {
+            int orderId = 0;
             string message = string.Empty;
             try
             {
-                Order order = new Order
+                Order order = new Order();
+
+                if (checkoutVMentity.Order != null)
                 {
-                    // Entity attribute mapping
-                    FkCustomerId = orderConfirmationEntity.CheckoutVM.DeliveryContactEmail,
+                    order.FkCustomerId = checkoutVMentity.DeliveryContactEmail;
 
-                    // FkOrderStatusId 
-                    // 1 : Pending
-                    // 2 : Paid
-                    // 3 : Shipped
-                    // 4 : Delivered
-                    // 5 : Cancelled
-
-                    // Use case to determine which status are we using and assign status id accordingly
-                    FkOrderStatusId = orderConfirmationEntity.CheckoutVM.Order.OrderStatus switch
+                    // Assign FkOrderStatusId based on OrderStatus value
+                    order.FkOrderStatusId = checkoutVMentity.Order.OrderStatus switch
                     {
+                        // FkOrderStatusId 
+                        // 1 : Pending
+                        // 2 : Paid
+                        // 3 : Shipped
+                        // 4 : Delivered
+                        // 5 : Cancelled
                         "Pending" => 1,
                         "Paid" => 2,
                         "Shipped" => 3,
                         "Delivered" => 4,
                         "Cancelled" => 5,
                         _ => 0
-                    },
-                    FkDiscountCode = orderConfirmationEntity.CheckoutVM.Order.Discount.PkDiscountCode,
-                    FkContactId = orderConfirmationEntity.CheckoutVM.Order.Contact.PkContactId,
-                    TransactionId = orderConfirmationEntity.CheckoutVM.TransactionId,
-                    BuyerNote = orderConfirmationEntity.CheckoutVM.Order.BuyerNote,
-                    OrderDate = orderConfirmationEntity.CheckoutVM.Order.OrderDate,
-                };
+                    };
+
+                    order.FkDiscountCode = checkoutVMentity.Order.Discount?.PkDiscountCode;
+                    order.BuyerNote = checkoutVMentity.Order.BuyerNote;
+                    order.OrderDate = checkoutVMentity.Order.OrderDate;
+                
+                }
+
+                
+
+                order.FkContactId = contactId;
+                // Null is duplicated, using a fake transactionId here
+                order.TransactionId = "not_valid" + contactId.ToString();
+    
+                //order.TransactionId = checkoutVMentity.TransactionId;
+                order.ShipDate = null;
+                order.Tracking = null;
+
+                // if customer is not logged in, add a new customer
+                if (!IsCustomerExist(checkoutVMentity.DeliveryContactEmail))
+                {
+                    Customer customer = new Customer
+                    {
+                        PkCustomerId = checkoutVMentity.DeliveryContactEmail,
+                        FkContactId = contactId,
+                        
+                    };
+
+                    _context.Add(customer);
+                    _context.SaveChanges();
+
+                }
+                
 
                 _context.Add(order);
                 _context.SaveChanges();
-                message = $"Order {orderConfirmationEntity.CheckoutVM.Order.OrderId} has been placed, you will get an email confirmation shortly.";
+                orderId = order.PkOrderId;
+                message = "";
             }
             catch (Exception ex)
             {
-                message = $"Error placing new order: {orderConfirmationEntity.CheckoutVM.Order.OrderId}";
+                message = $"Error placing new order: {checkoutVMentity.Order?.OrderId}";
+
+                // Log error
+                Console.WriteLine(ex.Message);
+            }
+
+            return Tuple.Create(message, orderId);
+        }
+        // create new order details
+        public string AddOrderDetails(CheckoutVM checkoutVMentity, int orderId)
+        {
+            // Placeholder to return message
+            string message = string.Empty;
+            try
+            {
+                foreach (var product in checkoutVMentity.ShoppingCart.ShoppingCartItems)
+                {
+                    // Retrieve the productId and get price by inqury the SkuId
+                    var sku = _context.ProductSkus.FirstOrDefault(s => s.PkSkuId == product.SkuId);
+                    if (sku != null)
+                    {
+                        var parentProduct = _context.Products.FirstOrDefault(p => p.PkProductId == sku.FkProductId);
+
+                        if (parentProduct == null)
+                        {
+                            message = $"Error adding new order details: No Price found for the SkuId {checkoutVMentity.Order.OrderId}";
+                            return message;
+                        }
+                        OrderDetail orderDetail = new()
+                        {
+                            FkOrderId = orderId,
+                            FkSkuId = product.SkuId,
+                            Quantity = product.Quantity,
+                            UnitPrice = parentProduct.Price,
+                        };
+
+                        _context.Add(orderDetail);
+                    }
+                }
+
+                // Save all order details to the database in a single transaction
+                _context.SaveChanges();
+
+                message = "";
+            }
+            catch (Exception ex)
+            {
+                message = $"Error adding new order details: {checkoutVMentity.Order.OrderId}";
+
+                // Log error
+                Console.WriteLine(ex.Message);
             }
             return message;
         }
+
 
         // check if the customer has an account
         public bool IsCustomerExist(string email)

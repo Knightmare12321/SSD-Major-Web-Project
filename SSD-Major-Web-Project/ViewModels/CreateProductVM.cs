@@ -19,8 +19,9 @@ namespace SSD_Major_Web_Project.ViewModels
 
         public bool IsActive { get; set; } = true;
 
-        [Required]
-        public List<IFormFile> Images { get; set; }
+        public List<IFormFile> Images { get; set; } = new List<IFormFile>();
+
+        public List<string> DeletedImageNames { get; set; } = new List<string>();
 
         [Required]
         public List<string> Sizes { get; set; }
