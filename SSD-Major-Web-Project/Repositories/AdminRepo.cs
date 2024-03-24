@@ -175,16 +175,20 @@ namespace SSD_Major_Web_Project.Repositories
                 byte[] imageData;
                 foreach (IFormFile imageFile in newImageFiles)
                 {
-                    //convert image file data to byte[]
-                    using (var memoryStream = new MemoryStream())
+                    //filter out images that were first added then deleted
+                    if (!DeletedImageNames.Contains(imageFile.Name))
                     {
-                        await imageFile.CopyToAsync(memoryStream);
-                        imageData = memoryStream.ToArray();
-                    }
+                        //convert image file data to byte[]
+                        using (var memoryStream = new MemoryStream())
+                        {
+                            await imageFile.CopyToAsync(memoryStream);
+                            imageData = memoryStream.ToArray();
+                        }
 
-                    //add image to db
-                    Image image = new Image { FileName = imageFile.FileName, Data = imageData, AltText = "product photo ", FkProductId = product.PkProductId };
-                    _context.Images.Add(image);
+                        //add image to db
+                        Image image = new Image { FileName = imageFile.FileName, Data = imageData, AltText = "product photo ", FkProductId = product.PkProductId };
+                        _context.Images.Add(image);
+                    }
                 }
 
                 _context.SaveChanges();
