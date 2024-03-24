@@ -14,6 +14,7 @@
         <div class="d-flex flex-row">
             <p class="mx-2">Order Date</p>
             <p class="mx-2">Order Id</p>
+@*             <p class="mx-2">SKU Id</p> *@
         </div>
         @foreach (var order in Model.Orders)
         {
@@ -23,15 +24,27 @@
                 @if (Model.OrdersDetails.ContainsKey(order.PkOrderId))
                 {
                     var orderDetails = Model.OrdersDetails[order.PkOrderId];
-                    foreach (var item in orderDetails)
+@*                     foreach (var item in orderDetails)
                     {
-                        <p>@item.FkSkuId</p>
+                        <p class="mx-2">@item.FkSkuId</p>
                     }
+ *@                    // Retrieve product pictures for this order
+                    var productPictures = Model.ProductPictures[order.PkOrderId];
+                    <p class="mx-2">
+                        @if (productPictures != null && productPictures.Count > 0)
+                        {
+                            <div style="width: 100px; height: 100px; overflow: hidden; position: relative;">
+                                <img src="data:image/jpeg;base64,@Convert.ToBase64String(productPictures.FirstOrDefault().Data)" alt="Product Image" class="product-image" style="width: 100%; height: auto; position: absolute; top: 0; left: 50%; transform: translateX(-50%);" />
+                            </div>
+                        }
+                    </p>
+
                 }
             </div>
         }
     </div>
 
+    <a href="@Url.Action("Index", "Customer")" class="btn btn-primary">Back</a>
 
 </div>
 

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using SSD_Major_Web_Project.Data.Services;
 using SSD_Major_Web_Project.Models;
 using SSD_Major_Web_Project.Repositories;
@@ -61,6 +62,40 @@ namespace SSD_Major_Web_Project.Controllers
 
             customerVM.OrdersDetails = orderDetailsDictionary;
 
+
+            // Retrieve product pictures for each order
+            Dictionary<int, List<Image>> productPictures = new Dictionary<int, List<Image>>();
+
+            foreach (var order in orders)
+            {
+                var orderDetails = orderDetailsDictionary[order.PkOrderId];
+                var images = new List<Image>();
+
+                foreach (var orderDetail in orderDetails)
+                {
+                    var skuId = orderDetail.FkSkuId;
+                    var productSku = _context.ProductSkus.FirstOrDefault(s => s.PkSkuId == skuId);
+
+                    if (productSku != null)
+                    {
+                        var productId = productSku.FkProductId;
+                        var product = _context.Products.Find(productId);
+
+                        if (product != null && product.ProductSkus != null && product.ProductSkus.Count > 0)
+                        {
+                            var productSkuWithImages = product.ProductSkus.FirstOrDefault(s => s.PkSkuId == skuId);
+                            // only one image per product sku
+                            var imagesForProduct = _context.Images.Where(i => i.FkProductId == productId).ToList();
+
+                            images.AddRange(imagesForProduct);
+                        }
+                    }
+                }
+
+                productPictures.Add(order.PkOrderId, images);
+            }
+
+            customerVM.ProductPictures = productPictures;
             return View(customerVM);
         }
 
