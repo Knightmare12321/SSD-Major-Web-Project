@@ -20,7 +20,7 @@ namespace SSD_Major_Web_Project.Repositories
             _context = context;
         }
 
-        public IQueryable<AdminProductVM> GetAllProducts(string searchTerm)
+        public IQueryable<AdminProductVM> GetAllProducts(string searchTerm, bool showInactive)
         {
             var query = _context.Products
                         .Select(p => new AdminProductVM
@@ -39,6 +39,12 @@ namespace SSD_Major_Web_Project.Repositories
                         });
             //filter query by search term
             query = query.Where(p => p.Name.Contains(searchTerm));
+
+            //filter query by active status
+            if (showInactive == false)
+            {
+                query = query.Where(p => p.IsActive == true);
+            }
             return query;
         }
 
@@ -448,7 +454,7 @@ namespace SSD_Major_Web_Project.Repositories
             }
         }
 
-        public IQueryable<DiscountVM> GetAllDiscounts(string searchTerm)
+        public IQueryable<DiscountVM> GetAllDiscounts(string searchTerm, bool showInactive)
         {
             var query = _context.Discounts.Select(d =>
                 new DiscountVM
@@ -463,6 +469,13 @@ namespace SSD_Major_Web_Project.Repositories
 
             //filter query by search term
             query = query.Where(d => d.PkDiscountCode.Contains(searchTerm));
+
+            //filter query by active status
+            if (showInactive == false)
+            {
+                query = query.Where(p => p.IsActive == true);
+            }
+
             return query;
         }
 

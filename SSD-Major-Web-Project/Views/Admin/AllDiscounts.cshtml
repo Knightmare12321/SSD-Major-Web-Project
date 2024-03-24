@@ -11,6 +11,10 @@
         <input id="search-term" name="searchTerm" value="@ViewBag.SearchTerm" placeholder="search product name" />
         <input name="pageIndex" value="@Model.PageIndex" hidden />
         <button class="btn btn-secondary" onClick="getFilteredAndPaginatedDiscounts(@Model.PageIndex)">Filter</button>
+        <div>
+            <input id="show-inactive" type="checkbox" checked="@ViewBag.ShowInactive" onChange="getFilteredAndPaginatedDiscounts(1)" />
+            <label>Show inactive listing</label>
+        </div>
         <button class="btn add-btn btn-primary" onclick="location.href='@Url.Action("CreateDiscount","Admin")'">Add Discount</button>
     <table class="table transaction-table">
         <thead>
@@ -65,11 +69,12 @@
 <script>
     const getFilteredAndPaginatedDiscounts = (pageIndex) => {
         const searchTerm = $("#search-term").val();
+        const showInactive = $("#show-inactive").prop('checked')
         const url = '@Url.Action("AllDiscounts", "Admin")';
         $.ajax({
             type: "GET",
             url: url,
-            data: { "searchTerm": searchTerm, "pageIndex": pageIndex },
+            data: { "searchTerm": searchTerm, "pageIndex": pageIndex, "showInactive": showInactive },
             success: function (data) {
                 const parser = new DOMParser();
                 const newDoc = parser.parseFromString(data, 'text/html');
