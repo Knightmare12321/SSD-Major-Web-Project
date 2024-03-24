@@ -11,12 +11,16 @@
     <input id="search-term" name="searchTerm" value="@ViewBag.SearchTerm" placeholder="search product name" />
     <input name="pageIndex" value="@Model.PageIndex" hidden />
     <button class="btn btn-secondary" onClick="getFilteredAndPaginatedProducts(@Model.PageIndex)">Filter</button>
+    <div>
+        <input id="show-inactive" type="checkbox" checked="@ViewBag.ShowInactive" onChange="getFilteredAndPaginatedProducts(1)" />
+        <label>Show inactive listing</label>
+    </div>
     <button class=" add-btn btn btn-primary" onclick="location.href='@Url.Action("CreateProduct","Admin")'">Add Listing</button>
     <table class="table transaction-table">
         <thead>
             <tr>
                 <th>Id</th>
-                <th>Name</th>
+                <th class="name">Name</th>
                 <th>Price</th>
                 <th>Status</th>
                 <th></th>
@@ -28,7 +32,7 @@
             {
                 <tr>
                     <td> @Html.DisplayFor(modelItem => item.PkProductId)</td>
-                    <td class="name"> @Html.DisplayFor(modelItem => item.Name)</td>
+                    <td class="name ellipsis"> @Html.DisplayFor(modelItem => item.Name)</td>
                     <td class="tight"> $@item.Price</td>
                     <td class="tight"> @Html.DisplayName(item.IsActive == true ? "Active" : "Inactive")</td>
                     <td class="tight">
@@ -68,11 +72,12 @@
 <script>
     const getFilteredAndPaginatedProducts = (pageIndex) => {
         const searchTerm = $("#search-term").val();
+        const showInactive = $("#show-inactive").prop('checked')
         const url = '@Url.Action("AllProducts", "Admin")';
         $.ajax({
             type: "GET",
             url: url,
-            data: { "searchTerm": searchTerm, "pageIndex": pageIndex },
+            data: { "searchTerm": searchTerm, "pageIndex": pageIndex, "showInactive":showInactive },
             success: function (data) {
                 const parser = new DOMParser();
                 const newDoc = parser.parseFromString(data, 'text/html');

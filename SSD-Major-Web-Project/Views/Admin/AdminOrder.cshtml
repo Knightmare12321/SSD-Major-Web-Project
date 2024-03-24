@@ -14,7 +14,7 @@
             <li onClick="toggleSummary(this,'Paid','Open Orders')" class="active">Open</li>
             <li onClick="toggleSummary(this,'Shipped', 'Shipped Orders')">Shipped</li>
             <li onClick="toggleSummary(this,'Delivered','Delivered Orders')">Delivered</li>
-            <li onClick="toggleSummary(this,'Refunded','Refunded Orders')">Refunded</li>
+            <li onClick="toggleSummary(this,'Cancelled','Cancelled Orders')">Cancelled</li>
 
 
         </ul>
@@ -190,19 +190,19 @@
         $("#admin-orders").addClass("active");
     }
 
-    const refundOrder = (orderId) => {
-        const url = '@Url.Action("RefundOrder", "Admin")';
+    const cancelOrder = (orderId) => {
+        const url = '@Url.Action("CancelOrder", "Admin")';
         $.ajax({
             type: "POST",
             url: url,
             data: { orderId },
             success: function (data) {
                 if (data.success) {
-                    $("[id^=" + orderId + "]").addClass('refunded');
+                    $("[id^=" + orderId + "]").addClass('cancelled');
 
                     //update button class, text and order status text
-                    $("[id^=" + orderId + "] button:contains(Refund)").addClass('deactivated').html('Refunded');
-                    $("[id^=" + orderId + "] td.order-status").html("Refunded");
+                    $("[id^=" + orderId + "] button:contains(Cancel)").addClass('deactivated').html('Cancelled');
+                    $("[id^=" + orderId + "] td.order-status").html("Cancelled");
                 } else {
                     $("#message").html(data.error);
                 }

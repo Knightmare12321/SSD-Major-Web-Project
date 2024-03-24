@@ -275,17 +275,29 @@ button {
 }
 
 /*Admin AllProducts*/
+#product-list{
+    max-width:800px;
+}
 #product-list .message {
     color: red;
 }
-#product-list td{
-    max-width:300px;
+#product-list th,
+#product-list td {
+    min-width: 50px;
+    width: 50px;
 }
 #product-list td.tight {
     width: 1%; /* Make the cell shrink to fit its contents */
 }
-#product-list td.name {
-    min-width: 300px;
+#product-list td.name,
+#product-list th.name {
+    min-width: 250px;
+    width: 500px;
+}
+#product-list .ellipsis {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 #product-list button{
     margin:5px;
@@ -436,11 +448,12 @@ button {
     display: none;
 }
 
-#admin-orders.active {
-    display: flex;
-    grid-column-gap: 10px;
+    #admin-orders.active {
+        display: flex;
+        grid-column-gap: 10px;
+        overflow-x: auto;
 
-    .side-bar ul{
+        .side-bar ul{
         padding: 0;
         width: 150px;
     }
@@ -476,9 +489,29 @@ button {
     thead{
         border-bottom:solid 1px black;
     }
+
+/*    th{
+        max-width:100px;
+    }*/
     td{
         border-top:none;
         border-bottom:none;
+        /*max-width:100px;*/
+    }
+    th.buyer, td.buyer {
+        max-width: 150px !important;
+    }
+    th.product, td.product {
+        max-width: 150px !important;
+       
+    }
+    th.buyer-note, td.buyer-note{
+        max-width:70px ;
+    }
+    .ellipsis {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 
     tr.bold-border{
@@ -488,7 +521,7 @@ button {
     tr.dispatched {
         background-color: orange;
     }
-    tr.refunded{
+    tr.cancelled{
         background-color: lightgray
     }
 }
@@ -530,6 +563,13 @@ button {
 }
 
 /*AllDiscounts Page*/
+#discount-list{
+    max-width:800px;
+}
+#discount-list th,
+#discount-list td{
+    max-width:150px;
+}
 #discount-list .message{
     color:red;
 }

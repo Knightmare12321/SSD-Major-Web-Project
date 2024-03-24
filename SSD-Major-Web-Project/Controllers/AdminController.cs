@@ -37,12 +37,13 @@ namespace SSD_Major_Web_Project.Controllers
             return View();
         }
 
-        public IActionResult AllProducts(string message = "", string searchTerm = "", int pageIndex = 1, int pageSize = 10)
+        public IActionResult AllProducts(string message = "", string searchTerm = "", bool showInactive = false, int pageIndex = 1, int pageSize = 10)
         {
             ViewData["Message"] = message;
             ViewData["SearchTerm"] = searchTerm;
+            ViewData["ShowInactive"] = showInactive;
             AdminRepo adminRepo = new AdminRepo(_context);
-            List<AdminProductVM> products = adminRepo.GetAllProducts(searchTerm).ToList();
+            List<AdminProductVM> products = adminRepo.GetAllProducts(searchTerm, showInactive).ToList();
             //determine which items to show based on current page index
             var count = products.Count();
             var items = products.Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList();
@@ -294,7 +295,7 @@ namespace SSD_Major_Web_Project.Controllers
         }
 
         [HttpPost]
-        public async Task<JsonResult> RefundOrder(int orderId)
+        public async Task<JsonResult> CancelOrder(int orderId)
         {   //find order
             AdminRepo adminRepo = new AdminRepo(_context);
             OrderVM order = adminRepo.GetOrderById(orderId);
@@ -364,12 +365,13 @@ namespace SSD_Major_Web_Project.Controllers
         }
 
 
-        public IActionResult AllDiscounts(string message = "", string searchTerm = "", int pageIndex = 1, int pageSize = 10)
+        public IActionResult AllDiscounts(string message = "", string searchTerm = "", bool showInactive = false, int pageIndex = 1, int pageSize = 10)
         {
             ViewData["Message"] = message;
             ViewData["SearchTerm"] = searchTerm;
+            ViewData["ShowInactive"] = showInactive;
             AdminRepo adminRepo = new AdminRepo(_context);
-            List<DiscountVM> discounts = adminRepo.GetAllDiscounts(searchTerm).ToList();
+            List<DiscountVM> discounts = adminRepo.GetAllDiscounts(searchTerm, showInactive).ToList();
 
             //determine which items to show based on current page index
             var count = discounts.Count();

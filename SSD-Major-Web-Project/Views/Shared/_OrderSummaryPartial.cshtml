@@ -3,15 +3,15 @@
     <table class="table transaction-table">
         <thead>
             <tr>
-                <th>Order Id</th>
-                <th>Order Date</th>
+                <th>Id</th>
+                <th>Date</th>
                 <th>Status</th>
-                <th>Buyer</th>
-                <th>Product</th>
+                <th class="buyer">Buyer</th>
+                <th class="product">Product</th>
                 <th>Size</th>
                 <th>Qty</th>
                 <th>Order Total</th>
-                <th>Buyer Note</th>
+                <th class="buyer-note">Buyer Note</th>
                 <th></th>
                 @{
                     if (ViewBag.OrderStatus == "Paid")
@@ -31,12 +31,12 @@
                         <td> @Html.DisplayFor(modelItem => item.OrderId)</td>
                         <td> @Html.DisplayFor(modelItem => item.OrderDate)</td>
                         <td class="order-status"> @Html.DisplayFor(modelItem => item.OrderStatus)</td>
-                        <td>@Html.DisplayName($"{item.Contact.FirstName} {item.Contact.LastName}")</td>
-                        <td> @Html.DisplayFor(modelItem => item.OrderDetails[0].FkSku.FkProduct.Name)</td>
+                        <td class=" buyer ellipsis">@Html.DisplayName($"{item.Contact.FirstName} {item.Contact.LastName}")</td>
+                        <td class="product ellipsis"> @Html.DisplayFor(modelItem => item.OrderDetails[0].FkSku.FkProduct.Name)</td>
                         <td> @Html.DisplayFor(modelItem => item.OrderDetails[0].FkSku.Size)</td>
                         <td> @Html.DisplayFor(modelItem => item.OrderDetails[0].Quantity)</td>
                         <td> @Html.DisplayFor(modelItem => item.OrderTotal)</td>
-                        <td> @Html.DisplayName(item.BuyerNote!=""? "Yes":"No")</td>
+                        <td class="buyer-note"> @Html.DisplayName(item.BuyerNote != "" ? "Yes" : "No")</td>
                         @{
                             if (ViewBag.OrderStatus == "Paid")
                             {
@@ -44,7 +44,12 @@
                             }
                         }
                         <td><button class="btn" onClick="getOrderDetail(@Json.Serialize(@item).ToString())">Detail</button></td>
-                        <td><button class="btn" onclick="refundOrder(@item.OrderId)">Refund</button></td>
+                        @{
+                            if (new List<string> { "Paid", "Shipped", "Delivered" }.Contains(ViewBag.OrderStatus))
+                            {
+                                <td><button class="btn" onclick="cancelOrder(@item.OrderId)">Cancel</button></td>
+                            }
+                        }
                     </tr>
 
                     //subsequent lines only lists additional order items
@@ -55,18 +60,24 @@
                             <td></td>
                             <td></td>
                             <td></td>
-                            <td> @Html.DisplayFor(modelItem => item.OrderDetails[i].FkSku.FkProduct.Name)</td>
+                            <td class="product ellipsis"> @Html.DisplayFor(modelItem => item.OrderDetails[i].FkSku.FkProduct.Name)</td>
                             <td> @Html.DisplayFor(modelItem => item.OrderDetails[i].FkSku.Size)</td>
                             <td> @Html.DisplayFor(modelItem => item.OrderDetails[i].Quantity)</td>
                             <td></td>
                             <td></td>
-                            <td></td>
-                            <td></td>
+                            <td class="buyer-note"></td>
                             @{
                                 if (ViewBag.OrderStatus == "Paid")
                                 {
 
                                                 <td></td>
+                                }
+                            }
+                            <td></td>
+                            @{
+                                if (new List<string> { "Paid", "Shipped", "Delivered" }.Contains(ViewBag.OrderStatus))
+                                {
+                                    <td></td>
                                 }
                             }
                         </tr>
