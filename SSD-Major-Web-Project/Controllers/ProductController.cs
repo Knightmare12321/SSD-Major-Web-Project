@@ -70,7 +70,7 @@ namespace SSD_Major_Web_Project.Controllers
                 if (category == "cart") cartCookie = resultJson;
                 else favoriteCookie = resultJson;
             }
-
+            ViewBag.currentSku = 0;
             ViewBag.isCart =
                 cartCookie == null ?
                 false :
@@ -94,24 +94,37 @@ namespace SSD_Major_Web_Project.Controllers
         }
 
         [HttpPost]
+        public JsonResult UpdateCartButtonStatus(int skuid)
+        {
+            Console.WriteLine(skuid);
+
+            return null;
+        }
+
+        [HttpPost]
         public JsonResult AddToCart(int id)
         {
             var cartCookie = Request.Cookies["cart"];
             CookieOptions option = new CookieOptions();
             option.Expires = DateTime.Now.AddDays(365);
             string resultJson;
-            //if ()
-            //{
-                
-            //}
             return Json(new { success = true, error = "" });
         }
 
         [HttpPost]
-        public JsonResult AddToFavorite(int id)
+        public JsonResult AddToFavorite(int skuid)
         {
             var favoriteCookie = Request.Cookies["favorite"];
-            return Json(new { success = true, error = "" });
+            CookieOptions option = new CookieOptions();
+            option.Expires = DateTime.Now.AddDays(365);
+            var favoriteSkuIDs = JsonConvert.DeserializeObject<List<int>>(favoriteCookie);
+            if (favoriteSkuIDs.Contains(skuid))
+            {
+                return Json(new { success = false, error = "Item already in the wishlist!" });
+            }
+            favoriteSkuIDs.Add(skuid);
+            Response.Cookies.Append("favorite", JsonConvert.SerializeObject(favoriteSkuIDs), option);
+            return Json(new { success = true});
         }
 
         public IActionResult CreateReview(int id)
@@ -137,7 +150,7 @@ namespace SSD_Major_Web_Project.Controllers
         // Delete this after project completes!
         public IActionResult Favorite()
         {
-            var IDListCookie = Request.Cookies["cart"];
+            var IDListCookie = Request.Cookies["favorite"];
             List<ProductSku> results = new List<ProductSku>();
             if (IDListCookie != null)
             {

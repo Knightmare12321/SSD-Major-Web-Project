@@ -69,12 +69,21 @@
                 @for (int i = 0; i < Model.Sizes.Count; i++)
                 {
                     if (i == 0) {
-                        <button class="size-button active" onclick="changeSize(event)">@Model.Sizes[i]</button>
+                        <button class="size-button active" 
+                                onclick="changeSize(event)" 
+                                data-skuid="@Model.ProductSkuIDs[i]">@Model.Sizes[i]
+                        </button>
                     }
                     else {
-                        <button class="size-button" onclick="changeSize(event)">@Model.Sizes[i]</button>
+                        <button class="size-button" 
+                                onclick="changeSize(event)" 
+                                data-skuid="@Model.ProductSkuIDs[i]">@Model.Sizes[i]
+                        </button>
                     }
                 }
+            </div>
+            <div class="hidden">
+                @Model.ProductSkuIDs[0]
             </div>
             <hr />
             <div class="product-description">
@@ -85,20 +94,10 @@
             </div>
             <div class="product-buttons-container">
                 <button id="product-add-to-bag">
-                    @{
-                        if (!ViewBag.isCart)
-                                    @Html.ActionLink("ADD TO BAG", "Details", new { id = Model.PkProductId, category = "cart", method = "add" })
-                        else
-                                    @Html.ActionLink("REMOVE FROM BAG", "Details", new { id = Model.PkProductId, category = "cart", method = "remove" })
-                    }
+                    ADD TO BAG
                 </button>
-                <button id="product-add-to-wishlist">
-                    @{
-                        if (!ViewBag.isFav)
-                                    @Html.ActionLink("ADD TO FAVORITE", "Details", new { id = Model.PkProductId, category = "favorite", method = "add" })
-                        else
-                                    @Html.ActionLink("REMOVE FROM FAVORITE", "Details", new { id = Model.PkProductId, category = "favorite", method = "remove" })
-                    }
+                <button id="product-add-to-wishlist" onclick="addFavorite">
+                    ADD TO FAVORITE
                 </button>
             </div>
         </div>
@@ -152,29 +151,46 @@
 </div>
 
 <script>
-    function changeSize(e) {
+    function changeSize(event) {
         $(".size-button").removeClass("active");
-        e.currentTarget.className += " active";
-    }
-    function addCart(id) {
-        const url = '@Url.Action("AddToCart", "Product")';
+        event.currentTarget.className += " active";
+        const url = "@Url.Action("UpdateCartButtonStatus", "Product")";
+        var skuid = $(".size-button.active").data("skuid");
         $.ajax({
-            type: "POST",
             url: url,
-            data: { "id": id },
-            success: function (data) {
-                $("product-add-to-bag")
+            type: "POST",''
+            data: { skuid: skuid },
+            success: function (response) {
+                if (response.inCart) {
+                    $("#product-add-to-bag").text('REMOVE FROM BAG');
+                } else {
+                    $("#product-add-to-bag").text('ADD TO BAG');
+                }
             }
         });
     }
-    function addFav(id) {
+    function addCart() {
         const url = '@Url.Action("AddToCart", "Product")';
         $.ajax({
             type: "POST",
             url: url,
-            data: { "id": id },
+            data: { id: id },
             success: function (data) {
-
+                $("product-add-to-bag").html
+            }
+        });
+    }
+    function addFavorite() {
+        const url = '@Url.Action("AddToFavorite", "Product")';
+        var skuid = $(".size-button.active").data("skuid");
+        $.ajax({
+            type: "POST",
+            url: url,
+            data: { "skuid": skuid },
+            success: function (response) {
+                if (response.success) {
+                    $("#product-add-to-wishlist").text("REMOVE FROM WISHLIST")
+                }
             }
         });
     }
