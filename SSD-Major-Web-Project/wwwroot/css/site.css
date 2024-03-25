@@ -561,6 +561,24 @@ button {
 #admin-order-detail .item:not(:last-child) {
     border-bottom: solid 1px black;
 }
+#admin-order-detail .img-container {
+    display: inline-block;
+    width: 50px;
+    height: 50px;
+    overflow: hidden;
+    margin-right: 10px;
+    vertical-align: middle;
+}
+#admin-order-detail .item-detail{
+    display:inline-block;
+    vertical-align:middle;
+
+}
+
+#admin-order-detail img {
+    width: 100%;
+    object-fit: cover;
+}
 
 /*AllDiscounts Page*/
 #discount-list{
