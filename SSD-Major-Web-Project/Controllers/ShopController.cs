@@ -9,6 +9,7 @@ using SSD_Major_Web_Project.ViewModels;
 using System;
 using System.Diagnostics.Metrics;
 using System.Net;
+using System.Numerics;
 
 namespace SSD_Major_Web_Project.Controllers
 {
@@ -293,12 +294,16 @@ namespace SSD_Major_Web_Project.Controllers
                     Quantity = product.Quantity
                 };
 
+
+                orderVM.OrderTotal = 0;
                 // Retrieve the unit price from the database based on the SKU ID
                 var productSku = _context.ProductSkus.FirstOrDefault(p => p.PkSkuId == product.SkuId);
                 if (productSku != null)
                 {
                     // Assign the retrieved unit price to orderDetail.UnitPrice
                     singleOrderDetailRecord.UnitPrice = productSku.FkProduct?.Price ?? 0;
+                    orderVM.OrderTotal += singleOrderDetailRecord.UnitPrice * singleOrderDetailRecord.Quantity;
+              
                 }
                 else
                 {
@@ -311,6 +316,7 @@ namespace SSD_Major_Web_Project.Controllers
             }
 
             checkoutVM.Order.OrderDetails = listOfOrderDetails;
+
 
 
             OrderConfirmationVM orderConfirmationVM = new OrderConfirmationVM();
