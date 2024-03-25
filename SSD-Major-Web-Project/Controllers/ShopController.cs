@@ -70,11 +70,8 @@ namespace SSD_Major_Web_Project.Controllers
 
                     shoppingcartVM.ShoppingCartItems = shoppingcartItems;
 
-//////////////////////Logic for validate if customer logged in
-                    //if (User.Identity.IsAuthenticated)
-                    //{
-                    //    shoppingcart.UserId = User.Identity.Name;
-                    //}
+                
+                   
 
                     //Use repo helper function to calculate subtotal, taxes, shipping fee and grand total
                     ShopRepo _shopRepo = new ShopRepo(_context);
@@ -82,6 +79,8 @@ namespace SSD_Major_Web_Project.Controllers
                     shoppingcartVM.ShippingFee = 0; // shipping fee is 0 for now
                     shoppingcartVM.Taxes = _shopRepo.CalculateTaxes(shoppingcartVM.Subtotal);
                     shoppingcartVM.GrandTotal = _shopRepo.CalculateGrandTotal(shoppingcartVM.Subtotal, shoppingcartVM.Taxes, shoppingcartVM.ShippingFee);
+                    
+         
 
                     //////////////////////Assign shopping cart products to shopping cart view model
                     shoppingcartVM.Products = products;
@@ -107,9 +106,15 @@ namespace SSD_Major_Web_Project.Controllers
             //Create a new Checkout view model object
             CheckoutVM checkoutVM = new CheckoutVM();
 
+            checkoutVM.ShoppingCart = shoppingcartVM;
+
             // Assign Discount Code if available from the shopping cart razor view
+            checkoutVM.ShoppingCart.CouponCode = shoppingcartVM.CouponCode != null ? shoppingcartVM.CouponCode : null;
+
             Discount discount = new Discount();
-            discount.PkDiscountCode = shoppingcartVM.CouponCode != null ? shoppingcartVM.CouponCode : null;
+            // assignem the discount obect with the id
+            discount = _context.Discounts.FirstOrDefault(d => d.PkDiscountCode == checkoutVM.ShoppingCart.CouponCode);
+
 
             Contact contact = new Contact();
 
