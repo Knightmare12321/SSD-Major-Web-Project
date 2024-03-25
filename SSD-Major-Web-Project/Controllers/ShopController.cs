@@ -185,7 +185,11 @@ namespace SSD_Major_Web_Project.Controllers
             // Assign Discount Code if available from the shopping cart razor view
             Discount discount = new Discount();
 
+      
+
             discount.PkDiscountCode = checkoutVM.ShoppingCart.CouponCode != null ? checkoutVM.ShoppingCart.CouponCode : null;
+
+            checkoutVM.Order.Discount = discount;
 
             Contact contact = new Contact();
 
@@ -295,14 +299,45 @@ namespace SSD_Major_Web_Project.Controllers
                 };
 
 
-                orderVM.OrderTotal = 0;
+                orderVM.OrderTotal = 0.0M;
+                var subtotal = 0.0M;
                 // Retrieve the unit price from the database based on the SKU ID
                 var productSku = _context.ProductSkus.FirstOrDefault(p => p.PkSkuId == product.SkuId);
                 if (productSku != null)
                 {
                     // Assign the retrieved unit price to orderDetail.UnitPrice
                     singleOrderDetailRecord.UnitPrice = productSku.FkProduct?.Price ?? 0;
-                    orderVM.OrderTotal += singleOrderDetailRecord.UnitPrice * singleOrderDetailRecord.Quantity;
+                     subtotal += singleOrderDetailRecord.UnitPrice * singleOrderDetailRecord.Quantity;
+
+              
+
+ 
+                    //if (discountCode != null)
+                    //{
+                    //    // get the discount type of the code
+                    //    string discountType = discountCode.DiscountType;
+                    //    // get the discount value of the code, use switch case to calculate the discount
+                    //    switch (discountType)
+                    //    {
+                    //        case "Percentage":
+                    //           subtotal = subtotal - (subtotal * discountCode.DiscountValue );
+                    //            break;
+                    //        case "Number":
+                    //            subtotal = subtotal - discountCode.DiscountValue;
+                    //            break;
+                    //        default:
+                    //            break;
+                    //    }
+
+                    //    orderVM.OrderTotal = _shopRepo.CalculateGrandTotal(subtotal, _shopRepo.CalculateTaxes(subtotal), 0);
+
+                    //}
+                    //else
+                    //{
+                    //    orderVM.OrderTotal = _shopRepo.CalculateGrandTotal(subtotal, _shopRepo.CalculateTaxes(subtotal), 0);
+                    //}
+                 
+
               
                 }
                 else
