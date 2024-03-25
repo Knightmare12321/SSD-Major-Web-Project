@@ -142,23 +142,18 @@
         $("#admin-order-detail td.buyernote").html(order.buyerNote);
         $("#admin-order-detail td.id").html(order.orderrId);
         const items = order.orderDetails.map(od => {
-            console.log('adminOrder detail images:', od.fkSku.fkProduct.Images);
-
-            const images = od.fkSku.fkProduct.Images;
+            const images = od.fkSku.fkProduct.images;
             let listingImage = "";
             if (images != null)
             {
-                var blob = new Blob(images[0].data);
-                var imageUrl = URL.createObjectURL(blob);
-                listingImage = `<img src=${imgeURl} alt=${images[0].AltText}/>`
+                listingImage = `<img src=data:image;base64,${images[0].data} alt=${images[0].altText}/>`
             }
-
             return `<div class='item'>
    
-                        <div>
+                        <div class="img-container">
                         ${listingImage}
                         </div>
-                        <div>
+                        <div class="item-detail">
                             <div>${od.fkSku.fkProduct.name}</div>
                             <div>
                                 <span>Size: ${od.fkSku.size}</span>

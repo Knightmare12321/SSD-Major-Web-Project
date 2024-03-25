@@ -36,7 +36,7 @@ namespace SSD_Major_Web_Project.Controllers
         // GET: CustomerController/PersonalOrderHistory
         public ActionResult PersonalOrderHistory()
         {
-   
+
             // Get customerVM
             CustomerVM customerVM = new CustomerVM();
 
@@ -129,12 +129,12 @@ namespace SSD_Major_Web_Project.Controllers
                 var order = _context.Orders.FirstOrDefault(o => o.Tracking == trackingNumber);
 
 
-                
+
                 if (order == null || order.FkCustomerId != userId)
                 {
                     string message = "Tracking Number not valid";
                     ViewBag.Message = message;
-                    return View("OrderTracking",customerVM);
+                    return View("OrderTracking", customerVM);
                 }
                 else
                 {
@@ -166,14 +166,14 @@ namespace SSD_Major_Web_Project.Controllers
                     trackiingResultVM.DeliveryDate = deliveryDate.HasValue ? deliveryDate.Value.ToString("dd/MM/yyyy") : "Not Delivered Yet";
 
 
-                       return View("TrackingResult", trackiingResultVM);
+                    return View("TrackingResult", trackiingResultVM);
                 }
             }
             catch
             {
                 return View();
             }
-            
+
         }
 
         // display order tracking result
@@ -234,7 +234,7 @@ namespace SSD_Major_Web_Project.Controllers
             customerVM.DefaultContact = _context.Contacts.Find(customer.FkContactId);
 
             return View(customerVM);
-    
+
         }
 
         // POST: CustomerController/Profile
