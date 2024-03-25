@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Conventions;
 using Newtonsoft.Json;
 using SSD_Major_Web_Project.Data.Services;
 using SSD_Major_Web_Project.Models;
@@ -189,7 +190,7 @@ namespace SSD_Major_Web_Project.Controllers
 
             discount.PkDiscountCode = checkoutVM.ShoppingCart.CouponCode != null ? checkoutVM.ShoppingCart.CouponCode : null;
 
-            checkoutVM.Order.Discount = discount;
+
 
             Contact contact = new Contact();
 
@@ -299,52 +300,20 @@ namespace SSD_Major_Web_Project.Controllers
                 };
 
 
-                orderVM.OrderTotal = 0.0M;
-                var subtotal = 0.0M;
+          
                 // Retrieve the unit price from the database based on the SKU ID
                 var productSku = _context.ProductSkus.FirstOrDefault(p => p.PkSkuId == product.SkuId);
                 if (productSku != null)
                 {
                     // Assign the retrieved unit price to orderDetail.UnitPrice
                     singleOrderDetailRecord.UnitPrice = productSku.FkProduct?.Price ?? 0;
-                     subtotal += singleOrderDetailRecord.UnitPrice * singleOrderDetailRecord.Quantity;
 
-              
-
- 
-                    //if (discountCode != null)
-                    //{
-                    //    // get the discount type of the code
-                    //    string discountType = discountCode.DiscountType;
-                    //    // get the discount value of the code, use switch case to calculate the discount
-                    //    switch (discountType)
-                    //    {
-                    //        case "Percentage":
-                    //           subtotal = subtotal - (subtotal * discountCode.DiscountValue );
-                    //            break;
-                    //        case "Number":
-                    //            subtotal = subtotal - discountCode.DiscountValue;
-                    //            break;
-                    //        default:
-                    //            break;
-                    //    }
-
-                    //    orderVM.OrderTotal = _shopRepo.CalculateGrandTotal(subtotal, _shopRepo.CalculateTaxes(subtotal), 0);
-
-                    //}
-                    //else
-                    //{
-                    //    orderVM.OrderTotal = _shopRepo.CalculateGrandTotal(subtotal, _shopRepo.CalculateTaxes(subtotal), 0);
-                    //}
-                 
-
-              
                 }
                 else
                 {
                     // Handle the case when the product SKU is not found
                     // You can set a default value or handle the exception accordingly
-                    singleOrderDetailRecord.UnitPrice = 0;
+                    singleOrderDetailRecord.UnitPrice = 9999;
                 }
 
                 listOfOrderDetails.Add(singleOrderDetailRecord);
@@ -376,9 +345,67 @@ namespace SSD_Major_Web_Project.Controllers
                 // add order details
                 string errorAddOrderDetails = _shopRepo.AddOrderDetails(checkoutVM, orderId);
 
+                  // add order discount
+                  //get order by order id
+                  Order order = _context.Orders.FirstOrDefault(o => o.PkOrderId == orderId);
 
-                //string message;
-                if (errorAddOrder == "")
+                Discount orderDiscount = new Discount();
+            // get order discount obejct by order.DiscountId
+            orderDiscount = _context.Discounts.FirstOrDefault(d => d.PkDiscountCode == order.FkDiscountCode);
+   
+                orderVM.OrderTotal = 0.0M;
+                var afterDiscountSubtotal = 0.0M;
+               // check if the discount code is not null and isActive 
+               if (orderDiscount != null && orderDiscount.IsActive)
+                {
+         
+                    // get the discount type of the code
+                    string discountType = orderDiscount.DiscountType;
+                    // get the discount value of the code, use switch case to calculate the discount
+                    switch (discountType)
+                    {
+                        case "Percentage":
+                           // get all the order details from the db
+                           List<OrderDetail> orderDetails = _context.OrderDetails.Where(o => o.FkOrderId == orderId).ToList();
+                        // calculate the subtotal of the order with discount
+
+                        foreach (var orderDetail1 in orderDetails)
+                        {
+                            afterDiscountSubtotal += orderDetail1.UnitPrice * orderDetail1.Quantity * (1 - orderDiscount.DiscountValue);
+                        }
+
+                            break;
+                        case "Number":
+                        // get all the order details from the db
+                        List<OrderDetail> orderDetailsNumber = _context.OrderDetails.Where(o => o.FkOrderId == orderId).ToList();
+                        // calculate the subtotal of the order with discount
+                        var subtotalNumber = 0.0M;
+                        foreach (var orderDetail2 in orderDetailsNumber)
+                        {
+                               subtotalNumber += orderDetail2.UnitPrice * orderDetail2.Quantity;
+                        }
+                        afterDiscountSubtotal = subtotalNumber - orderDiscount.DiscountValue;
+                        
+                            break;
+                        default:
+                            break;
+                    }
+                    Console.WriteLine(afterDiscountSubtotal);
+
+                  
+
+                    orderVM.OrderTotal = _shopRepo.CalculateGrandTotal(afterDiscountSubtotal, _shopRepo.CalculateTaxes(afterDiscountSubtotal), 0);
+
+                }
+                else
+                {
+                    orderVM.OrderTotal = _shopRepo.CalculateGrandTotal(afterDiscountSubtotal, _shopRepo.CalculateTaxes(afterDiscountSubtotal), 0);
+                }
+
+
+
+            //string message;
+            if (errorAddOrder == "")
                 {
                     message = $"Order {checkoutVM.Order.OrderId} has been placed, you will get an email confirmation shortly once prcoeed payment.";
                     return View("Paypal", checkoutVM);
