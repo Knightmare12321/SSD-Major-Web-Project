@@ -170,6 +170,7 @@
         });
     }
     function clickCart(event) {
+        var skuid = $(".size-button.active").data("skuid");
         const url = '@Url.Action("AddToCart", "Product")';
         $.ajax({
             type: "POST",
@@ -182,17 +183,16 @@
     }
     function clickFavorite(event) {
         console.log("calling clickFavorite");
-        var skuid = $(".size-button.active").data("skuid");
-        console.log("skuid:" + skuid);
+        var id = @Model.PkProductId;
+        console.log("pkid:" + id);
         var text = $(event).text().trim();
-        console.log("text:" + text);
         if (text == "ADD TO FAVORITE") {
             console.log("add favorite now");
             const url = '@Url.Action("AddToFavorite", "Product")';
             $.ajax({
                 type: "POST",
                 url: url,
-                data: { "skuid": skuid },
+                data: { "id": id },
                 success: function (response) {
                     if (response.success) {
                         $("#product-add-to-wishlist").text("REMOVE FROM FAVORITE")
@@ -206,7 +206,7 @@
             $.ajax({
                 type: "POST",
                 url: url,
-                data: { "skuid": skuid },
+                data: { "id": id },
                 success: function (response) {
                     if (response.success) {
                         $("#product-add-to-wishlist").text("ADD TO FAVORITE")
