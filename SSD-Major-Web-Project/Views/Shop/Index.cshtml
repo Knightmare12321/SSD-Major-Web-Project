@@ -1,5 +1,6 @@
 ﻿@model SSD_Major_Web_Project.ViewModels.ShoppingCartVM
 
+
 @{
     ViewData["Title"] = "Index";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -41,6 +42,12 @@
         </div>
 
         <div class="col-md-6 col-md-offset-2">
+
+            <div class="coupon-code">
+                <input id="couponCodeInput" name="CouponCode" placeholder="Enter Coupon code" value="" />
+                <input id="applyCodeButton" type="button" value="Apply Code" class="btn btn-primary" />
+                <span id="discountMessage" style="display:none;"></span>
+            </div>
 
             <div class="shopping-cart-total-form">
                 <div>
@@ -94,11 +101,8 @@
                     <input type="hidden" name="ShippingFee" value="@Model.ShippingFee" />
                     <input type="hidden" name="Taxes" value="@Model.Taxes" />
                     <input type="hidden" name="GrandTotal" value="@Model.GrandTotal" />
+                    <input id="couponCodeHiddenInput" name="CouponCode" value="" hidden />
 
-                    <div class="coupon-code">
-                    <input name="CouponCode" placeholder="Enter Coupon code" value="@Model.CouponCode" />
-                        <input type="submit" value="Apply Code" class="btn btn-primary" />
-                    </div>
 
                     <button type="submit" class="btn btn-primary">Proceed to Checkout</button>
                 </form>
@@ -107,3 +111,20 @@
     </div>
 </div>
 
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        document.getElementById('applyCodeButton').addEventListener('click', function () {
+            var couponCodeValue = document.getElementById('couponCodeInput').value;
+            document.getElementById('couponCodeHiddenInput').value = couponCodeValue; // Set the coupon code value in the hidden field
+
+            // Show discount message
+            var discountMessage = document.getElementById('discountMessage');
+            discountMessage.textContent = 'Discount applied!';
+            discountMessage.style.display = 'inline';
+
+            // Prevent form submission
+            event.preventDefault();
+            return false;
+        });
+    });
+</script>
