@@ -97,6 +97,23 @@ namespace SSD_Major_Web_Project.Controllers
         }
 
 
+        [HttpPost]
+        public IActionResult CheckCouponCode(string couponCode)
+        {
+            // Perform the database query
+            var discount = _context.Discounts.FirstOrDefault(d => d.PkDiscountCode == couponCode);
+            bool isActive = false;
+
+            if (discount != null)
+            {
+                isActive = discount.IsActive;
+            }
+
+            // Return the result as JSON
+            return Json(new { isActive });
+        }
+
+
 
 
         // POST: ShopController/Checkout
