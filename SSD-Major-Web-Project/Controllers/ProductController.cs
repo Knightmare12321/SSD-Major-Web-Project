@@ -30,6 +30,7 @@ namespace SSD_Major_Web_Project.Controllers
             return View(temp.GetAll());
         }
 
+        // TODO: Remove unnecessary lines after ajax implementation completes
         public IActionResult Details(int id, string category, string method, int subID)
         {
             ProductRepo products = new ProductRepo(_context);
@@ -93,6 +94,7 @@ namespace SSD_Major_Web_Project.Controllers
             return View(vm);
         }
 
+        // TODO: 
         [HttpPost]
         public JsonResult UpdateCartButtonStatus(int skuid)
         {
@@ -101,6 +103,7 @@ namespace SSD_Major_Web_Project.Controllers
             return null;
         }
 
+        // TODO: 
         [HttpPost]
         public JsonResult AddToCart(int id)
         {
@@ -117,7 +120,9 @@ namespace SSD_Major_Web_Project.Controllers
             var favoriteCookie = Request.Cookies["favorite"];
             CookieOptions option = new CookieOptions();
             option.Expires = DateTime.Now.AddDays(365);
-            var favoriteSkuIDs = JsonConvert.DeserializeObject<List<int>>(favoriteCookie);
+            var favoriteSkuIDs = favoriteCookie == null ?
+                new List<int>() :
+                JsonConvert.DeserializeObject<List<int>>(favoriteCookie);
             if (favoriteSkuIDs.Contains(skuid))
             {
                 return Json(new { success = false, error = "Item already in the wishlist!" });
@@ -125,6 +130,20 @@ namespace SSD_Major_Web_Project.Controllers
             favoriteSkuIDs.Add(skuid);
             Response.Cookies.Append("favorite", JsonConvert.SerializeObject(favoriteSkuIDs), option);
             return Json(new { success = true});
+        }
+
+        [HttpPost]
+        public JsonResult RemoveFromFavorite(int skuid)
+        {
+            var favoriteCookie = Request.Cookies["favorite"];
+            CookieOptions option = new CookieOptions();
+            option.Expires = DateTime.Now.AddDays(365);
+            if (favoriteCookie == null) return Json(new { success = false, error = "Wishlist is empty!" });
+            var favoriteSkuIDs = JsonConvert.DeserializeObject<List<int>>(favoriteCookie);
+            if (!favoriteSkuIDs.Contains(skuid)) return Json(new { success = false, error = "Item is not in the wishlist!" });
+            favoriteSkuIDs.Remove(skuid);
+            Response.Cookies.Append("favorite", JsonConvert.SerializeObject(favoriteSkuIDs), option);
+            return Json(new { success = true });
         }
 
         public IActionResult CreateReview(int id)

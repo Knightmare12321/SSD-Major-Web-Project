@@ -93,10 +93,10 @@
                 $@Html.DisplayFor(model => model.Price)
             </div>
             <div class="product-buttons-container">
-                <button id="product-add-to-bag">
+                <button id="product-add-to-bag" onclick="clickCart(event)">
                     ADD TO BAG
                 </button>
-                <button id="product-add-to-wishlist" onclick="addFavorite">
+                <button id="product-add-to-wishlist" onclick="clickFavorite(this)">
                     ADD TO FAVORITE
                 </button>
             </div>
@@ -151,15 +151,15 @@
 </div>
 
 <script>
-    function changeSize(event) {
+    function changeSize(e) {
         $(".size-button").removeClass("active");
-        event.currentTarget.className += " active";
+        e.currentTarget.className += " active";
         const url = "@Url.Action("UpdateCartButtonStatus", "Product")";
         var skuid = $(".size-button.active").data("skuid");
         $.ajax({
             url: url,
-            type: "POST",''
-            data: { skuid: skuid },
+            type: "POST",
+            data: { "skuid": skuid },
             success: function (response) {
                 if (response.inCart) {
                     $("#product-add-to-bag").text('REMOVE FROM BAG');
@@ -169,7 +169,7 @@
             }
         });
     }
-    function addCart() {
+    function clickCart(event) {
         const url = '@Url.Action("AddToCart", "Product")';
         $.ajax({
             type: "POST",
@@ -180,19 +180,41 @@
             }
         });
     }
-    function addFavorite() {
-        const url = '@Url.Action("AddToFavorite", "Product")';
+    function clickFavorite(event) {
+        console.log("calling clickFavorite");
         var skuid = $(".size-button.active").data("skuid");
-        $.ajax({
-            type: "POST",
-            url: url,
-            data: { "skuid": skuid },
-            success: function (response) {
-                if (response.success) {
-                    $("#product-add-to-wishlist").text("REMOVE FROM WISHLIST")
+        console.log("skuid:" + skuid);
+        var text = $(event).text().trim();
+        console.log("text:" + text);
+        if (text == "ADD TO FAVORITE") {
+            console.log("add favorite now");
+            const url = '@Url.Action("AddToFavorite", "Product")';
+            $.ajax({
+                type: "POST",
+                url: url,
+                data: { "skuid": skuid },
+                success: function (response) {
+                    if (response.success) {
+                        $("#product-add-to-wishlist").text("REMOVE FROM FAVORITE")
+                    }
                 }
-            }
-        });
+            });
+        }
+        else if (text == "REMOVE FROM FAVORITE") {
+            console.log("remove favorite now");
+            const url = '@Url.Action("RemoveFromFavorite", "Product")';
+            $.ajax({
+                type: "POST",
+                url: url,
+                data: { "skuid": skuid },
+                success: function (response) {
+                    if (response.success) {
+                        $("#product-add-to-wishlist").text("ADD TO FAVORITE")
+                    }
+                }
+            });
+        }
+        
     }
 </script>
 
