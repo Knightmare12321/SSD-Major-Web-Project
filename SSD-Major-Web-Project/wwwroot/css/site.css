@@ -238,15 +238,109 @@ button {
 }
 }
 
+/*Customer PersonalOrderHistory Styling*/
+#personal-order-section {
+    display: none;
+}
+#personal-order-section.active {
+    display: block;
+}
+#personal-order-history {
+    display: block;
+}
+#personal-order-history .order-item {
+    display: block;
+    border: solid 1px black;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 10px;
+    padding: 10px;
+    max-width: 800px;
+}
+#personal-order-history .short-detail {
+    display: inline-block;
+    vertical-align: middle;
+    margin-right:10px;
+}
+#personal-order-history .short-detail span{
+    display:block;
+}
+#personal-order-history .detail-btn {
+    color: blue;
+    cursor: pointer;
+}
+#personal-order-history .img-list {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+#personal-order-history .img-container {
+    width: 100px;
+    height: 100px;
+    overflow: hidden;
+}
+#personal-order-history img {
+width: 100%;
+object-fit: cover;
+}
+
+#personal-order-detail {
+display: none;
+}
+
+#personal-order-detail.active {
+display: block;
+}
+
+#personal-order-detail tr td:first-child {
+width: 150px;
+vertical-align: top;
+}
+
+#personal-order-detail .items {
+display: flex;
+flex-direction: column;
+}
+
+#personal-order-detail .item {
+width: fit-content;
+padding: 10px 0;
+}
+
+#personal-order-detail .item span:not(last-child) {
+margin-right: 30px;
+}
+
+#personal-order-detail .item:not(:last-child) {
+border-bottom: solid 1px black;
+}
+
+#personal-order-detail .img-container {
+display: inline-block;
+width: 50px;
+height: 50px;
+overflow: hidden;
+margin-right: 10px;
+vertical-align: middle;
+}
+
+#personal-order-detail .item-detail {
+display: inline-block;
+vertical-align: middle;
+}
+
+#personal-order-detail img {
+width: 100%;
+object-fit: cover;
+}
+
 /*ADMIN CONTROLLER*/
 /*Admin Index Styling*/
 #admin-index-grid {
     display: grid;
     grid-template-columns: 1fr;
     padding-left: 20px;
-    .grid-item
-
-{
+    .grid-item{
     min-width: 250px;
 }
 
@@ -275,17 +369,29 @@ button {
 }
 
 /*Admin AllProducts*/
+#product-list{
+    max-width:800px;
+}
 #product-list .message {
     color: red;
 }
-#product-list td{
-    max-width:300px;
+#product-list th,
+#product-list td {
+    min-width: 50px;
+    width: 50px;
 }
 #product-list td.tight {
     width: 1%; /* Make the cell shrink to fit its contents */
 }
-#product-list td.name {
-    min-width: 300px;
+#product-list td.name,
+#product-list th.name {
+    min-width: 250px;
+    width: 500px;
+}
+#product-list .ellipsis {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 #product-list button{
     margin:5px;
@@ -436,11 +542,12 @@ button {
     display: none;
 }
 
-#admin-orders.active {
-    display: flex;
-    grid-column-gap: 10px;
+    #admin-orders.active {
+        display: flex;
+        grid-column-gap: 10px;
+        overflow-x: auto;
 
-    .side-bar ul{
+        .side-bar ul{
         padding: 0;
         width: 150px;
     }
@@ -476,9 +583,29 @@ button {
     thead{
         border-bottom:solid 1px black;
     }
+
+/*    th{
+        max-width:100px;
+    }*/
     td{
         border-top:none;
         border-bottom:none;
+        /*max-width:100px;*/
+    }
+    th.buyer, td.buyer {
+        max-width: 150px !important;
+    }
+    th.product, td.product {
+        max-width: 150px !important;
+       
+    }
+    th.buyer-note, td.buyer-note{
+        max-width:70px ;
+    }
+    .ellipsis {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 
     tr.bold-border{
@@ -488,7 +615,7 @@ button {
     tr.dispatched {
         background-color: orange;
     }
-    tr.refunded{
+    tr.cancelled{
         background-color: lightgray
     }
 }
@@ -528,8 +655,33 @@ button {
 #admin-order-detail .item:not(:last-child) {
     border-bottom: solid 1px black;
 }
+#admin-order-detail .img-container {
+    display: inline-block;
+    width: 50px;
+    height: 50px;
+    overflow: hidden;
+    margin-right: 10px;
+    vertical-align: middle;
+}
+#admin-order-detail .item-detail{
+    display:inline-block;
+    vertical-align:middle;
+
+}
+
+#admin-order-detail img {
+    width: 100%;
+    object-fit: cover;
+}
 
 /*AllDiscounts Page*/
+#discount-list{
+    max-width:800px;
+}
+#discount-list th,
+#discount-list td{
+    max-width:150px;
+}
 #discount-list .message{
     color:red;
 }

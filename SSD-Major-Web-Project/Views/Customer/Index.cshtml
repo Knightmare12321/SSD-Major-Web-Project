@@ -7,9 +7,12 @@
 
 <div>
 
-    <p>First Name, Last Name</p>
-
-    <p>Welcome FirstName, LastName</p>
+    <div>
+        <h1></h1>
+@*         <p>@Model.DefaultContact.FirstName @Model.DefaultContact.LastName </p>
+         *@
+        <p>Welcome, @Model.DefaultContact?.FirstName!</p>
+    </div>
 
     <div id="customer-index-grid">
         <div class="grid-item">

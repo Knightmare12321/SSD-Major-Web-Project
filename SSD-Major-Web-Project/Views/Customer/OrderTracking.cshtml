@@ -5,9 +5,16 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
+@* //  viewbag message *@
+@if (ViewBag.Message != null)
+{
+    <div class="alert alert-danger" role="alert">
+        @ViewBag.Message
+    </div>
+}
 
-<form method="post">
-    <input type="text" name="orderNumber" placeholder="Enter Order Number">
+<form method="post" action="OrderTracking">
+    <input type="text" name="trackingNumber" placeholder="Enter Trackcing number" value="">
     <input type="submit" value="Submit">
 </form>
 

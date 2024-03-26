@@ -14,10 +14,13 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Drawing.Printing;
 using System.Collections;
 using static NuGet.Packaging.PackagingConstants;
+using Microsoft.AspNetCore.Authorization;
 
 
 namespace SSD_Major_Web_Project.Controllers
 {
+    [Authorize(Roles = "Admin, Manager")]
+
     public class AdminController : Controller
     {
         private readonly NovaDbContext _context;
@@ -34,12 +37,13 @@ namespace SSD_Major_Web_Project.Controllers
             return View();
         }
 
-        public IActionResult AllProducts(string message = "", string searchTerm = "", int pageIndex = 1, int pageSize = 10)
+        public IActionResult AllProducts(string message = "", string searchTerm = "", bool showInactive = false, int pageIndex = 1, int pageSize = 10)
         {
             ViewData["Message"] = message;
             ViewData["SearchTerm"] = searchTerm;
+            ViewData["ShowInactive"] = showInactive;
             AdminRepo adminRepo = new AdminRepo(_context);
-            List<AdminProductVM> products = adminRepo.GetAllProducts(searchTerm).ToList();
+            List<AdminProductVM> products = adminRepo.GetAllProducts(searchTerm, showInactive).ToList();
             //determine which items to show based on current page index
             var count = products.Count();
             var items = products.Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList();
@@ -62,6 +66,10 @@ namespace SSD_Major_Web_Project.Controllers
         {
             if (ModelState.IsValid)
             {
+                //UtilityRepo utilityRepo = new UtilityRepo();
+                //CreateProductVM vm = utilityRepo.FilterHarmfulInput(inputVM);
+
+
                 //make sure all images are in appropriate file types
                 string contentType;
                 foreach (IFormFile image in vm.Images)
@@ -291,7 +299,7 @@ namespace SSD_Major_Web_Project.Controllers
         }
 
         [HttpPost]
-        public async Task<JsonResult> RefundOrder(int orderId)
+        public async Task<JsonResult> CancelOrder(int orderId)
         {   //find order
             AdminRepo adminRepo = new AdminRepo(_context);
             OrderVM order = adminRepo.GetOrderById(orderId);
@@ -333,8 +341,7 @@ namespace SSD_Major_Web_Project.Controllers
                     FirstName = "Nova",
                     LastName = "Clothing",
                     Subject = $"Nova Fashion Order (#{orderId}) Cancelled",
-                    //Email = order.Contact.Customers.ToList()[0].PkCustomerId,
-                    Email = "afang324@gmail.com",
+                    Email = order.Contact.Customers.ToList()[0].PkCustomerId,
                     Body = $"Your order (#{order.OrderId}) of {order.OrderTotal:C} has been " +
                     $"refunded. The credit has been added to the discount code {discountCode} and will " +
                     $"expire on {endDate}."
@@ -342,12 +349,12 @@ namespace SSD_Major_Web_Project.Controllers
 
                 return Json(new { success = true, error = "" });
             }
-            else if (order.OrderStatus.ToLower() == "refunded")
+            else if (order.OrderStatus.ToLower() == "cancelled")
             {
                 return Json(new
                 {
                     success = false,
-                    error = "Order was already refunded so no action was taken"
+                    error = "Order was already cancelled so no action was taken"
                 });
             }
             else
@@ -361,12 +368,13 @@ namespace SSD_Major_Web_Project.Controllers
         }
 
 
-        public IActionResult AllDiscounts(string message = "", string searchTerm = "", int pageIndex = 1, int pageSize = 10)
+        public IActionResult AllDiscounts(string message = "", string searchTerm = "", bool showInactive = false, int pageIndex = 1, int pageSize = 10)
         {
             ViewData["Message"] = message;
             ViewData["SearchTerm"] = searchTerm;
+            ViewData["ShowInactive"] = showInactive;
             AdminRepo adminRepo = new AdminRepo(_context);
-            List<DiscountVM> discounts = adminRepo.GetAllDiscounts(searchTerm).ToList();
+            List<DiscountVM> discounts = adminRepo.GetAllDiscounts(searchTerm, showInactive).ToList();
 
             //determine which items to show based on current page index
             var count = discounts.Count();

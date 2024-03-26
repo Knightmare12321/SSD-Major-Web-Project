@@ -20,7 +20,7 @@ namespace SSD_Major_Web_Project.Repositories
             _context = context;
         }
 
-        public IQueryable<AdminProductVM> GetAllProducts(string searchTerm)
+        public IQueryable<AdminProductVM> GetAllProducts(string searchTerm, bool showInactive)
         {
             var query = _context.Products
                         .Select(p => new AdminProductVM
@@ -39,6 +39,12 @@ namespace SSD_Major_Web_Project.Repositories
                         });
             //filter query by search term
             query = query.Where(p => p.Name.Contains(searchTerm));
+
+            //filter query by active status
+            if (showInactive == false)
+            {
+                query = query.Where(p => p.IsActive == true);
+            }
             return query;
         }
 
@@ -175,16 +181,20 @@ namespace SSD_Major_Web_Project.Repositories
                 byte[] imageData;
                 foreach (IFormFile imageFile in newImageFiles)
                 {
-                    //convert image file data to byte[]
-                    using (var memoryStream = new MemoryStream())
+                    //filter out images that were first added then deleted
+                    if (!DeletedImageNames.Contains(imageFile.Name))
                     {
-                        await imageFile.CopyToAsync(memoryStream);
-                        imageData = memoryStream.ToArray();
-                    }
+                        //convert image file data to byte[]
+                        using (var memoryStream = new MemoryStream())
+                        {
+                            await imageFile.CopyToAsync(memoryStream);
+                            imageData = memoryStream.ToArray();
+                        }
 
-                    //add image to db
-                    Image image = new Image { FileName = imageFile.FileName, Data = imageData, AltText = "product photo ", FkProductId = product.PkProductId };
-                    _context.Images.Add(image);
+                        //add image to db
+                        Image image = new Image { FileName = imageFile.FileName, Data = imageData, AltText = "product photo ", FkProductId = product.PkProductId };
+                        _context.Images.Add(image);
+                    }
                 }
 
                 _context.SaveChanges();
@@ -444,7 +454,7 @@ namespace SSD_Major_Web_Project.Repositories
             }
         }
 
-        public IQueryable<DiscountVM> GetAllDiscounts(string searchTerm)
+        public IQueryable<DiscountVM> GetAllDiscounts(string searchTerm, bool showInactive)
         {
             var query = _context.Discounts.Select(d =>
                 new DiscountVM
@@ -459,6 +469,13 @@ namespace SSD_Major_Web_Project.Repositories
 
             //filter query by search term
             query = query.Where(d => d.PkDiscountCode.Contains(searchTerm));
+
+            //filter query by active status
+            if (showInactive == false)
+            {
+                query = query.Where(p => p.IsActive == true);
+            }
+
             return query;
         }
 

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using SSD_Major_Web_Project.Data.Services;
 using SSD_Major_Web_Project.Models;
 using SSD_Major_Web_Project.Repositories;
@@ -20,15 +21,28 @@ namespace SSD_Major_Web_Project.Controllers
         // GET: CustomerController
         public ActionResult Index()
         {
-            return View();
+            // get customerVM
+            CustomerVM customerVM = new CustomerVM();
+            // get current user by contactId
+            var userId = User.Identity.Name;
+            // Get the user details
+            var customer = _context.Customers.Find(userId);
+            customerVM.Customer = customer;
+            customerVM.DefaultContact = _context.Contacts.Find(customer.FkContactId);
+
+            return View(customerVM);
         }
 
         // GET: CustomerController/PersonalOrderHistory
         public ActionResult PersonalOrderHistory()
         {
-            return View();
+            var userId = User.Identity.Name;
+            CustomerRepo customerRepo = new CustomerRepo(_context);
+            List<PersonalOrderHistoryVM> vm = customerRepo.GetOrders("lotte.tfins@gmail.com").ToList();
+            return View(vm);
         }
 
+        // GET: CustomerController/OrderTracking
         // GET: CustomerController/OrderTracking
         public ActionResult OrderTracking()
         {
@@ -41,15 +55,74 @@ namespace SSD_Major_Web_Project.Controllers
         {
             try
             {
-                Order order = _context.Orders.Find(trackingNumber);
-                return View(order);
+                // get user id first
+                var userId = User.Identity.Name;
+                // validate if this is the user's order
+                // if not, return error message
+                // check if the order exists by tracking number, if yes, return the order details
+
+                // new CustomerVM
+                var customerVM = new CustomerVM();
+                customerVM.TrackingNumber = trackingNumber;
+                customerVM.Customer = _context.Customers.Find(userId);
+                customerVM.DefaultContact = _context.Contacts.Find(customerVM.Customer.FkContactId);
+                customerVM.Orders = _context.Orders.Where(o => o.FkCustomerId == userId).ToList();
+
+                // find order by inquiring tracking number
+                var order = _context.Orders.FirstOrDefault(o => o.Tracking == trackingNumber);
+
+
+
+                if (order == null || order.FkCustomerId != userId)
+                {
+                    string message = "Tracking Number not valid";
+                    ViewBag.Message = message;
+                    return View("OrderTracking", customerVM);
+                }
+                else
+                {
+                    // get order id
+                    var orderId = order.PkOrderId;
+
+                    var orderbyTrackingId = _context.Orders.Where(o => o.PkOrderId == orderId).FirstOrDefault();
+
+                    var trackiingResultVM = new TrackingResultVM();
+                    trackiingResultVM.TrackingNumber = orderbyTrackingId.Tracking;
+
+                    trackiingResultVM.OrderId = orderId.ToString();
+
+
+                    var orderSatatusId = orderbyTrackingId.FkOrderStatusId;
+                    var orderStatus = _context.OrderStatuses.Where(os => os.PkOrderStatusId == orderSatatusId).FirstOrDefault();
+                    trackiingResultVM.OrderStatus = orderStatus.Status;
+
+
+
+                    var shipDate = orderbyTrackingId.ShipDate;
+                    trackiingResultVM.ShippedDate = shipDate
+                        .HasValue ? shipDate.Value.ToString("dd/MM/yyyy") : "Not Shipped Yet";
+
+                    //delivery date is null if the order is not delivered yet
+                    // add 7 date of shipped date if the order is shipped
+                    var deliveryDate = shipDate.HasValue ? shipDate.Value.AddDays(7) : (System.DateOnly?)null;
+
+                    trackiingResultVM.DeliveryDate = deliveryDate.HasValue ? deliveryDate.Value.ToString("dd/MM/yyyy") : "Not Delivered Yet";
+
+
+                    return View("TrackingResult", trackiingResultVM);
+                }
             }
             catch
             {
                 return View();
             }
 
-            
+        }
+
+        // display order tracking result
+        public ActionResult TrackingResult(Order orderMain)
+        {
+            return View(orderMain);
         }
 
 
@@ -104,7 +177,7 @@ namespace SSD_Major_Web_Project.Controllers
             customerVM.DefaultContact = _context.Contacts.Find(customer.FkContactId);
 
             return View(customerVM);
-    
+
         }
 
         // POST: CustomerController/Profile

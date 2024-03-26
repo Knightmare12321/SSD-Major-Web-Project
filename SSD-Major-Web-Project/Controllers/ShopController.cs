@@ -42,7 +42,6 @@ namespace SSD_Major_Web_Project.Controllers
                 else
                 {
 
-          
 
                     List<ShoppingCartItem> shoppingcartItems = new List<ShoppingCartItem>();
                     for (int i = 0; i < IDList.Count; i++)
