@@ -144,7 +144,7 @@
         const items = order.orderDetails.map(od => {
             const images = od.fkSku.fkProduct.images;
             let listingImage = "";
-            if (images != null)
+            if (images.length > 0)
             {
                 listingImage = `<img src=data:image;base64,${images[0].data} alt=${images[0].altText}/>`
             }
