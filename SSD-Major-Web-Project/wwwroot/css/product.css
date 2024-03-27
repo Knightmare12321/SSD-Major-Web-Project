@@ -84,20 +84,25 @@
 }
 
 .product-items-container {
-    width: 300px;
+    flex: 0 0 calc(16.666% - 20px);
     height: auto;
     margin-left: 20px;
 }
 
 .product-thumbnail-wrapper {
-    width: 300px;
-    height: 400px;
+    width: 100%; /* Adjust width as needed */
+    padding-top: 133.33%; /* 4:3 aspect ratio (3 / 4 * 100) */
+    position: relative;
     border: 1px solid black;
 }
 
 .product-thumbnail {
-    width: inherit;
-    height: inherit;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
 
 .product-info {
