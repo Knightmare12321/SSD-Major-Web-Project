@@ -25,6 +25,7 @@ namespace SSD_Major_Web_Project.Controllers
         }
 
         // TODO: Filter non active item!
+        //       Search bar!
         //       Fix load more button so it disappears as first opportunity.
         public IActionResult Index(int? page)
         {
@@ -44,7 +45,7 @@ namespace SSD_Major_Web_Project.Controllers
         private IEnumerable<ProductVM> GetDataWithPages(int page, int itemsPerPage)
         {
             ProductRepo temp = new ProductRepo(_context);
-            var data = temp.GetAll();
+            var data = temp.GetAllActive();
             int maxSize = data.Count();
             List<ProductVM> results = new List<ProductVM>();
             for (int i = 0; i < itemsPerPage; i++)
