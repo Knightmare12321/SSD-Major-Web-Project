@@ -51,4 +51,41 @@
         <a asp-action="Create">Create New</a>
     </p> *@
     
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            var page = 1; // Initial page number
+
+            function loadMoreItems() {
+                console.log("loading more items")
+                $(".load-more").prop("disabled", true); // Disable the button
+                $(".load-more").text("Loading..."); // Change button text to "Loading..."
+                $.ajax({
+                    url: '@Url.Action("LoadMoreItems", "Product")',
+                    type: 'GET',
+                    data: { page: page + 1 },
+                    success: function (data) {
+                        console.log("items quantity: " + data.length);
+                        if (data.length > 0) {
+                            $('.product-container').append(data);
+                            page++; // Increment page number
+                        } else {
+                            console.log("hiding load-more button now");
+                            $('.load-more').hide(); // Hide button if no more items
+                        }
+                    }, 
+                    complete: function () {
+                        $(".load-more").prop("disabled", false);
+                        $(".load-more").text("Load more products");
+                    }
+                });
+            }
+
+            $(".load-more").click(function () {
+                loadMoreItems();
+            });
+        })
+    </script>
+
 </div>

@@ -129,3 +129,7 @@
 .load-more:hover {
     background-color: dimgrey;
 }
+
+.load-more:disabled:hover {
+    background-color: black;
+}

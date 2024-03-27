@@ -24,26 +24,45 @@ namespace SSD_Major_Web_Project.Controllers
             _context = context;
         }
 
-        public IActionResult Index()
+        // TODO: Filter non active item!
+        public IActionResult Index(int? page)
         {
-            ProductRepo temp = new ProductRepo(_context);
-            return View(temp.GetAll());
+            int itemsPerPage = 12; // Number of items appear at the beginning
+            var data = GetDataWithPages(page ?? 1, itemsPerPage);
+            return View(data);
         }
 
-        //public IEnumerable<ProductVM> GetDataWithPages(int page, int itemsPerPage)
-        //{
+        public IActionResult LoadMoreItems(int page)
+        {
+            var itemsPerPage = 12; // Number of items to load per page
+            var results = GetDataWithPages(page, itemsPerPage);
+            if (results.Any()) return PartialView("_ProductItemsPartial", results);
+            return Content("");
+        }
 
-        //}
+        private IEnumerable<ProductVM> GetDataWithPages(int page, int itemsPerPage)
+        {
+            ProductRepo temp = new ProductRepo(_context);
+            var data = temp.GetAll();
+            int maxSize = data.Count();
+            List<ProductVM> results = new List<ProductVM>();
+            for (int i = 0; i < itemsPerPage; i++)
+            {
+                int index = (page - 1) * itemsPerPage + i;
+                if (index >= maxSize) break;
+                results.Add(data.ElementAt(index));
+            }
+            return results;
+        }
 
         // TODO: Remove unnecessary lines after ajax implementation completes
-        public IActionResult Details(int id, string category, string method, int subID)
+        public IActionResult Details(int id)
         {
             ProductRepo products = new ProductRepo(_context);
             ReviewRepo reviewRepo = new ReviewRepo(_context);
             List<Review> reviews = reviewRepo.GetReviewsForProduct(id);
 
             var favoriteCookie = Request.Cookies["favorite"];
-            int skuID = subID == null ? products.GetSkuIdById(id) : subID;
 
             ViewBag.isFav =
                 favoriteCookie == null ?
@@ -61,72 +80,6 @@ namespace SSD_Major_Web_Project.Controllers
                 }).ToList();
             ProductDetailVM? vm = products.GetByIdAndReviewVM(id, reviewList);
             return View(vm);
-        }
-
-        // TODO: Fix Json Reponse so that it will not return cart object(if needed)
-        [HttpPost]
-        public JsonResult AddToCart(int id, int quantity)
-        {
-            var cartCookie = Request.Cookies["cart"];
-            CookieOptions option = new CookieOptions();
-            option.Expires = DateTime.Now.AddDays(365);
-            var carts = cartCookie == null ?
-                new List<ShoppingCartItem>() :
-                JsonConvert.DeserializeObject<List<ShoppingCartItem>>(cartCookie);
-            bool inShoppingCart = false;
-            ShoppingCartItem mycart = null;
-            string message = "";
-            foreach (var item in carts)
-            {
-                if (item.SkuId == id)
-                {
-                    mycart = item;
-                    inShoppingCart = true;
-                    item.Quantity += quantity;
-                    message = "Adding item quantity by " + quantity;
-                    break;
-                }
-            }
-            if (!inShoppingCart)
-            {
-                mycart = new ShoppingCartItem { SkuId = id, Quantity = quantity };
-                carts.Add(mycart);
-                message = "Adding item to shopping cart";
-            }
-            Response.Cookies.Append("cart", JsonConvert.SerializeObject(carts), option);
-            return Json(new { success = true, message = message, cart = mycart }); 
-        }
-
-        [HttpPost]
-        public JsonResult AddToFavorite(int id)
-        {
-            var favoriteCookie = Request.Cookies["favorite"];
-            CookieOptions option = new CookieOptions();
-            option.Expires = DateTime.Now.AddDays(365);
-            var favoriteIDs = favoriteCookie == null ?
-                new List<int>() :
-                JsonConvert.DeserializeObject<List<int>>(favoriteCookie);
-            if (favoriteIDs.Contains(id))
-            {
-                return Json(new { success = false, message = "Item already in the wishlist!" });
-            }
-            favoriteIDs.Add(id);
-            Response.Cookies.Append("favorite", JsonConvert.SerializeObject(favoriteIDs), option);
-            return Json(new { success = true, message = "Item added to favorite successfully!"});
-        }
-
-        [HttpPost]
-        public JsonResult RemoveFromFavorite(int id)
-        {
-            var favoriteCookie = Request.Cookies["favorite"];
-            CookieOptions option = new CookieOptions();
-            option.Expires = DateTime.Now.AddDays(365);
-            if (favoriteCookie == null) return Json(new { success = false, message = "Wishlist is empty!" });
-            var favoriteIDs = JsonConvert.DeserializeObject<List<int>>(favoriteCookie);
-            if (!favoriteIDs.Contains(id)) return Json(new { success = false, message = "Item is not in the wishlist!" });
-            favoriteIDs.Remove(id);
-            Response.Cookies.Append("favorite", JsonConvert.SerializeObject(favoriteIDs), option);
-            return Json(new { success = true, message = "Item removed from favorite successfully!" });
         }
 
         public IActionResult CreateReview(int id)
