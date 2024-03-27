@@ -77,3 +77,14 @@
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
+
+<script>
+    const url = '@Url.Action("GetUserName", "Home")';
+    $.ajax({
+        type: "GET",
+        url: url,
+        success: function (data) {
+            $("#username").html(data);
+        }
+    });
+</script>
