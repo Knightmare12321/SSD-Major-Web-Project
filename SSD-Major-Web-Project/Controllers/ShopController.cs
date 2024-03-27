@@ -100,27 +100,6 @@ namespace SSD_Major_Web_Project.Controllers
             }
         }
 
-        public JsonResult CheckDiscountCode(string couponCode)
-        {
-            AdminRepo adminRepo = new AdminRepo(_context);
-            DiscountVM discount = adminRepo.GetDiscountById(couponCode);
-            DateOnly today = DateOnly.FromDateTime(DateTime.Now);
-            if (discount != null && discount.IsActive == true && today <= discount.EndDate && today >= discount.StartDate)
-            {
-                return Json(new
-                {
-                    success = true,
-                    discountValue = discount.DiscountValue,
-                    discountType = discount.DiscountType
-                });
-            }
-
-            return Json(new
-            {
-                success = false,
-                error = "The discount code is invalid or expired"
-            });
-        }
 
         // POST: ShopController/Checkout
         // Click on the "Proceed to checkout" button at shopping cart page, pass the shopping cart data to Checkout view
@@ -192,53 +171,54 @@ namespace SSD_Major_Web_Project.Controllers
             return View("CheckoutShippingContact", checkoutVM);
         }
 
-        //public async Task<string> GetPaypalAccessToken()
-        //{
-        //    string clientId = _configuration["PaypalClientId"];
-        //    string secret = _configuration["PaypalClientSecret"];
+        public async Task<string> GetPaypalAccessToken()
+        {
+            string clientId = _configuration["PaypalClientId"];
+            string secret = _configuration["PaypalClientSecret"];
 
-        //    using (HttpClient client = new HttpClient())
-        //    {
-        //        //client.BaseAddress = new Uri("https://api-m.sandbox.paypal.com");
+            using (HttpClient client = new HttpClient())
+            {
+                //client.BaseAddress = new Uri("https://api-m.sandbox.paypal.com");
 
-        //        // Set the credentials for Basic Authentication
-        //        string auth = Convert.ToBase64String(Encoding.UTF8.GetBytes($"{clientId}:{secret}"));
-        //        client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", auth);
+                // Set the credentials for Basic Authentication
+                string auth = Convert.ToBase64String(Encoding.UTF8.GetBytes($"{clientId}:{secret}"));
+                client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", auth);
+                client.DefaultRequestHeaders.Add("Content-Type", "application/x-www-form-urlencoded");
 
-        //        // Prepare the request body
-        //        var requestData = new StringContent("grant_type=client_credentials", Encoding.UTF8, "application/x-www-form-urlencoded");
+                // Prepare the request body
+                var requestData = new StringContent("grant_type=client_credentials");
 
-        //        try
-        //        {
-        //            // Make the POST request to obtain the access token
-        //            HttpResponseMessage response = await client.PostAsync("https://api-m.sandbox.paypal.com/v1/oauth2/token", requestData);
+                try
+                {
+                    // Make the POST request to obtain the access token
+                    HttpResponseMessage response = await client.PostAsync("https://api-m.sandbox.paypal.com/v1/oauth2/token", requestData);
 
-        //            if (response.IsSuccessStatusCode)
-        //            {
-        //                // Read the response content as a JSON string
-        //                string json = await response.Content.ReadAsStringAsync();
+                    if (response.IsSuccessStatusCode)
+                    {
+                        // Read the response content as a JSON string
+                        string json = await response.Content.ReadAsStringAsync();
 
-        //                // Print the JSON data (which contains the access token)
-        //                Console.WriteLine(json);
-        //                return json;
-        //            }
-        //            else
-        //            {
-        //                return "Error: An unexpected error occured while retrieving the access token";
-        //            }
-        //        }
-        //        catch (Exception ex)
-        //        {
-        //            return "Error: An unexpected error occured while retrieving the access token";
+                        // Print the JSON data (which contains the access token)
+                        Console.WriteLine(json);
+                        return json;
+                    }
+                    else
+                    {
+                        return "Error: An unexpected error occured while retrieving the access token";
+                    }
+                }
+                catch (Exception ex)
+                {
+                    return "Error: An unexpected error occured while retrieving the access token";
 
-        //        }
-        //    }
-        //}
+                }
+            }
+        }
 
-        //public bool validatePayment(int orderId, string transactionId, double amount)
-        //{
-        //    return true;
-        //}
+        public bool validatePayment(int orderId, string transactionId, double amount)
+        {
+            return true;
+        }
 
 
         // POST: ShopController/Checkout
@@ -249,6 +229,7 @@ namespace SSD_Major_Web_Project.Controllers
 
             //string accessToken = await GetPaypalAccessToken();
             //bool isValidPayment = validatePayment(checkoutVM.Order.OrderId, transactionId, amount);
+
             ShopRepo _shopRepo = new ShopRepo(_context);
 
             // Assign Discount Code if available from the shopping cart razor view

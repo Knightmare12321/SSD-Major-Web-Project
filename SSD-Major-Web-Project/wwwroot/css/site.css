@@ -422,6 +422,9 @@ button {
 #product-list button.add-btn{
     display:block;
 }
+#all-products-pagination .page-item{
+    cursor:pointer;
+} 
 
 /*Admin CreateProduct*/
 #create-product-grid {
@@ -714,6 +717,9 @@ button {
 #discount-list button.add-btn {
     display: block;
 }
+#all-discounts-pagination .page-item {
+    cursor: pointer;
+} 
 
 /*CreateDiscount Page*/
 #create-discount-form button:hover {
