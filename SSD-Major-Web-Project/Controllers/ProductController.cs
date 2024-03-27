@@ -25,6 +25,7 @@ namespace SSD_Major_Web_Project.Controllers
         }
 
         // TODO: Search bar!
+        //       Fix load efficiency.
         //       Fix load more button so it disappears as first opportunity.
         public IActionResult Index(int? page)
         {

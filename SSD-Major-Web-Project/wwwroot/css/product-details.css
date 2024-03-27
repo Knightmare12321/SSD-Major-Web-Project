@@ -1,4 +1,8 @@
-﻿.product-details-container {
+﻿.message-prompt {
+    color: red;
+}
+
+.product-details-container {
     display: flex;
     justify-content: space-around;
     width: 100vw
