@@ -35,7 +35,8 @@ namespace SSD_Major_Web_Project.Controllers
                     mycart = item;
                     inShoppingCart = true;
                     item.Quantity += quantity;
-                    message = "Adding item quantity by " + quantity;
+                    message = "Adding item quantity by " + quantity
+                        + " (current quantity: " + item.Quantity + ")";
                     break;
                 }
             }
@@ -43,7 +44,7 @@ namespace SSD_Major_Web_Project.Controllers
             {
                 mycart = new ShoppingCartItem { SkuId = id, Quantity = quantity };
                 carts.Add(mycart);
-                message = "Adding item to shopping cart";
+                message = "Item added to shopping cart!";
             }
             Response.Cookies.Append("cart", JsonConvert.SerializeObject(carts), option);
             return Json(new { success = true, message = message, cart = mycart });

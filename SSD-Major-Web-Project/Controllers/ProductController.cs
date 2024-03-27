@@ -24,7 +24,9 @@ namespace SSD_Major_Web_Project.Controllers
             _context = context;
         }
 
-        // TODO: Filter non active item!
+        // TODO: Search bar!
+        //       Fix load efficiency.
+        //       Fix load more button so it disappears as first opportunity.
         public IActionResult Index(int? page)
         {
             int itemsPerPage = 12; // Number of items appear at the beginning
@@ -34,7 +36,7 @@ namespace SSD_Major_Web_Project.Controllers
 
         public IActionResult LoadMoreItems(int page)
         {
-            var itemsPerPage = 12; // Number of items to load per page
+            int itemsPerPage = 12; // Number of items to load per page
             var results = GetDataWithPages(page, itemsPerPage);
             if (results.Any()) return PartialView("_ProductItemsPartial", results);
             return Content("");
@@ -43,7 +45,7 @@ namespace SSD_Major_Web_Project.Controllers
         private IEnumerable<ProductVM> GetDataWithPages(int page, int itemsPerPage)
         {
             ProductRepo temp = new ProductRepo(_context);
-            var data = temp.GetAll();
+            var data = temp.GetAllActive();
             int maxSize = data.Count();
             List<ProductVM> results = new List<ProductVM>();
             for (int i = 0; i < itemsPerPage; i++)
@@ -55,7 +57,6 @@ namespace SSD_Major_Web_Project.Controllers
             return results;
         }
 
-        // TODO: Remove unnecessary lines after ajax implementation completes
         public IActionResult Details(int id)
         {
             ProductRepo products = new ProductRepo(_context);
