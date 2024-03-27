@@ -62,6 +62,25 @@
                     </dd>
                 </div>
              </div>
+
+            <div id="discountSubtotalSection" style="display: none;">
+                <div>
+                    <dt class="col-sm-3">Total Discount Amount:</dt>
+                </div>
+                <div>
+                    <dd class="col-sm-10" id="discountSubtotalAmount"></dd>
+                </div>
+            </div>
+
+            <div id="afterDiscountSubtotal" style="display: none;">
+                <div>
+                    <dt class="col-sm-3">Discounted Subtotal:</dt>
+                </div>
+                <div>
+                    <dd class="col-sm-10" id="afterDiscountSubtotalAmount"></dd>
+                </div>
+            </div>
+
              <div class="shopping-cart-total-form">
                     <dt class="col-sm-2">
                         <p>@Html.DisplayNameFor(model => model.ShippingFee)</p>
@@ -75,7 +94,7 @@
                         <p>@Html.DisplayNameFor(model => model.Taxes)</p>
                     </dt>
                     <dd class="col-sm-10">
-                        <p>@Html.DisplayFor(model => model.Taxes)</p>
+                    <p id="taxesAmount">@Html.DisplayFor(model => model.Taxes)</p>
                     </dd>
              </div>
              <div class="shopping-cart-total-form">
@@ -83,7 +102,7 @@
                         <p>@Html.DisplayNameFor(model => model.GrandTotal)</p>
                     </dt>
                     <dd class="col-sm-10">
-                        <p>@Html.DisplayFor(model => model.GrandTotal)</p>
+                    <p id="grandTotalAmount">@Html.DisplayFor(model => model.GrandTotal)</p>
                     </dd>
              </div>
    
@@ -111,11 +130,18 @@
         </div>
     </div>
 </div>
-
 <script>
     document.addEventListener('DOMContentLoaded', function () {
+        var discountApplied = false;
+
         document.getElementById('applyCodeButton').addEventListener('click', function () {
+            if (discountApplied) {
+                return; // Exit the function if discount has already been applied
+            }
+
             var couponCodeValue = document.getElementById('couponCodeInput').value;
+            document.getElementById('couponCodeHiddenInput').value = couponCodeValue; // Set the coupon code value in the hidden field
+
 
             // Send AJAX request to the controller action
             var xhr = new XMLHttpRequest();
@@ -125,12 +151,17 @@
                 if (xhr.status === 200) {
                     var response = JSON.parse(xhr.responseText);
                     var discountMessage = document.getElementById('discountMessage');
+                    var discountSubtotalSection = document.getElementById('discountSubtotalSection');
+                    var discountSubtotalAmount = document.getElementById('discountSubtotalAmount');
 
                     if (response.isActive) {
                         discountMessage.textContent = 'Discount applied!';
+                        discountApplied = true; // Set the flag to indicate discount has been applied
 
                         // Loop through each product and display the discount amount
                         var productDetails = document.getElementsByClassName('product-details');
+                        var subtotal = 0;
+
                         for (var i = 0; i < productDetails.length; i++) {
                             var unitPriceElement = productDetails[i].querySelector('p:nth-of-type(2)');
                             var unitPrice = parseFloat(unitPriceElement.textContent);
@@ -138,14 +169,49 @@
 
                             if (response.discountType === 'Percent') {
                                 var calculatedDiscount = (unitPrice * response.discountAmount).toFixed(2);
-                                discountAmountElement.textContent = '(' + (response.discountAmount * 100) + '% off) Discount Amount: $ ' + calculatedDiscount;
+                                var discountText = '(' + (response.discountAmount * 100) + '% off)';
+                                var discountAmountText = '- $ ' + calculatedDiscount;
+
+                                discountAmountElement.innerHTML = discountText + '<br>' + discountAmountText;
                             } else {
                                 var calculatedDiscount = response.discountAmount.toFixed(2);
-                                discountAmountElement.textContent = 'Discount Amount: $ ' + calculatedDiscount;
+                                var discountAmountText = 'Total Discount Amount: $ ' + calculatedDiscount;
+
+                                discountAmountElement.textContent = discountAmountText;
                             }
 
                             productDetails[i].appendChild(discountAmountElement);
+
+                            subtotal += unitPrice;
                         }
+
+                        // Calculate discount subtotal
+                        var discountSubtotal = subtotal * response.discountAmount; // Updated calculation
+                        discountSubtotalAmount.textContent = '$ ' + discountSubtotal.toFixed(2);
+
+                        // Show the discount subtotal section
+                        discountSubtotalSection.style.display = 'block';
+
+                        // Calculate and display the after-discount subtotal
+                        var afterDiscountSubtotal = subtotal - discountSubtotal;
+                        var afterDiscountSubtotalAmount = document.getElementById('afterDiscountSubtotalAmount');
+                        afterDiscountSubtotalAmount.textContent = '$ ' + afterDiscountSubtotal.toFixed(2);
+
+                        // Show the after-discount subtotal section
+                        var afterDiscountSubtotalSection = document.getElementById('afterDiscountSubtotal');
+                        afterDiscountSubtotalSection.style.display = 'block';
+
+                        // Calculate and display the tax
+                        var taxRate = 0.1; // Assuming a tax rate of 10%
+                        var tax = afterDiscountSubtotal * taxRate;
+                        var taxAmount = document.getElementById('taxesAmount');
+                        taxAmount.textContent = '$ ' + tax.toFixed(2);
+
+                        // Calculate and display the grand total
+                        var grandTotal = afterDiscountSubtotal + tax;
+                        var grandTotalAmount = document.getElementById('grandTotalAmount');
+                        grandTotalAmount.textContent = '$ ' + grandTotal.toFixed(2);
+
                     } else {
                         discountMessage.textContent = 'Invalid code.';
                     }
