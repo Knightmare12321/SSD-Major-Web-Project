@@ -100,33 +100,42 @@ namespace SSD_Major_Web_Project.Controllers
         [HttpPost]
         public IActionResult CheckCouponCode(string couponCode)
         {
-            // Perform the database query
             var discount = _context.Discounts.FirstOrDefault(d => d.PkDiscountCode == couponCode);
             bool isActive = false;
             string discountType = string.Empty;
             decimal discountAmount = 0;
+            bool isValid = false;
 
             if (discount != null)
             {
                 isActive = discount.IsActive;
                 discountType = discount.DiscountType;
-                if (discountType == "Percent")
-                {
-                    discountAmount = discount.DiscountValue / 100;
-                }
-                else if (discountType == "Number")
-                {
+                DateOnly startDate = discount.StartDate;
+                DateOnly endDate = discount.EndDate;
 
-                    discountAmount = discount.DiscountValue;
-                }
+                DateOnly currentDate = DateOnly.FromDateTime(DateTime.Now);
 
+                if (currentDate >= startDate && currentDate <= endDate)
+                {
+                    isValid = true;
+                    if (discountType == "Percent")
+                    {
+                        discountAmount = discount.DiscountValue / 100;
+                    }
+                    else if (discountType == "Number")
+                    {
+                        discountAmount = discount.DiscountValue;
+                    }
+                }
             }
 
-            // Return the result as JSON
-            return Json(new { isActive, discountType, discountAmount });
+            if (!isActive || !isValid)
+            {
+                discount = null;
+            }
+
+            return Json(new { discount, isActive, discountType, discountAmount, isValid});
         }
-
-
 
 
         // POST: ShopController/Checkout

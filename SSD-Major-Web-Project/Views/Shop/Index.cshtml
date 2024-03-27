@@ -154,7 +154,7 @@
                     var discountSubtotalSection = document.getElementById('discountSubtotalSection');
                     var discountSubtotalAmount = document.getElementById('discountSubtotalAmount');
 
-                    if (response.isActive) {
+                    if (response.isActive && response.isValid) {
                         discountMessage.textContent = 'Discount applied!';
                         discountApplied = true; // Set the flag to indicate discount has been applied
 
