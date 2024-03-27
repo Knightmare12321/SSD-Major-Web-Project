@@ -163,7 +163,7 @@
     }
     function clickCart(event) {
         var skuid = $(".size-button.active").data("skuid");
-        const url = '@Url.Action("AddToCart", "Product")';
+        const url = '@Url.Action("AddToCart", "Cookie")';
         $.ajax({
             type: "POST",
             url: url,
@@ -185,7 +185,7 @@
         console.log(text);
         if (text == "ADD TO FAVORITE") {
             console.log("add favorite now");
-            const url = '@Url.Action("AddToFavorite", "Product")';
+            const url = '@Url.Action("AddToFavorite", "Cookie")';
             $.ajax({
                 type: "POST",
                 url: url,
@@ -199,7 +199,7 @@
         }
         else if (text == "REMOVE FROM FAVORITE") {
             console.log("remove favorite now");
-            const url = '@Url.Action("RemoveFromFavorite", "Product")';
+            const url = '@Url.Action("RemoveFromFavorite", "Cookie")';
             $.ajax({
                 type: "POST",
                 url: url,

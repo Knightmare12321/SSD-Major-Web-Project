@@ -1,0 +1,23 @@
+﻿@model IEnumerable<SSD_Major_Web_Project.ViewModels.ProductVM>
+
+<!-- Render additional product items -->
+@foreach (var item in Model)
+{
+    <div class="product-items-container">
+        <a asp-action="Details" asp-route-id="@item.PkProductId">
+            <div class="product-thumbnail-wrapper">
+                @if (item.ImageByteArray != null)
+                {
+                    <img src="data:image/jpeg;base64,
+                                    @Convert.ToBase64String(item.ImageByteArray)"
+                         alt="item.Name"
+                         class="product-thumbnail" />
+                }
+            </div>
+        </a>
+        <div class="product-info">
+            <div class="product-name"> @Html.DisplayFor(modelItem => item.Name) </div>
+            <div class="product-price"> @Html.DisplayFor(modelItem => item.Price) </div>
+        </div>
+    </div>
+}
