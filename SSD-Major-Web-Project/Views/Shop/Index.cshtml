@@ -174,35 +174,71 @@
 
                                 discountAmountElement.innerHTML = discountText + '<br>' + discountAmountText;
                             } else {
-                                var calculatedDiscount = response.discountAmount.toFixed(2);
-                                var discountAmountText = 'Total Discount Amount: $ ' + calculatedDiscount;
 
-                                discountAmountElement.textContent = discountAmountText;
+                             
                             }
 
                             productDetails[i].appendChild(discountAmountElement);
 
                             subtotal += unitPrice;
                         }
+                        
+                        if (response.discountType === 'Percent') {
+                            // Calculate discount subtotal
+                            var discountSubtotal = subtotal * response.discountAmount; // Updated calculation
+                            discountSubtotalAmount.textContent = '$ ' + discountSubtotal.toFixed(2);
 
-                        // Calculate discount subtotal
-                        var discountSubtotal = subtotal * response.discountAmount; // Updated calculation
-                        discountSubtotalAmount.textContent = '$ ' + discountSubtotal.toFixed(2);
+                            // Show the discount subtotal section
+                            discountSubtotalSection.style.display = 'block';
 
-                        // Show the discount subtotal section
-                        discountSubtotalSection.style.display = 'block';
+                            // Calculate and display the after-discount subtotal
+                            var afterDiscountSubtotal = subtotal - discountSubtotal;
+                            var afterDiscountSubtotalAmount = document.getElementById('afterDiscountSubtotalAmount');
+                            afterDiscountSubtotalAmount.textContent = '$ ' + afterDiscountSubtotal.toFixed(2);
 
-                        // Calculate and display the after-discount subtotal
-                        var afterDiscountSubtotal = subtotal - discountSubtotal;
-                        var afterDiscountSubtotalAmount = document.getElementById('afterDiscountSubtotalAmount');
-                        afterDiscountSubtotalAmount.textContent = '$ ' + afterDiscountSubtotal.toFixed(2);
+                            // Show the after-discount subtotal section
+                            var afterDiscountSubtotalSection = document.getElementById('afterDiscountSubtotal');
+                            afterDiscountSubtotalSection.style.display = 'block';
+                        }
+                        else if (response.discountType === 'Number') {
+                            /// if discountAmount is > than the subtotal
+                            if (response.discountAmount > subtotal) {
+                                discountMessage.textContent = 'Discount Amount is greater than subtotal, please add more items to your cart to use the coupon code.';
+                                afterDiscountSubtotal = subtotal;
+                                // Calculate and display the tax
+                                var taxRate = 0.12; // Assuming a tax rate of 10%
+                                var tax = afterDiscountSubtotal * taxRate;
+                                var taxAmount = document.getElementById('taxesAmount');
+                                taxAmount.textContent = '$ ' + tax.toFixed(2);
 
-                        // Show the after-discount subtotal section
-                        var afterDiscountSubtotalSection = document.getElementById('afterDiscountSubtotal');
-                        afterDiscountSubtotalSection.style.display = 'block';
+                                // Calculate and display the grand total
+                                var grandTotal = afterDiscountSubtotal + tax;
+                                var grandTotalAmount = document.getElementById('grandTotalAmount');
+                                grandTotalAmount.textContent = '$ ' + grandTotal.toFixed(2);
+                            }
+                            else {
+                                // Calculate discount subtotal
+                                var discountSubtotal = response.discountAmount; // Updated calculation
+                                discountSubtotalAmount.textContent = '$ ' + discountSubtotal.toFixed(2);
+
+                                // Show the discount subtotal section
+                                discountSubtotalSection.style.display = 'block';
+
+                                // Calculate and display the after-discount subtotal
+                                var afterDiscountSubtotal = subtotal - discountSubtotal;
+                                var afterDiscountSubtotalAmount = document.getElementById('afterDiscountSubtotalAmount');
+                                afterDiscountSubtotalAmount.textContent = '$ ' + afterDiscountSubtotal.toFixed(2);
+
+                                // Show the after-discount subtotal section
+                                var afterDiscountSubtotalSection = document.getElementById('afterDiscountSubtotal');
+                                afterDiscountSubtotalSection.style.display = 'block';
+                            }
+
+                        }
+                        
 
                         // Calculate and display the tax
-                        var taxRate = 0.1; // Assuming a tax rate of 10%
+                        var taxRate = 0.12; // Assuming a tax rate of 10%
                         var tax = afterDiscountSubtotal * taxRate;
                         var taxAmount = document.getElementById('taxesAmount');
                         taxAmount.textContent = '$ ' + tax.toFixed(2);
