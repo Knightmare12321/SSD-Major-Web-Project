@@ -55,10 +55,8 @@ body {
     height: 30px;
 }
 
-
-
 .footer-container {
-    bottom: 0;
+    /*bottom: 0;*/
     width: 100%;
     background-color: #FDF0F0;
     font-size: 0.7rem;
@@ -79,25 +77,26 @@ body {
 /*Home Controller Stylings*/
 .carousel {
     box-sizing: border-box;
-    width: 100vw;
-    height: 100%;
-    position: relative;
-    transform: translateX(calc(var(--page-padding) * -1));
     margin: 0;
+    overflow: hidden;
+    /*height calculated using banner aspect ratio*/
+    height: calc(100vw / 7 * 4);
+    width: 100vw;
+    transform: translate(calc(var(--page-padding) * -1),calc(var(--page-padding) * -1));
 }
 
-    .carousel img {
-        width: 100%;
-        position: absolute;
-        top: 0;
-        left: 0;
-        opacity: 0;
-        transition: opacity 0.5s ease-in-out;
-    }
+.carousel img {
+    width: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out;
+}
 
-        .carousel img.active {
-            opacity: 1;
-        }
+    .carousel img.active {
+        opacity: 1;
+    }
 
 /*SHOP CONTROLLER*/
 /*Index Page*/
@@ -560,13 +559,6 @@ button {
 }
 
 /*Admin AdminOrder*/
-#order-data{
-    table
-    {
-        table-layout: auto;
-    }
-}
-
 #admin-orders {
     display: none;
 }
