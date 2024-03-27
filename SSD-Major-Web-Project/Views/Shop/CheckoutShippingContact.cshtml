@@ -93,7 +93,8 @@
                     }
                     
       
-                    <input type="hidden" name="ShoppingCart.CouponCode" value="@Model.ShoppingCart.CouponCode" />
+                    <input name="ShoppingCart.CouponCode" value="@Model.ShoppingCart.CouponCode" hidden/>
+                    <input name="Order.Discount" value="@Model.Order.Discount" hidden />
               
      
                     <button type="submit" class="btn btn-primary">Proceed to Payment Page</button>

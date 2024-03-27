@@ -209,7 +209,7 @@ namespace SSD_Major_Web_Project.Controllers
 
             checkoutVM.ShoppingCart = shoppingcartVM;    
             checkoutVM.ShoppingCart.ShoppingCartItems = shoppingcartVM.ShoppingCartItems;
-
+ 
             
             return View("CheckoutShippingContact", checkoutVM);
         }
@@ -415,6 +415,15 @@ namespace SSD_Major_Web_Project.Controllers
                 // add order details
                 string errorAddOrderDetails = _shopRepo.AddOrderDetails(checkoutVM, orderId);
 
+                // get coupon code from database by order id
+                string discountCode = _context.Orders.FirstOrDefault(o => o.PkOrderId == orderId).FkDiscountCode;
+
+                // get the discount code from the database
+                Discount discountCodeDb = _context.Discounts.FirstOrDefault(d => d.PkDiscountCode == discountCode);
+                checkoutVM.Order.Discount = discountCodeDb;
+                checkoutVM.ShoppingCart.CouponCode = discountCodeDb.PkDiscountCode;
+
+
 
                 //string message;
                 if (errorAddOrder == "")
@@ -470,9 +479,22 @@ namespace SSD_Major_Web_Project.Controllers
                     // Update the order with the transaction ID
                     order.TransactionId = orderConfirmationVM.CheckoutVM.TransactionId;
 
+        
+
                     _context.SaveChanges();
                     checkoutVM.Order.OrderStatus = "Paid";
-             
+                    // update the discount code to inactive, if only the discounttype is "Number"
+                    Discount discount = _context.Discounts.FirstOrDefault(d => d.PkDiscountCode == order.FkDiscountCode);
+
+                    // if any order with order status  paid and the discount type is "Number" and coupon code is equal to the discount code
+                    // update the discount code to inactive
+                    if (order.FkOrderStatusId == 2 && discount.DiscountType == "Number" && order.FkDiscountCode == discount.PkDiscountCode)
+                    {
+                        discount.IsActive = false;
+                    }
+                    _context.SaveChanges();
+
+
                 }
 
                 // use transactionId to find the order from the database
@@ -492,8 +514,7 @@ namespace SSD_Major_Web_Project.Controllers
                         shoppingCartItem.Quantity = orderDetail.Quantity;
                         shoppingCartItemList.Add(shoppingCartItem);
                     }
-                    // print out shoppingCartItemList
-                    Console.WriteLine(shoppingCartItemList);
+
 
                     checkoutVM.ShoppingCart.ShoppingCartItems = shoppingCartItemList;
 
