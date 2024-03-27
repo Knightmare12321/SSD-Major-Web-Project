@@ -31,9 +31,15 @@
                             <img src="data:image/jpeg;base64,
                                     @Convert.ToBase64String(item.ImageByteArray)"
                                  alt="item.Name"
+                            class="product-thumbnail" />
+                        }
+                        else
+                        {
+                            <img src="~/images/No-Image-Placeholder.png"
+                                 alt="item.Name"
                                  class="product-thumbnail" />
-                            }
-                        </div>
+                        }
+                    </div>
                     </a>
                     <div class="product-info">
                         <div class="product-name"> @Html.DisplayFor(modelItem => item.Name) </div>

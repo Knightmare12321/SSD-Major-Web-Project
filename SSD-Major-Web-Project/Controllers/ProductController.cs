@@ -24,8 +24,7 @@ namespace SSD_Major_Web_Project.Controllers
             _context = context;
         }
 
-        // TODO: Filter non active item!
-        //       Search bar!
+        // TODO: Search bar!
         //       Fix load more button so it disappears as first opportunity.
         public IActionResult Index(int? page)
         {
@@ -36,7 +35,7 @@ namespace SSD_Major_Web_Project.Controllers
 
         public IActionResult LoadMoreItems(int page)
         {
-            var itemsPerPage = 12; // Number of items to load per page
+            int itemsPerPage = 12; // Number of items to load per page
             var results = GetDataWithPages(page, itemsPerPage);
             if (results.Any()) return PartialView("_ProductItemsPartial", results);
             return Content("");
