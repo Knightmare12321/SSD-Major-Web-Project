@@ -9,6 +9,7 @@ using SSD_Major_Web_Project.ViewModels;
 using System;
 using System.Diagnostics.Metrics;
 using System.Net;
+using System.Text;
 
 namespace SSD_Major_Web_Project.Controllers
 {
@@ -18,12 +19,15 @@ namespace SSD_Major_Web_Project.Controllers
         private readonly ILogger<ShopController> _logger;
         private readonly NovaDbContext _context;
         private readonly IEmailService _emailService;
+        private readonly IConfiguration _configuration;
 
-        public ShopController(ILogger<ShopController> logger, NovaDbContext context, IEmailService emailService)
+
+        public ShopController(ILogger<ShopController> logger, NovaDbContext context, IEmailService emailService, IConfiguration configuration)
         {
             _logger = logger;
             _context = context;
             _emailService = emailService;
+            _configuration = configuration;
         }
 
         public IActionResult Index()
@@ -37,7 +41,7 @@ namespace SSD_Major_Web_Project.Controllers
                 //Catch error, if shopping cart is empty(no products found), show a message"
                 if (IDList.Count() == 0)
                 {
-                    return View("Error", new ErrorViewModel { RequestId = "Your shopping cart is empty. Shop now"});
+                    return View("Error", new ErrorViewModel { RequestId = "Your shopping cart is empty. Shop now" });
                 }
                 else
                 {
@@ -70,7 +74,7 @@ namespace SSD_Major_Web_Project.Controllers
 
                     shoppingcartVM.ShoppingCartItems = shoppingcartItems;
 
-//////////////////////Logic for validate if customer logged in
+                    //////////////////////Logic for validate if customer logged in
                     //if (User.Identity.IsAuthenticated)
                     //{
                     //    shoppingcart.UserId = User.Identity.Name;
@@ -96,8 +100,27 @@ namespace SSD_Major_Web_Project.Controllers
             }
         }
 
+        public JsonResult CheckDiscountCode(string couponCode)
+        {
+            AdminRepo adminRepo = new AdminRepo(_context);
+            DiscountVM discount = adminRepo.GetDiscountById(couponCode);
+            DateOnly today = DateOnly.FromDateTime(DateTime.Now);
+            if (discount != null && discount.IsActive == true && today <= discount.EndDate && today >= discount.StartDate)
+            {
+                return Json(new
+                {
+                    success = true,
+                    discountValue = discount.DiscountValue,
+                    discountType = discount.DiscountType
+                });
+            }
 
-
+            return Json(new
+            {
+                success = false,
+                error = "The discount code is invalid or expired"
+            });
+        }
 
         // POST: ShopController/Checkout
         // Click on the "Proceed to checkout" button at shopping cart page, pass the shopping cart data to Checkout view
@@ -162,23 +185,75 @@ namespace SSD_Major_Web_Project.Controllers
             shoppingcartVM.Currency = "CAD";
             shoppingcartVM.CurrencySymbol = "$";
 
-            checkoutVM.ShoppingCart = shoppingcartVM;    
+            checkoutVM.ShoppingCart = shoppingcartVM;
             checkoutVM.ShoppingCart.ShoppingCartItems = shoppingcartVM.ShoppingCartItems;
 
-            
+
             return View("CheckoutShippingContact", checkoutVM);
         }
+
+        //public async Task<string> GetPaypalAccessToken()
+        //{
+        //    string clientId = _configuration["PaypalClientId"];
+        //    string secret = _configuration["PaypalClientSecret"];
+
+        //    using (HttpClient client = new HttpClient())
+        //    {
+        //        //client.BaseAddress = new Uri("https://api-m.sandbox.paypal.com");
+
+        //        // Set the credentials for Basic Authentication
+        //        string auth = Convert.ToBase64String(Encoding.UTF8.GetBytes($"{clientId}:{secret}"));
+        //        client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", auth);
+
+        //        // Prepare the request body
+        //        var requestData = new StringContent("grant_type=client_credentials", Encoding.UTF8, "application/x-www-form-urlencoded");
+
+        //        try
+        //        {
+        //            // Make the POST request to obtain the access token
+        //            HttpResponseMessage response = await client.PostAsync("https://api-m.sandbox.paypal.com/v1/oauth2/token", requestData);
+
+        //            if (response.IsSuccessStatusCode)
+        //            {
+        //                // Read the response content as a JSON string
+        //                string json = await response.Content.ReadAsStringAsync();
+
+        //                // Print the JSON data (which contains the access token)
+        //                Console.WriteLine(json);
+        //                return json;
+        //            }
+        //            else
+        //            {
+        //                return "Error: An unexpected error occured while retrieving the access token";
+        //            }
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            return "Error: An unexpected error occured while retrieving the access token";
+
+        //        }
+        //    }
+        //}
+
+        //public bool validatePayment(int orderId, string transactionId, double amount)
+        //{
+        //    return true;
+        //}
+
 
         // POST: ShopController/Checkout
         // Click on the "Proceed to Payment Page" button at Enter Shipping Contact page, create order to db at this stage
         [HttpPost]
-        public IActionResult ProceedPayment(CheckoutVM checkoutVM)
+        public async Task<IActionResult> ProceedPaymentAsync(CheckoutVM checkoutVM, [FromQuery] string transactionId, [FromQuery] double amount)
         {
+
+            //string accessToken = await GetPaypalAccessToken();
+            //bool isValidPayment = validatePayment(checkoutVM.Order.OrderId, transactionId, amount);
             ShopRepo _shopRepo = new ShopRepo(_context);
 
             // Assign Discount Code if available from the shopping cart razor view
             Discount discount = new Discount();
-            
+
             discount.PkDiscountCode = checkoutVM.ShoppingCart.CouponCode != null ? checkoutVM.ShoppingCart.CouponCode : null;
 
             Contact contact = new Contact();
@@ -192,8 +267,8 @@ namespace SSD_Major_Web_Project.Controllers
             contact.Country = checkoutVM.Order.Contact.Country;
             contact.PostalCode = checkoutVM.Order.Contact.PostalCode;
             contact.PhoneNumber = checkoutVM.Order.Contact.PhoneNumber;
-        
-            
+
+
 
             // Assign the value from the Razor view to the Order property of the CheckoutVM object
             OrderVM orderVM = new OrderVM
@@ -209,7 +284,7 @@ namespace SSD_Major_Web_Project.Controllers
             //Order Detail
             OrderDetail orderDetail = new OrderDetail();
 
-           
+
             ShoppingCartItem shoppingCartItem = new ShoppingCartItem();
 
 
@@ -218,7 +293,7 @@ namespace SSD_Major_Web_Project.Controllers
             {
                 orderDetail.FkSkuId = product.SkuId;
                 orderDetail.Quantity = product.Quantity;
-           
+
 
                 // Retrieve the unit price from the database based on the SKU ID
                 var productSku = _context.ProductSkus.FirstOrDefault(p => p.PkSkuId == product.SkuId);
@@ -234,7 +309,7 @@ namespace SSD_Major_Web_Project.Controllers
                     orderDetail.UnitPrice = 0;
                 }
 
-              
+
             }
 
 
@@ -279,7 +354,7 @@ namespace SSD_Major_Web_Project.Controllers
 
             // initialize the list of order details
             List<OrderDetail> listOfOrderDetails = new List<OrderDetail>();
-            
+
             // for each product in the shopping cart, create an order detail and add it to the list of order details
             foreach (var product in checkoutVM.ShoppingCart.ShoppingCartItems)
             {
@@ -308,7 +383,7 @@ namespace SSD_Major_Web_Project.Controllers
 
             checkoutVM.Order.OrderDetails = listOfOrderDetails;
 
- 
+
             OrderConfirmationVM orderConfirmationVM = new OrderConfirmationVM();
 
             orderConfirmationVM.CheckoutVM = checkoutVM;
@@ -339,7 +414,7 @@ namespace SSD_Major_Web_Project.Controllers
 
             // add order details
             string errorAddOrderDetails = _shopRepo.AddOrderDetails(checkoutVM, orderId);
-            
+
 
             //string message;
             if (errorAddOrder == "")
@@ -363,7 +438,7 @@ namespace SSD_Major_Web_Project.Controllers
         // GET: ShopController//orderConfirmation
         public IActionResult OrderConfirmation(string transactionId, decimal amount, string payerName, CheckoutVM checkoutVM)
         {
-            
+
 
             // Create an instance of OrderConfirmationVM and populate its properties
             var orderConfirmation = new OrderConfirmationVM
@@ -400,7 +475,7 @@ namespace SSD_Major_Web_Project.Controllers
 
                     _context.SaveChanges();
                     checkoutVM.Order.OrderStatus = "Paid";
-             
+
                 }
 
                 // use transactionId to find the order from the database
@@ -428,22 +503,22 @@ namespace SSD_Major_Web_Project.Controllers
                 }
 
                 //
-    
+
 
                 // Populate the orderconfirmationVM with the necessary data
 
-                return View("OrderConfirmation",orderConfirmationVM);
-                    }
-                    else
-                    {
-                        // Return the Checkout page with the checkout view model again
-                        return View("CheckoutShippingContact", checkoutVM);
-                    }
-                
-              
+                return View("OrderConfirmation", orderConfirmationVM);
+            }
+            else
+            {
+                // Return the Checkout page with the checkout view model again
+                return View("CheckoutShippingContact", checkoutVM);
             }
 
-       
+
+        }
+
+
 
     }
 }

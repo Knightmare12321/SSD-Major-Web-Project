@@ -62,13 +62,13 @@ namespace SSD_Major_Web_Project.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateProduct(CreateProductVM vm)
+        public async Task<IActionResult> CreateProduct(CreateProductVM inputVM)
         {
+            UtilityRepo utilityRepo = new UtilityRepo();
+            CreateProductVM vm = utilityRepo.FilterHarmfulInput(inputVM);
+
             if (ModelState.IsValid)
             {
-                //UtilityRepo utilityRepo = new UtilityRepo();
-                //CreateProductVM vm = utilityRepo.FilterHarmfulInput(inputVM);
-
 
                 //make sure all images are in appropriate file types
                 string contentType;
@@ -102,7 +102,7 @@ namespace SSD_Major_Web_Project.Controllers
 
             }
             ViewData["Create"] = true;
-            return View(vm);
+            return View(inputVM);
         }
 
         public IActionResult EditProduct(int productId)

@@ -128,8 +128,8 @@
                     $("#message").html(data.error)
                 }
             },
-            error: function (request, status, error) {
-                $("#message").html(error)
+            error: function () {
+                $("#message").html("An unexpected error occured")
             }
         });
     }

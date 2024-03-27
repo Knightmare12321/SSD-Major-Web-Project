@@ -483,7 +483,7 @@ namespace SSD_Major_Web_Project.Repositories
         public DiscountVM GetDiscountById(string discountCode)
         {
             return _context.Discounts
-                .Where(d => d.PkDiscountCode == discountCode)
+                .Where(d => d.PkDiscountCode.ToLower() == discountCode.ToLower())
                 .Select(d => new DiscountVM
                 {
                     PkDiscountCode = d.PkDiscountCode,

@@ -100,6 +100,24 @@ body {
         }
 
 /*SHOP CONTROLLER*/
+/*Index Page*/
+.shoppingcart-container #discount-section{
+    display:none;
+}
+.shoppingcart-container #discount-section.show {
+    display: block;
+}
+.shoppingcart-container #discount {
+    color: red;
+}
+.shoppingcart-container .price-update {
+    text-decoration: line-through;
+    color: red;
+}
+.shoppingcart-container .price-update span {
+    text-decoration:none;
+    color: red;
+}
 
 .shoppingcart-container h2 {
     font-size: calc(var(--shopping-cart-font-size) * 1.5);
@@ -177,6 +195,7 @@ body {
 .shopping-cart-total-submit button {
     margin-bottom: 10px;
 }
+
 
 /*USER CONTROLLER*/
 /*Sign in Page*/

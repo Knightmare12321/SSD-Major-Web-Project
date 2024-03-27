@@ -42,8 +42,21 @@
 
         <div class="col-md-6 col-md-offset-2">
             <div class="coupon-code">
-                <input type="text" placeholder="Coupon Code" />
-                <input type="submit" value="Apply Code" class="btn btn-primary" />
+                <input id="coupon-code" type="text" placeholder="Coupon Code" />
+                <button value="Apply Code" class="btn btn-primary" onClick="applyCouponCode()">Apply Discount</button>
+            </div>
+            <p id="message"></p>
+            <div id="discount-section">
+                <div>
+                    <dt class="col-sm-3">
+                        Discount
+                    </dt>
+                </div>
+                <div>
+                    <dd class="col-sm-10">
+                        <p id="discount"></p>
+                    </dd>
+                </div>
             </div>
             <div class="shopping-cart-total-form">
                 <div>
@@ -53,7 +66,9 @@
                 </div>
                 <div>
                     <dd class="col-sm-10">
-                        <p>@Html.DisplayFor(model => model.Subtotal)</p>
+@*                         <p id="subtotal">@Html.DisplayFor(model => model.Subtotal)</p>
+ *@                        <p id="subtotal">100</p>
+
                     </dd>
                 </div>
              </div>
@@ -70,7 +85,7 @@
                         <p>@Html.DisplayNameFor(model => model.Taxes)</p>
                     </dt>
                     <dd class="col-sm-10">
-                        <p>@Html.DisplayFor(model => model.Taxes)</p>
+                        <p id="tax">@Html.DisplayFor(model => model.Taxes)</p>
                     </dd>
              </div>
              <div class="shopping-cart-total-form">
@@ -78,7 +93,7 @@
                         <p>@Html.DisplayNameFor(model => model.GrandTotal)</p>
                     </dt>
                     <dd class="col-sm-10">
-                        <p>@Html.DisplayFor(model => model.GrandTotal)</p>
+                        <p id="grandtotal">@Html.DisplayFor(model => model.GrandTotal)</p>
                     </dd>
              </div>
    
@@ -91,10 +106,10 @@
                       
 
                     }
-                    <input type="hidden" name="Subtotal" value="@Model.Subtotal" />
+                    <input id="msubtotal" type="hidden" name="Subtotal" value="@Model.Subtotal" />
                     <input type="hidden" name="ShippingFee" value="@Model.ShippingFee" />
-                    <input type="hidden" name="Taxes" value="@Model.Taxes" />
-                    <input type="hidden" name="GrandTotal" value="@Model.GrandTotal" />  
+                    <input id="mtax" type="hidden" name="Taxes" value="@Model.Taxes" />
+                    <input id="mgrand-total" type="hidden" name="GrandTotal" value="@Model.GrandTotal" />  
 
                     <button type="submit" class="btn btn-primary">Proceed to Checkout</button>
                 </form>
@@ -103,3 +118,37 @@
     </div>
 </div>
 
+<script>
+    const applyCouponCode = () => {
+        const couponCode = $("#coupon-code").val();
+        const url = '@Url.Action("CheckDiscountCode", "Shop")';
+        $.ajax({
+            type: "GET",
+            url: url,
+            data: { "couponCode": couponCode},
+            success: function (data) {
+                console.log(data)
+                if (data.success) {
+                    const subtotal = parseFloat($("#msubtotal").html());
+
+                    //update order amounts and show discount on screen
+                    $("#discount-section").addClass('show');
+                    if (data.discountType.toLowerCase() == "percent") {
+                        $("#discount").html(`${data.discountValue}% off`);
+                        //update subtotal
+                        var newSubtotal = (subtotal * (1-data.discountValue/100.0)).toFixed(2);
+                        $("#subtotal").html(subtotal + ` <span>${newSubtotal}</span>`).addClass('price-update')
+                    } else {
+                        $("#discount").html(`$${data.discountValue} off`);
+                    }
+
+                }else{
+                    $("#message").html(data.error);
+                }
+            },
+            error: function () {
+                $("#message").html("An unexpected error occured")
+            }
+        });
+    }
+</script>

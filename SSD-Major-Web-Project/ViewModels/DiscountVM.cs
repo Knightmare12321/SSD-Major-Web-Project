@@ -50,6 +50,7 @@ namespace SSD_Major_Web_Project.ViewModels
         }
     }
 
+    //Data validations
     public class DateNotBeforeAttribute : ValidationAttribute
     {
         private readonly string _startDatePropertyName;
