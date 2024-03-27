@@ -25,6 +25,7 @@ namespace SSD_Major_Web_Project.Controllers
         }
 
         // TODO: Filter non active item!
+        //       Fix load more button so it disappears as first opportunity.
         public IActionResult Index(int? page)
         {
             int itemsPerPage = 12; // Number of items appear at the beginning
@@ -55,7 +56,6 @@ namespace SSD_Major_Web_Project.Controllers
             return results;
         }
 
-        // TODO: Remove unnecessary lines after ajax implementation completes
         public IActionResult Details(int id)
         {
             ProductRepo products = new ProductRepo(_context);
