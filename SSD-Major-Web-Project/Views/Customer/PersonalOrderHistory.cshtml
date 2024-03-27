@@ -1,50 +1,154 @@
-﻿@model SSD_Major_Web_Project.ViewModels.CustomerVM
+﻿@model List<SSD_Major_Web_Project.ViewModels.PersonalOrderHistoryVM>
 
 @{
-    ViewData["Title"] = "Customer Home Page";
+    ViewData["Title"] = "Order History";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div>
 
-    <h2>Order History</h2>
-    <p>Past Orders</p>
-
-    <div id="customer-order-history-grid">
-        <div class="d-flex flex-row">
-            <p class="mx-2">Order Date</p>
-            <p class="mx-2">Order Id</p>
-@*             <p class="mx-2">SKU Id</p> *@
-        </div>
-        @foreach (var order in Model.Orders)
-        {
-            <div class="d-flex flex-row">
-                <p class="mx-2">@order.OrderDate</p>
-                <p class="mx-2">@order.PkOrderId</p>
-                @if (Model.OrdersDetails.ContainsKey(order.PkOrderId))
-                {
-                    var orderDetails = Model.OrdersDetails[order.PkOrderId];
-@*                     foreach (var item in orderDetails)
-                    {
-                        <p class="mx-2">@item.FkSkuId</p>
-                    }
- *@                    // Retrieve product pictures for this order
-                    var productPictures = Model.ProductPictures[order.PkOrderId];
-                    <p class="mx-2">
-                        @if (productPictures != null && productPictures.Count > 0)
+<h2>Order History</h2>
+<div id="personal-order-section" class="active">
+    <div id="personal-order-history">
+        @{
+            foreach (var order in Model)
+            {
+                 <div class="order-item">
+                    <div class="short-detail">
+                        <span>Order Date: @order.OrderDate</span>
+                        <span>Order #@order.OrderId</span>
+                        <span>Status:@order.OrderStatus</span>
+                        <span class="detail-btn" onClick="getOrderDetail(@Json.Serialize(@order).ToString())">See Detail</span>
+                    </div>
+                    <div class="img-list">
+                        @foreach (var orderDetail in order.OrderDetails)
                         {
-                            <div style="width: 100px; height: 100px; overflow: hidden; position: relative;">
-                                <img src="data:image/jpeg;base64,@Convert.ToBase64String(productPictures.FirstOrDefault().Data)" alt="Product Image" class="product-image" style="width: 100%; height: auto; position: absolute; top: 0; left: 50%; transform: translateX(-50%);" />
-                            </div>
+                            var images = orderDetail.FkSku.FkProduct.Images;
+                            if (images.Count > 0)
+                            {
+                                <div class="img-container">
+                                    <img src="data:image;base64,@Convert.ToBase64String(@images.FirstOrDefault().Data)" />
+                                </div>
+                            }
                         }
-                    </p>
-
-                }
-            </div>
+                    </div>
+                </div>
+            }
         }
     </div>
-
     <a href="@Url.Action("Index", "Customer")" class="btn btn-primary">Back</a>
-
 </div>
 
+@* Order detail Page Component*@
+<div id="personal-order-detail">
+    <button class="btn btn-secondary" onclick="closeOrderDetail()">Back</button>
+    <table>
+        <tr>
+            <td>Order Id:</td>
+            <td class="id"></td>
+        </tr>
+        <tr>
+            <td>Order Date: </td>
+            <td class="date"></td>
+        </tr>
+        <tr>
+            <td>Status: </td>
+            <td class="status"></td>
+        </tr>
+        <tr>
+            <td>Ship Date: </td>
+            <td class="ship-date"></td>
+        </tr>
+        <tr>
+            <td>Tracking: </td>
+            <td class="tracking"></td>
+        </tr>
+        <tr>
+            <td>Recipient: </td>
+            <td class="buyer"></td>
+        </tr>
+        <tr>
+            <td>Contact Number: </td>
+            <td class="contact-number"></td>
+        </tr>
+        <tr>
+            <td>Shipping Address: </td>
+            <td class="address"></td>
+        </tr>
+        <tr>
+            <td> Note: </td>
+            <td class="buyernote"></td>
+        </tr>
+        <tr>
+            <td>Items: </td>
+            <td class="items"></td>
+        </tr>
+        <tr>
+            <td>Discount: </td>
+            <td class="discount"></td>
+        </tr>
+        <tr>
+            <td>Total: </td>
+            <td class="total-price"></td>
+        </tr>
+    </table>
+</div>
+
+
+<script>
+    const getOrderDetail = (order) => {
+        $("#personal-order-detail td.id").html(order.orderId);
+        $("#personal-order-detail td.date").html(order.orderDate);
+        $("#personal-order-detail td.status").html(order.orderStatus);
+        $("#personal-order-detail td.ship-date").html(order.shipDate??"Not Available");
+        $("#personal-order-detail td.tracking").html(order.tracking??"Not Available");
+        const contact = order.contact;
+        $("#personal-order-detail td.buyer").html(contact.firstName + " " + contact.lastName);
+        $("#personal-order-detail td.contact-number").html(contact.phoneNumber);
+        $("#personal-order-detail td.address").html(`${contact.address}</br>${contact.address2? contact.address2+"</br>":""}
+                                                    ${contact.city}, ${contact.province} ${contact.postalCode}
+                                                    </br>${contact.country}`);
+        $("#personal-order-detail td.buyernote").html(order.buyerNote);
+        $("#personal-order-detail td.id").html(order.orderrId);
+        const items = order.orderDetails.map(od => {
+            const images = od.fkSku.fkProduct.images;
+            let listingImage = "";
+            if (images.length > 0) {
+                listingImage = `<img src=data:image;base64,${images[0].data} alt=${images[0].altText}/>`
+            }
+            return `<div class='item'>
+
+                                            <div class="img-container">
+                                            ${listingImage}
+                                            </div>
+                                            <div class="item-detail">
+                                                <div>${od.fkSku.fkProduct.name}</div>
+                                                <div>
+                                                    <span>Size: ${od.fkSku.size}</span>
+                                                        <span>Price: $${od.unitPrice}</span>
+                                                    <span>Quantity: ${od.quantity}</span>
+                                                </div>
+                                            </div>
+                                        </div>`;
+
+        });
+        $("#personal-order-detail td.items").html(items);
+        //also show discount detail if there is one
+        if (order.discount) {
+            const discountValue = order.discount.discountValue;
+            const discountContent = order.discount.discountType.toLowerCase() == 'percent' ? `${discountValue}% off` : `-$${discountValue}`
+            $("#personal-order-detail td.discount").html(`${order.discount.pkDiscountCode} (${discountContent})`)
+        } else {
+            $("#personal-order-detail td.discount").html("None");
+        }
+        $("#personal-order-detail td.total-price").html(`$${order.orderTotal}`);
+
+        //toggle on detail page
+        $("#personal-order-section").removeClass("active");
+        $("#personal-order-detail").addClass("active");
+    }
+
+    const closeOrderDetail = () => {
+        $("#personal-order-detail").removeClass("active");
+        $("#personal-order-section").addClass("active");
+    }
+</script>

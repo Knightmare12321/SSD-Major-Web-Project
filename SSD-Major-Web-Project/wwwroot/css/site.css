@@ -238,15 +238,109 @@ button {
 }
 }
 
+/*Customer PersonalOrderHistory Styling*/
+#personal-order-section {
+    display: none;
+}
+#personal-order-section.active {
+    display: block;
+}
+#personal-order-history {
+    display: block;
+}
+#personal-order-history .order-item {
+    display: block;
+    border: solid 1px black;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 10px;
+    padding: 10px;
+    max-width: 800px;
+}
+#personal-order-history .short-detail {
+    display: inline-block;
+    vertical-align: middle;
+    margin-right:10px;
+}
+#personal-order-history .short-detail span{
+    display:block;
+}
+#personal-order-history .detail-btn {
+    color: blue;
+    cursor: pointer;
+}
+#personal-order-history .img-list {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+#personal-order-history .img-container {
+    width: 100px;
+    height: 100px;
+    overflow: hidden;
+}
+#personal-order-history img {
+width: 100%;
+object-fit: cover;
+}
+
+#personal-order-detail {
+display: none;
+}
+
+#personal-order-detail.active {
+display: block;
+}
+
+#personal-order-detail tr td:first-child {
+width: 150px;
+vertical-align: top;
+}
+
+#personal-order-detail .items {
+display: flex;
+flex-direction: column;
+}
+
+#personal-order-detail .item {
+width: fit-content;
+padding: 10px 0;
+}
+
+#personal-order-detail .item span:not(last-child) {
+margin-right: 30px;
+}
+
+#personal-order-detail .item:not(:last-child) {
+border-bottom: solid 1px black;
+}
+
+#personal-order-detail .img-container {
+display: inline-block;
+width: 50px;
+height: 50px;
+overflow: hidden;
+margin-right: 10px;
+vertical-align: middle;
+}
+
+#personal-order-detail .item-detail {
+display: inline-block;
+vertical-align: middle;
+}
+
+#personal-order-detail img {
+width: 100%;
+object-fit: cover;
+}
+
 /*ADMIN CONTROLLER*/
 /*Admin Index Styling*/
 #admin-index-grid {
     display: grid;
     grid-template-columns: 1fr;
     padding-left: 20px;
-    .grid-item
-
-{
+    .grid-item{
     min-width: 250px;
 }
 
@@ -560,6 +654,24 @@ button {
 }
 #admin-order-detail .item:not(:last-child) {
     border-bottom: solid 1px black;
+}
+#admin-order-detail .img-container {
+    display: inline-block;
+    width: 50px;
+    height: 50px;
+    overflow: hidden;
+    margin-right: 10px;
+    vertical-align: middle;
+}
+#admin-order-detail .item-detail{
+    display:inline-block;
+    vertical-align:middle;
+
+}
+
+#admin-order-detail img {
+    width: 100%;
+    object-fit: cover;
 }
 
 /*AllDiscounts Page*/

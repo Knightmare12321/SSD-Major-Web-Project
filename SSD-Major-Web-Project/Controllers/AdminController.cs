@@ -66,6 +66,10 @@ namespace SSD_Major_Web_Project.Controllers
         {
             if (ModelState.IsValid)
             {
+                //UtilityRepo utilityRepo = new UtilityRepo();
+                //CreateProductVM vm = utilityRepo.FilterHarmfulInput(inputVM);
+
+
                 //make sure all images are in appropriate file types
                 string contentType;
                 foreach (IFormFile image in vm.Images)
@@ -337,8 +341,7 @@ namespace SSD_Major_Web_Project.Controllers
                     FirstName = "Nova",
                     LastName = "Clothing",
                     Subject = $"Nova Fashion Order (#{orderId}) Cancelled",
-                    //Email = order.Contact.Customers.ToList()[0].PkCustomerId,
-                    Email = "afang324@gmail.com",
+                    Email = order.Contact.Customers.ToList()[0].PkCustomerId,
                     Body = $"Your order (#{order.OrderId}) of {order.OrderTotal:C} has been " +
                     $"refunded. The credit has been added to the discount code {discountCode} and will " +
                     $"expire on {endDate}."
@@ -346,12 +349,12 @@ namespace SSD_Major_Web_Project.Controllers
 
                 return Json(new { success = true, error = "" });
             }
-            else if (order.OrderStatus.ToLower() == "refunded")
+            else if (order.OrderStatus.ToLower() == "cancelled")
             {
                 return Json(new
                 {
                     success = false,
-                    error = "Order was already refunded so no action was taken"
+                    error = "Order was already cancelled so no action was taken"
                 });
             }
             else

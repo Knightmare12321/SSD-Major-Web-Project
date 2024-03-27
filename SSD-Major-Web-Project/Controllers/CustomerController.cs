@@ -36,67 +36,10 @@ namespace SSD_Major_Web_Project.Controllers
         // GET: CustomerController/PersonalOrderHistory
         public ActionResult PersonalOrderHistory()
         {
-   
-            // Get customerVM
-            CustomerVM customerVM = new CustomerVM();
-
-            // Get current user by contactId
             var userId = User.Identity.Name;
-
-            // Get the user details
-            var customer = _context.Customers.Find(userId);
-            customerVM.Customer = customer;
-
-            // Get the user's orders
-            var orders = _context.Orders.Where(o => o.FkCustomerId == userId).ToList();
-            customerVM.Orders = orders;
-
-            // Retrieve order details for each order
-            Dictionary<int, List<OrderDetail>> orderDetailsDictionary = new Dictionary<int, List<OrderDetail>>();
-
-            foreach (var order in orders)
-            {
-                var orderDetails = _context.OrderDetails.Where(od => od.FkOrderId == order.PkOrderId).ToList();
-                orderDetailsDictionary.Add(order.PkOrderId, orderDetails);
-            }
-
-            customerVM.OrdersDetails = orderDetailsDictionary;
-
-
-            // Retrieve product pictures for each order
-            Dictionary<int, List<Image>> productPictures = new Dictionary<int, List<Image>>();
-
-            foreach (var order in orders)
-            {
-                var orderDetails = orderDetailsDictionary[order.PkOrderId];
-                var images = new List<Image>();
-
-                foreach (var orderDetail in orderDetails)
-                {
-                    var skuId = orderDetail.FkSkuId;
-                    var productSku = _context.ProductSkus.FirstOrDefault(s => s.PkSkuId == skuId);
-
-                    if (productSku != null)
-                    {
-                        var productId = productSku.FkProductId;
-                        var product = _context.Products.Find(productId);
-
-                        if (product != null && product.ProductSkus != null && product.ProductSkus.Count > 0)
-                        {
-                            var productSkuWithImages = product.ProductSkus.FirstOrDefault(s => s.PkSkuId == skuId);
-                            // only one image per product sku
-                            var imagesForProduct = _context.Images.Where(i => i.FkProductId == productId).ToList();
-
-                            images.AddRange(imagesForProduct);
-                        }
-                    }
-                }
-
-                productPictures.Add(order.PkOrderId, images);
-            }
-
-            customerVM.ProductPictures = productPictures;
-            return View(customerVM);
+            CustomerRepo customerRepo = new CustomerRepo(_context);
+            List<PersonalOrderHistoryVM> vm = customerRepo.GetOrders("lotte.tfins@gmail.com").ToList();
+            return View(vm);
         }
 
         // GET: CustomerController/OrderTracking
@@ -129,12 +72,12 @@ namespace SSD_Major_Web_Project.Controllers
                 var order = _context.Orders.FirstOrDefault(o => o.Tracking == trackingNumber);
 
 
-                
+
                 if (order == null || order.FkCustomerId != userId)
                 {
                     string message = "Tracking Number not valid";
                     ViewBag.Message = message;
-                    return View("OrderTracking",customerVM);
+                    return View("OrderTracking", customerVM);
                 }
                 else
                 {
@@ -166,14 +109,14 @@ namespace SSD_Major_Web_Project.Controllers
                     trackiingResultVM.DeliveryDate = deliveryDate.HasValue ? deliveryDate.Value.ToString("dd/MM/yyyy") : "Not Delivered Yet";
 
 
-                       return View("TrackingResult", trackiingResultVM);
+                    return View("TrackingResult", trackiingResultVM);
                 }
             }
             catch
             {
                 return View();
             }
-            
+
         }
 
         // display order tracking result
@@ -234,7 +177,7 @@ namespace SSD_Major_Web_Project.Controllers
             customerVM.DefaultContact = _context.Contacts.Find(customer.FkContactId);
 
             return View(customerVM);
-    
+
         }
 
         // POST: CustomerController/Profile

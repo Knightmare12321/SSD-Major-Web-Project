@@ -62,10 +62,22 @@ namespace SSD_Major_Web_Project.Repositories
                 .Where(u => u.FkProductId == pkProductId)
                 .Select(u => u.Data)
                 .ToList();
-            IEnumerable<String> sizes = _context.ProductSkus
+            var sizeWithIDs = _context.ProductSkus
                 .Where(u => u.FkProductId == pkProductId)
-                .Select(x => x.Size)
+                .Select(x => new
+                {
+                    skuID = x.PkSkuId,
+                    size = x.Size
+                })
                 .Distinct();
+            //IEnumerable<String> sizes = _context.ProductSkus
+            //    .Where(u => u.FkProductId == pkProductId)
+            //    .Select(x => x.Size)
+            //    .Distinct();
+            List<int> skuIDs = new List<int>();
+            foreach (var item in sizeWithIDs) { skuIDs.Add(item.skuID); }
+            List<String> sizes = new List<String>();
+            foreach (var item in sizeWithIDs) { sizes.Add(item.size); }
             ProductDetailVM productDetailVM = new ProductDetailVM
             {
                 PkProductId = pkProductId,
@@ -74,7 +86,8 @@ namespace SSD_Major_Web_Project.Repositories
                 Description = productVM.Description,
                 IsActive = productVM.IsActive,
                 ImageByteArray = imageByteArray,
-                Sizes = sizes.ToList(),
+                ProductSkuIDs = skuIDs,
+                Sizes = sizes,
                 Reviews = reviews
             };
             return productDetailVM;
