@@ -26,6 +26,23 @@ namespace SSD_Major_Web_Project.Repositories
             return products;
         }
 
+        public IEnumerable<ProductVM> GetAllActive()
+        {
+            IEnumerable<ProductVM> products =
+            _context.Products
+            .Where(u => u.IsActive)
+            .Select(u => new ProductVM
+            {
+                PkProductId = u.PkProductId,
+                Name = u.Name,
+                Price = u.Price,
+                Description = u.Description,
+                IsActive = u.IsActive,
+                ImageByteArray = u.Images.FirstOrDefault().Data
+            });
+            return products;
+        }
+
         // This method is for testing only. Delete this after project completes!
         public Product? GetById(int pkProductId)
         {

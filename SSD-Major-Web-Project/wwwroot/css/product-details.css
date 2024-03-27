@@ -1,4 +1,8 @@
-﻿.product-details-container {
+﻿.message-prompt {
+    color: red;
+}
+
+.product-details-container {
     display: flex;
     justify-content: space-around;
     width: 100vw
@@ -6,19 +10,21 @@
 
 .product-details-left {
     width: 300px;
-    height: 400px;
-    border: 1px solid black;
 }
 
 .product-image-container {
     object-fit: fill;
-    height: 100%;
-    width: 100%;
+    width: 300px;
+    height: 400px;
 }
 
 .product-image {
     height:inherit;
     width:inherit;
+}
+
+.sub-image {
+    margin-top: 5px;
 }
 
 .product-details-right {

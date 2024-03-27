@@ -185,13 +185,14 @@ namespace SSD_Major_Web_Project.Controllers
 
             // geting shopping cart data from cookies
             var shoppingCartCookie = Request.Cookies["cart"];
-            List<int> IDList = JsonConvert.DeserializeObject<List<int>>(shoppingCartCookie);
+            List<ShoppingCartItem> ShoppingCartItemCookiesList = JsonConvert.DeserializeObject<List<ShoppingCartItem>>(shoppingCartCookie);
 
             List<ShoppingCartItem> shoppingcartItems = new List<ShoppingCartItem>();
-            for (int i = 0; i < IDList.Count; i++)
-            {
-                shoppingcartItems.Add(new ShoppingCartItem { SkuId = IDList[i], Quantity = 1 });
-            }
+            shoppingcartItems = ShoppingCartItemCookiesList;
+            //for (int i = 0; i < IDList.Count; i++)
+            //{
+            //    shoppingcartItems.Add(new ShoppingCartItem { SkuId = IDList[i], Quantity = 1 });
+            //}
 
             //productIdsFromDb list contains the ProductId values associated with the provided SkuIds from the database.
             List<int> skuIds = shoppingcartItems.Select(s => s.SkuId).ToList();
@@ -327,10 +328,6 @@ namespace SSD_Major_Web_Project.Controllers
             //Order Detail
             OrderDetail orderDetail = new OrderDetail();
 
-
-            ShoppingCartItem shoppingCartItem = new ShoppingCartItem();
-
-
             // for loop to get the product details from the shopping cart
             foreach (var product in checkoutVM.ShoppingCart.ShoppingCartItems)
             {
@@ -368,13 +365,15 @@ namespace SSD_Major_Web_Project.Controllers
 
             // Pass the shopping cart products data to Checkout razer view
             var shoppingCartCookie = Request.Cookies["cart"];
-            List<int> IDList = JsonConvert.DeserializeObject<List<int>>(shoppingCartCookie);
+            List<ShoppingCartItem> ShoppingCartItemCookiesList = JsonConvert.DeserializeObject<List<ShoppingCartItem>>(shoppingCartCookie);
 
             List<ShoppingCartItem> shoppingcartItems = new List<ShoppingCartItem>();
-            for (int i = 0; i < IDList.Count; i++)
-            {
-                shoppingcartItems.Add(new ShoppingCartItem { SkuId = IDList[i], Quantity = 1 });
-            }
+            //for (int i = 0; i < ShoppingCartItem.Count; i++)
+            //{
+            //    shoppingcartItems.Add(new ShoppingCartItem { SkuId = IDList[i], Quantity = 1 });
+            //}
+
+            shoppingcartItems = ShoppingCartItemCookiesList;
 
             //productIdsFromDb list contains the ProductId values associated with the provided SkuIds from the database.
             List<int> skuIds = shoppingcartItems.Select(s => s.SkuId).ToList();
@@ -415,38 +414,8 @@ namespace SSD_Major_Web_Project.Controllers
                 {
                     // Assign the retrieved unit price to orderDetail.UnitPrice
                     singleOrderDetailRecord.UnitPrice = productSku.FkProduct?.Price ?? 0;
-                    subtotal += singleOrderDetailRecord.UnitPrice * singleOrderDetailRecord.Quantity;
-
-
-
-
-                    //if (discountCode != null)
-                    //{
-                    //    // get the discount type of the code
-                    //    string discountType = discountCode.DiscountType;
-                    //    // get the discount value of the code, use switch case to calculate the discount
-                    //    switch (discountType)
-                    //    {
-                    //        case "Percentage":
-                    //           subtotal = subtotal - (subtotal * discountCode.DiscountValue );
-                    //            break;
-                    //        case "Number":
-                    //            subtotal = subtotal - discountCode.DiscountValue;
-                    //            break;
-                    //        default:
-                    //            break;
-                    //    }
-
-                    //    orderVM.OrderTotal = _shopRepo.CalculateGrandTotal(subtotal, _shopRepo.CalculateTaxes(subtotal), 0);
-
-                    //}
-                    //else
-                    //{
-                    //    orderVM.OrderTotal = _shopRepo.CalculateGrandTotal(subtotal, _shopRepo.CalculateTaxes(subtotal), 0);
-                    //}
-
-
-
+                     subtotal += singleOrderDetailRecord.UnitPrice * singleOrderDetailRecord.Quantity;           
+              
                 }
                 else
                 {
@@ -488,10 +457,15 @@ namespace SSD_Major_Web_Project.Controllers
             // get coupon code from database by order id
             string discountCode = _context.Orders.FirstOrDefault(o => o.PkOrderId == orderId).FkDiscountCode;
 
-            // get the discount code from the database
+
             Discount discountCodeDb = _context.Discounts.FirstOrDefault(d => d.PkDiscountCode == discountCode);
-            checkoutVM.Order.Discount = discountCodeDb;
-            checkoutVM.ShoppingCart.CouponCode = discountCodeDb.PkDiscountCode;
+
+            if (discountCodeDb != null)
+            {
+                checkoutVM.Order.Discount = discountCodeDb;
+                checkoutVM.ShoppingCart.CouponCode = discountCodeDb.PkDiscountCode;
+            }
+
 
 
             //string message;
