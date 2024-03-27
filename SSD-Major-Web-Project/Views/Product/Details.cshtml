@@ -69,10 +69,16 @@
                 @for (int i = 0; i < Model.Sizes.Count; i++)
                 {
                     if (i == 0) {
-                        <button class="size-button active" onclick="changeSize(event)">@Model.Sizes[i]</button>
+                        <button class="size-button active" 
+                                onclick="changeSize(event)" 
+                                data-skuid="@Model.ProductSkuIDs[i]">@Model.Sizes[i]
+                        </button>
                     }
                     else {
-                        <button class="size-button" onclick="changeSize(event)">@Model.Sizes[i]</button>
+                        <button class="size-button" 
+                                onclick="changeSize(event)" 
+                                data-skuid="@Model.ProductSkuIDs[i]">@Model.Sizes[i]
+                        </button>
                     }
                 }
             </div>
@@ -84,22 +90,21 @@
                 $@Html.DisplayFor(model => model.Price)
             </div>
             <div class="product-buttons-container">
-                <button id="product-add-to-bag">
-                    @{
-                        if (!ViewBag.isCart)
-                            @Html.ActionLink("ADD TO BAG", "Details", new { id = Model.PkProductId, category = "cart", method = "add" })
-                        else
-                            @Html.ActionLink("REMOVE FROM BAG", "Details", new { id = Model.PkProductId, category = "cart", method = "remove" })
-                    }
+                <button id="product-add-to-bag" onclick="clickCart(event)">
+                    ADD TO BAG
                 </button>
-                <button id="product-add-to-wishlist">
-                    @{
-                        if (!ViewBag.isFav)
-                            @Html.ActionLink("ADD TO FAVORITE", "Details", new { id = Model.PkProductId, category = "favorite", method = "add" })
-                        else
-                            @Html.ActionLink("REMOVE FROM FAVORITE", "Details", new { id = Model.PkProductId, category = "favorite", method = "remove" })
-                    }
-                </button>
+                @if (!ViewBag.isFav)
+                {
+                    <button id="product-add-to-wishlist" onclick="clickFavorite(this)">
+                        ADD TO FAVORITE
+                    </button>
+                }
+                else
+                {
+                    <button id="product-add-to-wishlist" onclick="clickFavorite(this)">
+                        REMOVE FROM FAVORITE
+                    </button>
+                }
             </div>
         </div>
         <div class="reviews-container">
@@ -155,6 +160,58 @@
     function changeSize(e) {
         $(".size-button").removeClass("active");
         e.currentTarget.className += " active";
+    }
+    function clickCart(event) {
+        var skuid = $(".size-button.active").data("skuid");
+        const url = '@Url.Action("AddToCart", "Product")';
+        $.ajax({
+            type: "POST",
+            url: url,
+            data: { "id": skuid, "quantity": 1 },
+            success: function (response) {
+                if (response.success) {
+                    // TODO: Fix the reponse if needed
+                    console.log("Add to cart successful")
+                    console.log(response.cart)
+                }
+            }
+        });
+    }
+    function clickFavorite(event) {
+        console.log("calling clickFavorite");
+        var id = @Model.PkProductId;
+        console.log("pkid:" + id);
+        var text = $(event).text().trim();
+        console.log(text);
+        if (text == "ADD TO FAVORITE") {
+            console.log("add favorite now");
+            const url = '@Url.Action("AddToFavorite", "Product")';
+            $.ajax({
+                type: "POST",
+                url: url,
+                data: { "id": id },
+                success: function (response) {
+                    if (response.success) {
+                        $("#product-add-to-wishlist").text("REMOVE FROM FAVORITE")
+                    }
+                }
+            });
+        }
+        else if (text == "REMOVE FROM FAVORITE") {
+            console.log("remove favorite now");
+            const url = '@Url.Action("RemoveFromFavorite", "Product")';
+            $.ajax({
+                type: "POST",
+                url: url,
+                data: { "id": id },
+                success: function (response) {
+                    if (response.success) {
+                        $("#product-add-to-wishlist").text("ADD TO FAVORITE")
+                    }
+                }
+            });
+        }
+        
     }
 </script>
 

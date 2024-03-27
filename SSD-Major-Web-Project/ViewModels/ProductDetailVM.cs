@@ -1,4 +1,5 @@
-﻿using SSD_Major_Web_Project.Models;
+﻿using EllipticCurve.Utils;
+using SSD_Major_Web_Project.Models;
 using System.ComponentModel.DataAnnotations;
 
 namespace SSD_Major_Web_Project.ViewModels
@@ -23,7 +24,9 @@ namespace SSD_Major_Web_Project.ViewModels
 
         public List<byte[]>? ImageByteArray { get; set; }
 
-        public List<String>? Sizes { get; set; }
+        public List<int> ProductSkuIDs { get; set; }
+
+        public List<System.String>? Sizes { get; set; }
 
         public List<ReviewVM> Reviews { get; set; }
     }
