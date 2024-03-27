@@ -94,6 +94,7 @@ namespace SSD_Major_Web_Project.Controllers
         {
             ReviewRepo reviewRepo = new ReviewRepo(_context);
 
+            reviewVM.FkCustomerId = User.Identity.Name;
             string addMessage = reviewRepo.Add(reviewVM);
 
             return RedirectToAction("Index", new { message = addMessage });

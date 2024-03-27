@@ -16,7 +16,7 @@
                 <label asp-for="FkCustomerId" class="control-label"></label>
                 <select asp-for="FkCustomerId" class ="form-control" value="@Model.FkCustomerId">@Model.FkCustomerId</select>
             </div> *@
-            <input name="FkCustomerId" value="@Model.FkCustomerId"   />
+            <input name="FkCustomerId" value="@Model.FkCustomerId"  hidden />
 
             <div class="form-group" style="display: none;">
                 <label asp-for="PkReviewDate" class="control-label"></label>
