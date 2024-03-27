@@ -250,7 +250,9 @@
                             // Handle discount type 'Number'
                             if (response.discountAmount > subtotal) {
                                 discountMessage.textContent = 'Discount Amount is greater than subtotal, please add more items to your cart to use the coupon code.';
-                                isValid = false;
+                                var couponCodeValue = document.getElementById('couponCodeInput').value;
+                                document.getElementById('couponCodeHiddenInput').value = ""; // Reset the coupon code value
+                            
                                 discountMessage.style.color = 'red';
                                 afterDiscountSubtotal = subtotal;
                                 // Calculate and display the tax
@@ -295,6 +297,8 @@
                     } else {
                         discountMessage.textContent = 'Invalid code.';
                         discountMessage.style.color = 'red';
+                        var couponCodeValue = document.getElementById('couponCodeInput').value;
+                        document.getElementById('couponCodeHiddenInput').value = "";
                     }
                     discountMessage.style.display = 'inline';
             
