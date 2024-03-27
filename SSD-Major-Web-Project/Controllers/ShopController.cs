@@ -32,11 +32,11 @@ namespace SSD_Major_Web_Project.Controllers
             try
             {
                 var shoppingCartCookie = Request.Cookies["cart"];
-                List<int> IDList = JsonConvert.DeserializeObject<List<int>>(shoppingCartCookie);
+                List<ShoppingCartItem> ShoppingCartItemCookiesList = JsonConvert.DeserializeObject<List<ShoppingCartItem>>(shoppingCartCookie);
 
 
                 //Catch error, if shopping cart is empty(no products found), show a message"
-                if (IDList.Count() == 0)
+                if (ShoppingCartItemCookiesList.Count() == 0)
                 {
                     return View("Error", new ErrorViewModel { RequestId = "Your shopping cart is empty. Shop now"});
                 }
@@ -45,10 +45,12 @@ namespace SSD_Major_Web_Project.Controllers
 
 
                     List<ShoppingCartItem> shoppingcartItems = new List<ShoppingCartItem>();
-                    for (int i = 0; i < IDList.Count; i++)
-                    {
-                        shoppingcartItems.Add(new ShoppingCartItem { SkuId = IDList[i], Quantity = 1 });
-                    }
+                    //for (int i = 0; i < ShoppingCartItem.Count; i++)
+                    //{
+                    //    shoppingcartItems.Add(new ShoppingCartItem { SkuId = IDList[i], Quantity = 1 });
+                    //}
+
+                    shoppingcartItems = ShoppingCartItemCookiesList;
 
                     //productIdsFromDb list contains the ProductId values associated with the provided SkuIds from the database.
                     List<int> skuIds = shoppingcartItems.Select(s => s.SkuId).ToList();
