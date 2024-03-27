@@ -47,6 +47,7 @@
                 <input id="couponCodeInput" name="CouponCode" placeholder="Enter Coupon code" value="" />
                 <input id="applyCodeButton" type="button" value="Apply Code" class="btn btn-primary" />
                 <span id="discountMessage" style="display:none;"></span>
+                    <p id="discountAmount" style="display:none;"></p> 
             </div>
 
             <div class="shopping-cart-total-form">
@@ -124,10 +125,29 @@
                 if (xhr.status === 200) {
                     var response = JSON.parse(xhr.responseText);
                     var discountMessage = document.getElementById('discountMessage');
+
                     if (response.isActive) {
                         discountMessage.textContent = 'Discount applied!';
+
+                        // Loop through each product and display the discount amount
+                        var productDetails = document.getElementsByClassName('product-details');
+                        for (var i = 0; i < productDetails.length; i++) {
+                            var unitPriceElement = productDetails[i].querySelector('p:nth-of-type(2)');
+                            var unitPrice = parseFloat(unitPriceElement.textContent);
+                            var discountAmountElement = document.createElement('p');
+
+                            if (response.discountType === 'Percent') {
+                                var calculatedDiscount = (unitPrice * response.discountAmount).toFixed(2);
+                                discountAmountElement.textContent = '(' + (response.discountAmount * 100) + '% off) Discount Amount: $ ' + calculatedDiscount;
+                            } else {
+                                var calculatedDiscount = response.discountAmount.toFixed(2);
+                                discountAmountElement.textContent = 'Discount Amount: $ ' + calculatedDiscount;
+                            }
+
+                            productDetails[i].appendChild(discountAmountElement);
+                        }
                     } else {
-                        discountMessage.textContent = 'Invalid Discount Code.';
+                        discountMessage.textContent = 'Invalid code.';
                     }
                     discountMessage.style.display = 'inline';
                 }

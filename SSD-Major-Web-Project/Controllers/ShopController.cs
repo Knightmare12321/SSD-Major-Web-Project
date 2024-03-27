@@ -103,14 +103,27 @@ namespace SSD_Major_Web_Project.Controllers
             // Perform the database query
             var discount = _context.Discounts.FirstOrDefault(d => d.PkDiscountCode == couponCode);
             bool isActive = false;
+            string discountType = string.Empty;
+            decimal discountAmount = 0;
 
             if (discount != null)
             {
                 isActive = discount.IsActive;
+                discountType = discount.DiscountType;
+                if (discountType == "Percent")
+                {
+                    discountAmount = discount.DiscountValue / 100;
+                }
+                else if (discountType == "Number")
+                {
+
+                    discountAmount = discount.DiscountValue;
+                }
+
             }
 
             // Return the result as JSON
-            return Json(new { isActive });
+            return Json(new { isActive, discountType, discountAmount });
         }
 
 
