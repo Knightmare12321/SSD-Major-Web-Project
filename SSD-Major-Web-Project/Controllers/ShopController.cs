@@ -9,6 +9,7 @@ using SSD_Major_Web_Project.ViewModels;
 using System;
 using System.Diagnostics.Metrics;
 using System.Net;
+using System.Numerics;
 
 namespace SSD_Major_Web_Project.Controllers
 {
@@ -70,11 +71,8 @@ namespace SSD_Major_Web_Project.Controllers
 
                     shoppingcartVM.ShoppingCartItems = shoppingcartItems;
 
-//////////////////////Logic for validate if customer logged in
-                    //if (User.Identity.IsAuthenticated)
-                    //{
-                    //    shoppingcart.UserId = User.Identity.Name;
-                    //}
+                
+                   
 
                     //Use repo helper function to calculate subtotal, taxes, shipping fee and grand total
                     ShopRepo _shopRepo = new ShopRepo(_context);
@@ -82,6 +80,8 @@ namespace SSD_Major_Web_Project.Controllers
                     shoppingcartVM.ShippingFee = 0; // shipping fee is 0 for now
                     shoppingcartVM.Taxes = _shopRepo.CalculateTaxes(shoppingcartVM.Subtotal);
                     shoppingcartVM.GrandTotal = _shopRepo.CalculateGrandTotal(shoppingcartVM.Subtotal, shoppingcartVM.Taxes, shoppingcartVM.ShippingFee);
+                    
+         
 
                     //////////////////////Assign shopping cart products to shopping cart view model
                     shoppingcartVM.Products = products;
@@ -97,6 +97,45 @@ namespace SSD_Major_Web_Project.Controllers
         }
 
 
+        [HttpPost]
+        public IActionResult CheckCouponCode(string couponCode)
+        {
+            var discount = _context.Discounts.FirstOrDefault(d => d.PkDiscountCode == couponCode);
+            bool isActive = false;
+            string discountType = string.Empty;
+            decimal discountAmount = 0;
+            bool isValid = false;
+
+            if (discount != null)
+            {
+                isActive = discount.IsActive;
+                discountType = discount.DiscountType;
+                DateOnly startDate = discount.StartDate;
+                DateOnly endDate = discount.EndDate;
+
+                DateOnly currentDate = DateOnly.FromDateTime(DateTime.Now);
+
+                if (currentDate >= startDate && currentDate <= endDate)
+                {
+                    isValid = true;
+                    if (discountType == "Percent")
+                    {
+                        discountAmount = discount.DiscountValue / 100;
+                    }
+                    else if (discountType == "Number")
+                    {
+                        discountAmount = discount.DiscountValue;
+                    }
+                }
+            }
+
+            if (!isActive || !isValid)
+            {
+                discount = null;
+            }
+
+            return Json(new { discount, isActive, discountType, discountAmount, isValid});
+        }
 
 
         // POST: ShopController/Checkout
@@ -107,9 +146,15 @@ namespace SSD_Major_Web_Project.Controllers
             //Create a new Checkout view model object
             CheckoutVM checkoutVM = new CheckoutVM();
 
+            checkoutVM.ShoppingCart = shoppingcartVM;
+
             // Assign Discount Code if available from the shopping cart razor view
+            checkoutVM.ShoppingCart.CouponCode = shoppingcartVM.CouponCode != null ? shoppingcartVM.CouponCode : null;
+
             Discount discount = new Discount();
-            discount.PkDiscountCode = shoppingcartVM.CouponCode != null ? shoppingcartVM.CouponCode : null;
+            // assignem the discount obect with the id
+            discount = _context.Discounts.FirstOrDefault(d => d.PkDiscountCode == checkoutVM.ShoppingCart.CouponCode);
+
 
             Contact contact = new Contact();
 
@@ -164,7 +209,7 @@ namespace SSD_Major_Web_Project.Controllers
 
             checkoutVM.ShoppingCart = shoppingcartVM;    
             checkoutVM.ShoppingCart.ShoppingCartItems = shoppingcartVM.ShoppingCartItems;
-
+ 
             
             return View("CheckoutShippingContact", checkoutVM);
         }
@@ -178,8 +223,12 @@ namespace SSD_Major_Web_Project.Controllers
 
             // Assign Discount Code if available from the shopping cart razor view
             Discount discount = new Discount();
-            
+
+      
+
             discount.PkDiscountCode = checkoutVM.ShoppingCart.CouponCode != null ? checkoutVM.ShoppingCart.CouponCode : null;
+
+            checkoutVM.Order.Discount = discount;
 
             Contact contact = new Contact();
 
@@ -192,8 +241,8 @@ namespace SSD_Major_Web_Project.Controllers
             contact.Country = checkoutVM.Order.Contact.Country;
             contact.PostalCode = checkoutVM.Order.Contact.PostalCode;
             contact.PhoneNumber = checkoutVM.Order.Contact.PhoneNumber;
-        
-            
+
+
 
             // Assign the value from the Razor view to the Order property of the CheckoutVM object
             OrderVM orderVM = new OrderVM
@@ -209,7 +258,7 @@ namespace SSD_Major_Web_Project.Controllers
             //Order Detail
             OrderDetail orderDetail = new OrderDetail();
 
-           
+
             ShoppingCartItem shoppingCartItem = new ShoppingCartItem();
 
 
@@ -218,7 +267,7 @@ namespace SSD_Major_Web_Project.Controllers
             {
                 orderDetail.FkSkuId = product.SkuId;
                 orderDetail.Quantity = product.Quantity;
-           
+
 
                 // Retrieve the unit price from the database based on the SKU ID
                 var productSku = _context.ProductSkus.FirstOrDefault(p => p.PkSkuId == product.SkuId);
@@ -234,9 +283,8 @@ namespace SSD_Major_Web_Project.Controllers
                     orderDetail.UnitPrice = 0;
                 }
 
-              
-            }
 
+            }
 
             // userId is nullable
             if (User.Identity.IsAuthenticated)
@@ -279,7 +327,7 @@ namespace SSD_Major_Web_Project.Controllers
 
             // initialize the list of order details
             List<OrderDetail> listOfOrderDetails = new List<OrderDetail>();
-            
+
             // for each product in the shopping cart, create an order detail and add it to the list of order details
             foreach (var product in checkoutVM.ShoppingCart.ShoppingCartItems)
             {
@@ -289,12 +337,47 @@ namespace SSD_Major_Web_Project.Controllers
                     Quantity = product.Quantity
                 };
 
+
+                orderVM.OrderTotal = 0.0M;
+                var subtotal = 0.0M;
                 // Retrieve the unit price from the database based on the SKU ID
                 var productSku = _context.ProductSkus.FirstOrDefault(p => p.PkSkuId == product.SkuId);
                 if (productSku != null)
                 {
                     // Assign the retrieved unit price to orderDetail.UnitPrice
                     singleOrderDetailRecord.UnitPrice = productSku.FkProduct?.Price ?? 0;
+                     subtotal += singleOrderDetailRecord.UnitPrice * singleOrderDetailRecord.Quantity;
+
+              
+
+ 
+                    //if (discountCode != null)
+                    //{
+                    //    // get the discount type of the code
+                    //    string discountType = discountCode.DiscountType;
+                    //    // get the discount value of the code, use switch case to calculate the discount
+                    //    switch (discountType)
+                    //    {
+                    //        case "Percentage":
+                    //           subtotal = subtotal - (subtotal * discountCode.DiscountValue );
+                    //            break;
+                    //        case "Number":
+                    //            subtotal = subtotal - discountCode.DiscountValue;
+                    //            break;
+                    //        default:
+                    //            break;
+                    //    }
+
+                    //    orderVM.OrderTotal = _shopRepo.CalculateGrandTotal(subtotal, _shopRepo.CalculateTaxes(subtotal), 0);
+
+                    //}
+                    //else
+                    //{
+                    //    orderVM.OrderTotal = _shopRepo.CalculateGrandTotal(subtotal, _shopRepo.CalculateTaxes(subtotal), 0);
+                    //}
+                 
+
+              
                 }
                 else
                 {
@@ -308,54 +391,52 @@ namespace SSD_Major_Web_Project.Controllers
 
             checkoutVM.Order.OrderDetails = listOfOrderDetails;
 
- 
+
+
             OrderConfirmationVM orderConfirmationVM = new OrderConfirmationVM();
 
             orderConfirmationVM.CheckoutVM = checkoutVM;
 
-
-            // Add the contact to the database
-            var addContactResult = _shopRepo.AddContact(checkoutVM.Order.Contact);
-            string message = addContactResult.Item1;
-            int contactId = addContactResult.Item2;
-
-            //if (string.IsNullOrEmpty(message))
-            //{
-            //    ViewBag.Message = $"Contact ID - {contactId} has been added.";
-            //    return View("CheckoutShippingContact", checkoutVM);
-            //}
-            //else
-            //{
-            //    ViewBag.Message = $"Error creating new contact: {message}";
-            //    return View("CheckoutShippingContact", checkoutVM);
-            //}
+    
+        
+         
+                // Add the contact to the database
+                var addContactResult = _shopRepo.AddContact(checkoutVM.Order.Contact);
+                string message = addContactResult.Item1;
+                int contactId = addContactResult.Item2;
 
 
-            Tuple<string, int> result = _shopRepo.AddOrder(checkoutVM, contactId);
+                Tuple<string, int> result = _shopRepo.AddOrder(checkoutVM, contactId);
 
-            string errorAddOrder = result.Item1;
-            int orderId = result.Item2;
-            checkoutVM.Order.OrderId = orderId;
+                string errorAddOrder = result.Item1;
+                int orderId = result.Item2;
+                checkoutVM.Order.OrderId = orderId;
 
-            // add order details
-            string errorAddOrderDetails = _shopRepo.AddOrderDetails(checkoutVM, orderId);
-            
+                // add order details
+                string errorAddOrderDetails = _shopRepo.AddOrderDetails(checkoutVM, orderId);
 
-            //string message;
-            if (errorAddOrder == "")
-            {
-                message = $"Order {checkoutVM.Order.OrderId} has been placed, you will get an email confirmation shortly once prcoeed payment.";
-                return View("Paypal", checkoutVM);
-            }
-            else
-            {
-                message = $"Error placing new order: {checkoutVM.Order.OrderId}";
-                ViewBag.Message = message;
-                return View("CheckoutShippingContact", checkoutVM);
-            }
+                // get coupon code from database by order id
+                string discountCode = _context.Orders.FirstOrDefault(o => o.PkOrderId == orderId).FkDiscountCode;
 
-            //// Add the Order Detail to the database
-            //var addOrderDetailResult = _shopRepo.AddOrderDetails(checkoutVM.Order.OrderDetails);
+                // get the discount code from the database
+                Discount discountCodeDb = _context.Discounts.FirstOrDefault(d => d.PkDiscountCode == discountCode);
+                checkoutVM.Order.Discount = discountCodeDb;
+                checkoutVM.ShoppingCart.CouponCode = discountCodeDb.PkDiscountCode;
+
+
+
+                //string message;
+                if (errorAddOrder == "")
+                {
+                    message = $"Order {checkoutVM.Order.OrderId} has been placed, you will get an email confirmation shortly once prcoeed payment.";
+                    return View("Paypal", checkoutVM);
+                }
+                else
+                {
+                    message = $"Error placing new order. Please try again.";
+                    ViewBag.Message = message;
+                    return View("CheckoutShippingContact", checkoutVM);
+                }
 
 
         }
@@ -398,9 +479,22 @@ namespace SSD_Major_Web_Project.Controllers
                     // Update the order with the transaction ID
                     order.TransactionId = orderConfirmationVM.CheckoutVM.TransactionId;
 
+        
+
                     _context.SaveChanges();
                     checkoutVM.Order.OrderStatus = "Paid";
-             
+                    // update the discount code to inactive, if only the discounttype is "Number"
+                    Discount discount = _context.Discounts.FirstOrDefault(d => d.PkDiscountCode == order.FkDiscountCode);
+
+                    // if any order with order status  paid and the discount type is "Number" and coupon code is equal to the discount code
+                    // update the discount code to inactive
+                    if (order.FkOrderStatusId == 2 && discount.DiscountType == "Number" && order.FkDiscountCode == discount.PkDiscountCode)
+                    {
+                        discount.IsActive = false;
+                    }
+                    _context.SaveChanges();
+
+
                 }
 
                 // use transactionId to find the order from the database
@@ -420,8 +514,7 @@ namespace SSD_Major_Web_Project.Controllers
                         shoppingCartItem.Quantity = orderDetail.Quantity;
                         shoppingCartItemList.Add(shoppingCartItem);
                     }
-                    // print out shoppingCartItemList
-                    Console.WriteLine(shoppingCartItemList);
+
 
                     checkoutVM.ShoppingCart.ShoppingCartItems = shoppingCartItemList;
 

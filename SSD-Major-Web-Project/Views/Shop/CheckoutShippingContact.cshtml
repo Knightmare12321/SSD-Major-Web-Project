@@ -43,24 +43,44 @@
 
 
                     <div>
+
                     <input type="text" name="Order.Contact.FirstName" placeholder="First Name" />
+                     <span asp-validation-for="Order.Contact.FirstName"></span>
+
                     <input type="text" name="Order.Contact.LastName" placeholder="Last Name" />
+                     <span asp-validation-for="Order.Contact.LastName"></span>
+
                     </div>
                     <div>
                     <input type="text" name="Order.Contact.Address" placeholder="Address" />
+                     <span asp-validation-for="Order.Contact.Address"></span>
                     <input type="text" name="Order.Contact.Address2" placeholder="Address 2" />
                     </div>
                     <div>
                     <input type="text" name="Order.Contact.City" placeholder="City" />
+                        <span asp-validation-for="Order.Contact.City"></span>
                     <input type="text" name="Order.Contact.Province" placeholder="Province" />
+                        <span asp-validation-for="Order.Contact.Province"></span>
                     </div>
                     <div>
                     <input type="text" name="Order.Contact.PostalCode" placeholder="Postal Code" />
+                        <span asp-validation-for="Order.Contact.PostalCode"></span>
                     <input type="text" name="Order.Contact.Country" placeholder="Country" />
+                        <span asp-validation-for="Order.Contact.Country"></span>
                     </div>
                     <div>
-                    <input type="text" name="DeliveryContactEmail" placeholder="Email" />
+
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <input type="text" name="DeliveryContactEmail" value="@User.Identity.Name" readonly="readonly" style="background-color: #f0f0f0; cursor: not-allowed;" />
+                        }
+                        else
+                        {
+                            <input type="text" name="DeliveryContactEmail" placeholder="Email" />
+                            <span asp-validation-for="DeliveryContactEmail"></span>
+                        }
                     <input type="text" name="Order.Contact.PhoneNumber" placeholder="Phone Number" />
+                    <span asp-validation-for="Order.Contact.PhoneNumber"></span>
                     </div>
                     <div>
                     <input type="text" name="Order.Contact.BuyerNote" placeholder="Special Instructions" />
@@ -72,6 +92,10 @@
                         <input name="ShoppingCart.ShoppingCartItems.Quanity" value="item.quanity" hidden/>
                     }
                     
+      
+                    <input name="ShoppingCart.CouponCode" value="@Model.ShoppingCart.CouponCode" hidden/>
+                    <input name="Order.Discount" value="@Model.Order.Discount" hidden />
+              
      
                     <button type="submit" class="btn btn-primary">Proceed to Payment Page</button>
                 </form>
