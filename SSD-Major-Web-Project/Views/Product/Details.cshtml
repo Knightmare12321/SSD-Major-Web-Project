@@ -82,9 +82,6 @@
                     }
                 }
             </div>
-            <div class="hidden">
-                @Model.ProductSkuIDs[0]
-            </div>
             <hr />
             <div class="product-description">
                 @Html.DisplayFor(model => model.Description)
@@ -96,9 +93,18 @@
                 <button id="product-add-to-bag" onclick="clickCart(event)">
                     ADD TO BAG
                 </button>
-                <button id="product-add-to-wishlist" onclick="clickFavorite(this)">
-                    ADD TO FAVORITE
-                </button>
+                @if (!ViewBag.isFav)
+                {
+                    <button id="product-add-to-wishlist" onclick="clickFavorite(this)">
+                        ADD TO FAVORITE
+                    </button>
+                }
+                else
+                {
+                    <button id="product-add-to-wishlist" onclick="clickFavorite(this)">
+                        REMOVE FROM FAVORITE
+                    </button>
+                }
             </div>
         </div>
         <div class="reviews-container">
@@ -154,20 +160,6 @@
     function changeSize(e) {
         $(".size-button").removeClass("active");
         e.currentTarget.className += " active";
-        const url = "@Url.Action("UpdateCartButtonStatus", "Product")";
-        var skuid = $(".size-button.active").data("skuid");
-        $.ajax({
-            url: url,
-            type: "POST",
-            data: { "skuid": skuid },
-            success: function (response) {
-                if (response.inCart) {
-                    $("#product-add-to-bag").text('REMOVE FROM BAG');
-                } else {
-                    $("#product-add-to-bag").text('ADD TO BAG');
-                }
-            }
-        });
     }
     function clickCart(event) {
         var skuid = $(".size-button.active").data("skuid");
@@ -175,9 +167,13 @@
         $.ajax({
             type: "POST",
             url: url,
-            data: { id: id },
-            success: function (data) {
-                $("product-add-to-bag").html
+            data: { "id": skuid, "quantity": 1 },
+            success: function (response) {
+                if (response.success) {
+                    // TODO: Fix the reponse if needed
+                    console.log("Add to cart successful")
+                    console.log(response.cart)
+                }
             }
         });
     }
@@ -186,6 +182,7 @@
         var id = @Model.PkProductId;
         console.log("pkid:" + id);
         var text = $(event).text().trim();
+        console.log(text);
         if (text == "ADD TO FAVORITE") {
             console.log("add favorite now");
             const url = '@Url.Action("AddToFavorite", "Product")';

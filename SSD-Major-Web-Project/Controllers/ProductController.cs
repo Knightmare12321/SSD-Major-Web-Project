@@ -37,49 +37,13 @@ namespace SSD_Major_Web_Project.Controllers
             ReviewRepo reviewRepo = new ReviewRepo(_context);
             List<Review> reviews = reviewRepo.GetReviewsForProduct(id);
 
-            var cartCookie = Request.Cookies["cart"];
             var favoriteCookie = Request.Cookies["favorite"];
             int skuID = subID == null ? products.GetSkuIdById(id) : subID;
 
-            ViewBag.productSkuID = 0;
-            if (category == "cart" || category == "favorite")
-            {
-                // Set the expired date when cookie is updated/created.
-                CookieOptions option = new CookieOptions();
-                option.Expires = DateTime.Now.AddDays(365);
-                string resultJson;
-
-                var IDListCookie = category == "cart" ? cartCookie : favoriteCookie;
-                /* If the cookie doesn't exist, create a new cookie.
-                   If the cookie exists, deserialize the ID list and and add/delete ID in the list.
-                   Pass in cookie with serialized ID list. */
-                if (IDListCookie == null)
-                {
-                    List<int> IDList = new List<int>();
-                    IDList.Add(skuID);
-                    resultJson = JsonConvert.SerializeObject(IDList);
-                    Response.Cookies.Append(category, resultJson, option);
-                }
-                else
-                {
-                    List<int> IDList = JsonConvert.DeserializeObject<List<int>>(IDListCookie);
-                    if (method == "add") IDList.Add(skuID);
-                    else if (method == "remove") IDList.Remove(skuID);
-                    resultJson = JsonConvert.SerializeObject(IDList);
-                    Response.Cookies.Append(category, resultJson, option);
-                }
-                if (category == "cart") cartCookie = resultJson;
-                else favoriteCookie = resultJson;
-            }
-            ViewBag.currentSku = 0;
-            ViewBag.isCart =
-                cartCookie == null ?
-                false :
-                JsonConvert.DeserializeObject<List<int>>(cartCookie).Contains(skuID);
             ViewBag.isFav =
                 favoriteCookie == null ?
-                false :
-                JsonConvert.DeserializeObject<List<int>>(favoriteCookie).Contains(skuID);
+                false : 
+                JsonConvert.DeserializeObject<List<int>>(favoriteCookie).Contains(id);
 
 
             List<ReviewVM> reviewList = reviews
@@ -94,18 +58,9 @@ namespace SSD_Major_Web_Project.Controllers
             return View(vm);
         }
 
-        // TODO: 
+        // TODO: Fix Json Reponse so that it will not return cart object(if needed)
         [HttpPost]
-        public JsonResult UpdateCartButtonStatus(int skuid)
-        {
-            Console.WriteLine(skuid);
-
-            return null;
-        }
-
-        // TODO: 
-        [HttpPost]
-        public JsonResult AddToCart(int id)
+        public JsonResult AddToCart(int id, int quantity)
         {
             var cartCookie = Request.Cookies["cart"];
             CookieOptions option = new CookieOptions();
@@ -114,16 +69,27 @@ namespace SSD_Major_Web_Project.Controllers
                 new List<ShoppingCartItem>() :
                 JsonConvert.DeserializeObject<List<ShoppingCartItem>>(cartCookie);
             bool inShoppingCart = false;
+            ShoppingCartItem mycart = null;
+            string message = "";
             foreach (var item in carts)
             {
                 if (item.SkuId == id)
                 {
+                    mycart = item;
                     inShoppingCart = true;
+                    item.Quantity += quantity;
+                    message = "Adding item quantity by " + quantity;
                     break;
                 }
             }
-            //if ()
-            return Json(new { success = true, error = "" });
+            if (!inShoppingCart)
+            {
+                mycart = new ShoppingCartItem { SkuId = id, Quantity = quantity };
+                carts.Add(mycart);
+                message = "Adding item to shopping cart";
+            }
+            Response.Cookies.Append("cart", JsonConvert.SerializeObject(carts), option);
+            return Json(new { success = true, message = message, cart = mycart }); 
         }
 
         [HttpPost]
@@ -137,11 +103,11 @@ namespace SSD_Major_Web_Project.Controllers
                 JsonConvert.DeserializeObject<List<int>>(favoriteCookie);
             if (favoriteIDs.Contains(id))
             {
-                return Json(new { success = false, error = "Item already in the wishlist!" });
+                return Json(new { success = false, message = "Item already in the wishlist!" });
             }
             favoriteIDs.Add(id);
             Response.Cookies.Append("favorite", JsonConvert.SerializeObject(favoriteIDs), option);
-            return Json(new { success = true});
+            return Json(new { success = true, message = "Item added to favorite successfully!"});
         }
 
         [HttpPost]
@@ -150,12 +116,12 @@ namespace SSD_Major_Web_Project.Controllers
             var favoriteCookie = Request.Cookies["favorite"];
             CookieOptions option = new CookieOptions();
             option.Expires = DateTime.Now.AddDays(365);
-            if (favoriteCookie == null) return Json(new { success = false, error = "Wishlist is empty!" });
+            if (favoriteCookie == null) return Json(new { success = false, message = "Wishlist is empty!" });
             var favoriteIDs = JsonConvert.DeserializeObject<List<int>>(favoriteCookie);
-            if (!favoriteIDs.Contains(id)) return Json(new { success = false, error = "Item is not in the wishlist!" });
+            if (!favoriteIDs.Contains(id)) return Json(new { success = false, message = "Item is not in the wishlist!" });
             favoriteIDs.Remove(id);
             Response.Cookies.Append("favorite", JsonConvert.SerializeObject(favoriteIDs), option);
-            return Json(new { success = true });
+            return Json(new { success = true, message = "Item removed from favorite successfully!" });
         }
 
         public IActionResult CreateReview(int id)
