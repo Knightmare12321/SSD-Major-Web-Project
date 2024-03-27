@@ -30,6 +30,11 @@ namespace SSD_Major_Web_Project.Controllers
             return View(temp.GetAll());
         }
 
+        //public IEnumerable<ProductVM> GetDataWithPages(int page, int itemsPerPage)
+        //{
+
+        //}
+
         // TODO: Remove unnecessary lines after ajax implementation completes
         public IActionResult Details(int id, string category, string method, int subID)
         {

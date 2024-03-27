@@ -1,4 +1,5 @@
 ﻿.product-page-wrapper {
+    position: relative;
     width: 100%;
     padding: 0px;
 }
@@ -109,4 +110,22 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+}
+
+.load-more {
+    position: absolute;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 300px;
+    height: 50px;
+    text-align: center;
+    background-color: black;
+    color: white;
+    font-size: 15.88px;
+    font-family: Inter;
+    font-weight: 400;
+}
+
+.load-more:hover {
+    background-color: dimgrey;
 }
