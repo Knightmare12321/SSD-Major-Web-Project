@@ -77,6 +77,9 @@
 
 <script>
     const toggleSummary = (tabClicked, sheetType, sheetTitle) => {
+        //reset message element
+        $("#message").html("");
+
         //toggle tabs
         $("#admin-orders li").removeClass("active");
         $(tabClicked).addClass("active");
@@ -98,6 +101,9 @@
     }
 
     const getFilteredAndPaginatedOrders = (pageIndex) => {
+        //reset message element
+        $("#message").html("");
+
         const searchTerm = $("#search-term").val();
         const sheetType = $("#sheet-type").val();
         const url = '@Url.Action("GetFilteredOrders", "Admin")';
@@ -112,6 +118,9 @@
     }
 
     const dispatchOrder =  (orderId) => {
+        //reset message element
+        $("#message").html("");
+
         const url = '@Url.Action("DispatchOrder", "Admin")';
         $.ajax({
             type: "POST",
@@ -124,6 +133,8 @@
                     //update button class, text and order status text
                     $("[id^=" + orderId + "] button:contains(Dispatch)").addClass('deactivated').html('Dispatched')
                     $("[id^=" + orderId + "] td.order-status").html("Shipped");
+                    //reset message element
+                    $("#message").html("Successfully dispatched order #"+orderId);
                 } else {
                     $("#message").html(data.error)
                 }
@@ -186,6 +197,9 @@
     }
 
     const cancelOrder = (orderId) => {
+        //reset message element
+        $("#message").html("");
+
         const url = '@Url.Action("CancelOrder", "Admin")';
         $.ajax({
             type: "POST",
@@ -198,6 +212,7 @@
                     //update button class, text and order status text
                     $("[id^=" + orderId + "] button:contains(Cancel)").addClass('deactivated').html('Cancelled');
                     $("[id^=" + orderId + "] td.order-status").html("Cancelled");
+                    $("#message").html("Successfully canceled order #"+orderId);
                 } else {
                     $("#message").html(data.error);
                 }

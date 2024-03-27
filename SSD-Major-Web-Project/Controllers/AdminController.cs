@@ -334,7 +334,6 @@ namespace SSD_Major_Web_Project.Controllers
                     });
                 }
 
-                string abc = order.Contact.Customers.ToList()[0].PkCustomerId;
                 //send refund as a discount code in email
                 var response = await _emailService.SendSingleEmail(new Models.ComposeEmailModel
                 {

@@ -560,10 +560,16 @@ button {
 }
 
 /*Admin AdminOrder*/
+#order-data{
+    table
+    {
+        table-layout: auto;
+    }
+}
+
 #admin-orders {
     display: none;
 }
-
     #admin-orders.active {
         display: flex;
         grid-column-gap: 10px;
