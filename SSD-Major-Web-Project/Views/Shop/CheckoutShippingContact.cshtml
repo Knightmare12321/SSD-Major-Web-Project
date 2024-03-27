@@ -86,11 +86,20 @@
                     <input type="text" name="Order.Contact.BuyerNote" placeholder="Special Instructions" />
                     </div>
 
-                    @foreach (var item in Model.ShoppingCart.ShoppingCartItems)
+                    @for (int i = 0; i < Model.ShoppingCart.ShoppingCartItems.Count; i++)
                     {
-                        <input name="ShopingCart.ShoppingCartItems.SkuId" value="item.SkuId" hidden/>
-                        <input name="ShoppingCart.ShoppingCartItems.Quanity" value="item.quanity" hidden/>
+                        var item = Model.ShoppingCart.ShoppingCartItems[i];
+                        <input name="ShoppingCart.ShoppingCartItems[@i].SkuId" value="@item.SkuId" type="hidden" />
+                        <input name="ShoppingCart.ShoppingCartItems[@i].Quantity" value="@item.Quantity" type="hidden" />
                     }
+                    
+
+        @*             @foreach(var item in Model.ShoppingCart.Products)
+                    {
+                        <input name="ShoppingCart.Products" value="@item" hidden/>
+
+          
+                    } *@
                     
       
                     <input name="ShoppingCart.CouponCode" value="@Model.ShoppingCart.CouponCode" hidden/>
