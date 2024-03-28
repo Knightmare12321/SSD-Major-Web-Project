@@ -51,6 +51,30 @@ namespace SSD_Major_Web_Project.Controllers
         }
 
         [HttpPost]
+        public JsonResult RemoveFromCart(int id)
+        {
+            var cartCookie = Request.Cookies["cart"];
+            CookieOptions option = new CookieOptions();
+            option.Expires = DateTime.Now.AddDays(365);
+            var carts = cartCookie == null ?
+                new List<ShoppingCartItem>() :
+                JsonConvert.DeserializeObject<List<ShoppingCartItem>>(cartCookie);       
+            bool inShoppingCart = false;
+            foreach (var item in carts)
+            {
+                if (item.SkuId == id)
+                {
+                    carts.Remove(item);
+                    inShoppingCart = true;
+                    break;
+                }
+            }
+            if (!inShoppingCart) return Json(new { success = false, message = "No such item in the cart!" }) ;
+            Response.Cookies.Append("cart", JsonConvert.SerializeObject(carts), option);
+            return Json(new { success = true, message = "Item removed from cart successfully!" });
+        }
+
+        [HttpPost]
         public JsonResult AddToFavorite(int id)
         {
             var favoriteCookie = Request.Cookies["favorite"];
