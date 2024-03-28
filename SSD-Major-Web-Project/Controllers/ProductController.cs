@@ -34,10 +34,10 @@ namespace SSD_Major_Web_Project.Controllers
             return View(data);
         }
 
-        public IActionResult LoadMoreItems(int page)
+        public IActionResult LoadMoreItems(int page, string searchTerm = "")
         {
             int itemsPerPage = 12; // Number of items to load per page
-            var results = GetDataWithPages(page, itemsPerPage);
+            var results = GetDataWithPages(page, itemsPerPage, searchTerm);
             if (results.Any()) return PartialView("_ProductItemsPartial", results);
             return Content("");
         }

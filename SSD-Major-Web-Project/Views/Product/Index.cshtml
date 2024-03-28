@@ -74,12 +74,12 @@
                 console.log("loading more items")
                 $(".load-more").prop("disabled", true); // Disable the button
                 $(".load-more").text("Loading..."); // Change button text to "Loading..."
+                const searchTerm = $("#search-term").val();
                 $.ajax({
                     url: '@Url.Action("LoadMoreItems", "Product")',
                     type: 'GET',
-                    data: { page: page + 1 },
+                    data: { "page": page + 1,"searchTerm":searchTerm },
                     success: function (data) {
-                        console.log("items quantity: " + data.length);
                         if (data.length > 0) {
                             $('.product-container').append(data);
                             page++; // Increment page number
