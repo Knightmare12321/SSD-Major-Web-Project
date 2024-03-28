@@ -24,7 +24,7 @@ namespace SSD_Major_Web_Project.ViewModels
 
         //for paypal payment
         public string Currency { get; set; }
-        public string CurrencySymbol { get; set; }
+        public string CurrencySymbol { get; set; } = "$";
         //public byte[]? ImageByteArray { get; set; }
 
     }

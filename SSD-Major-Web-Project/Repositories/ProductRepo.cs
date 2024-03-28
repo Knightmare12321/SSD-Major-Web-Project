@@ -1,4 +1,5 @@
-﻿using SSD_Major_Web_Project.Models;
+﻿using Microsoft.EntityFrameworkCore;
+using SSD_Major_Web_Project.Models;
 using SSD_Major_Web_Project.ViewModels;
 
 namespace SSD_Major_Web_Project.Repositories
@@ -14,23 +15,8 @@ namespace SSD_Major_Web_Project.Repositories
         public IEnumerable<ProductVM> GetAll()
         {
             IEnumerable<ProductVM> products =
-            _context.Products.Select(u => new ProductVM
-            {
-                PkProductId = u.PkProductId,
-                Name = u.Name,
-                Price = u.Price,
-                Description = u.Description,
-                IsActive = u.IsActive,
-                ImageByteArray = u.Images.FirstOrDefault().Data
-            });
-            return products;
-        }
-
-        public IEnumerable<ProductVM> GetAllActive(string searchTerm)
-        {
-            IEnumerable<ProductVM> products =
             _context.Products
-            .Where(u => u.IsActive && u.Name.Contains(searchTerm))
+            .Include(p => p.Images)
             .Select(u => new ProductVM
             {
                 PkProductId = u.PkProductId,
@@ -43,26 +29,72 @@ namespace SSD_Major_Web_Project.Repositories
             return products;
         }
 
+        public IEnumerable<ProductVM> GetAllActive()
+        {
+            IEnumerable<ProductVM> products =
+            _context.Products
+            .Include(p => p.Images)
+            .Where(u => u.IsActive)
+            .Select(u => new ProductVM
+            {
+                PkProductId = u.PkProductId,
+                Name = u.Name,
+                Price = u.Price,
+                Description = u.Description,
+                IsActive = u.IsActive,
+                ImageByteArray = u.Images.FirstOrDefault().Data
+            });
+            return products;
+        }
+
+        public IEnumerable<ProductVM> GetAllActiveWithPages(int page, int itemsPerPage, string searchTerm)
+        {
+            int skipCount = (page - 1) * itemsPerPage;
+            return _context.Products
+            .Where(p => p.IsActive && p.Name.Contains(searchTerm))
+            .OrderBy(p => p.PkProductId)
+            .Skip(skipCount)
+            .Take(itemsPerPage)
+            .Include(p => p.Images)
+            .Select(p => new ProductVM
+            {
+                PkProductId = p.PkProductId,
+                Name = p.Name,
+                Price = p.Price,
+                ImageByteArray = p.Images.FirstOrDefault().Data
+            })
+            .ToList();
+        }
+
         // This method is for testing only. Delete this after project completes!
         public Product? GetById(int pkProductId)
         {
-            return _context.Products.Where(p => p.PkProductId == pkProductId).FirstOrDefault();
+            return _context.Products
+                .Include(p => p.Images)
+                .Where(p => p.PkProductId == pkProductId)
+                .FirstOrDefault();
         }
 
         // This method is for testing only. Delete this after project completes!
         public ProductSku GetSkuById(int id)
         {
-            return _context.ProductSkus.Where(p => p.PkSkuId == id).FirstOrDefault();
+            return _context.ProductSkus
+                .Where(p => p.PkSkuId == id)
+                .FirstOrDefault();
         }
 
         public int GetSkuIdById(int id)
         {
-            return _context.ProductSkus.Where(p => p.FkProductId == id).FirstOrDefault().PkSkuId;
+            return _context.ProductSkus
+                .Where(p => p.FkProductId == id)
+                .Select(p => p.PkSkuId)
+                .FirstOrDefault();
         }
 
         public ProductDetailVM? GetByIdAndReviewVM(int pkProductId, List<ReviewVM> reviews)
         {
             ProductVM? productVM = _context.Products
+                .Include(p => p.Images)
                 .Where(u => u.PkProductId == pkProductId)
                 .Select(u => new ProductVM
                 {

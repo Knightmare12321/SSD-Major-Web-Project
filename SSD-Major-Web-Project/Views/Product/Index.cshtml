@@ -10,16 +10,18 @@
     <div class="product-title"> MEN'S Clothes</div>
 
     <div class="search-bar">
-        <div id="search-btn" class="search-icon-wrapper">
+        <div class="search-icon-wrapper">
             <img src="~/images/icon/icon-search.svg" class="search-icon" />
         </div>
         <div class="search-input-container">
             <div class="search-input-wrapper">
                 <input id="search-term" type="text" placeholder="Search products" class="search-input"></input>
-
             </div>
+            <button id="search-btn">Search</button>
+
         </div>
     </div>
+
 
     <div id="product-container" class="product-container">
                 @foreach (var item in Model)
@@ -32,13 +34,15 @@
                             <img src="data:image/jpeg;base64,
                                     @Convert.ToBase64String(item.ImageByteArray)"
                                  alt="item.Name"
-                            class="product-thumbnail" />
+                                 class="product-thumbnail"
+                                 loading="lazy" />
                         }
                         else
                         {
                             <img src="~/images/No-Image-Placeholder.png"
                                  alt="item.Name"
-                                 class="product-thumbnail" />
+                                 class="product-thumbnail" 
+                                 loading="lazy" />
                         }
                     </div>
                     </a>
@@ -61,21 +65,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
     <script>
-        // function getFilteredProduct(){
-        //     const searchTerm = $("#search-term").val();
-        //     console.log(searchTerm, 'hi');
-        //     const url = '@Url.Action("Index", "Product")';
-        //     $.ajax({
-        //         type: "GET",
-        //         url: url,
-        //         data: { "searchTerm": searchTerm },
-        //         success: function (data) {
-        //             const parser = new DOMParser();
-        //             const newDoc = parser.parseFromString(data, 'text/html');
-        //             $('#product-container')[0].innerHTML = newDoc.getElementById("product-container").innerHTML;
-        //         }
-        //     });
-        // }
+        
 
         $(document).ready(function () {
             var page = 1; // Initial page number
@@ -109,9 +99,9 @@
                 loadMoreItems();
             });
 
-            document.getElementById("search-btn").addEventListener("click", function () {
+            $("#search-btn").on("click", function () {
+
                 const searchTerm = $("#search-term").val();
-                console.log(searchTerm, 'hi');
                 const url = '@Url.Action("Index", "Product")';
                 $.ajax({
                     type: "GET",
@@ -124,9 +114,10 @@
                     }
                 });
             });
+
         })
 
-        
+
     </script>
 
 </div>

@@ -32,21 +32,24 @@
                 <img src="data:image/jpeg;base64,
                          @Convert.ToBase64String(Model.ImageByteArray[0])"
                      alt="Model.Name"
-                     class="product-image mySlides"/>
+                     class="product-image mySlides"
+                     loading="lazy" />
                 @for (int i = 1; i < Model.ImageByteArray.Count; i++)
                 {
                     <img src="data:image/jpeg;base64,
                             @Convert.ToBase64String(Model.ImageByteArray[i])"
                          alt="Model.Name"
                          class="product-image mySlides" 
-                         style = "display:none"/>
+                         style = "display:none"
+                         loading="lazy" />
                 }
             }
             else
             {
                 <img src="~/images/No-Image-Placeholder.png"
                      alt="Model.Name"
-                     class="product-image mySlides" />
+                     class="product-image mySlides"
+                     loading="lazy" />
             }
         </div>
         @if (Model.ImageByteArray != null && Model.ImageByteArray.Count > 1)
@@ -60,7 +63,8 @@
                                     @Convert.ToBase64String(Model.ImageByteArray[i])"
                              style="width:100%;cursor:pointer"
                              alt="Model.Name"
-                             onclick="currentDiv(@(i+1))" />
+                             onclick="currentDiv(@(i+1))"
+                             loading="lazy" />
                     </div>
                 }
             </div>

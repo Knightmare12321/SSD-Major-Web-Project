@@ -45,16 +45,7 @@ namespace SSD_Major_Web_Project.Controllers
         private IEnumerable<ProductVM> GetDataWithPages(int page, int itemsPerPage, string searchTerm = "")
         {
             ProductRepo temp = new ProductRepo(_context);
-            var data = temp.GetAllActive(searchTerm);
-            int maxSize = data.Count();
-            List<ProductVM> results = new List<ProductVM>();
-            for (int i = 0; i < itemsPerPage; i++)
-            {
-                int index = (page - 1) * itemsPerPage + i;
-                if (index >= maxSize) break;
-                results.Add(data.ElementAt(index));
-            }
-            return results;
+            return temp.GetAllActiveWithPages(page, itemsPerPage, searchTerm);
         }
 
         public IActionResult Details(int id)
