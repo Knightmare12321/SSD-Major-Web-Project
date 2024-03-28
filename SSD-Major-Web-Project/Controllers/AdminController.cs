@@ -65,7 +65,7 @@ namespace SSD_Major_Web_Project.Controllers
         public async Task<IActionResult> CreateProduct(CreateProductVM inputVM)
         {
             UtilityRepo utilityRepo = new UtilityRepo();
-            CreateProductVM vm = utilityRepo.FilterHarmfulInput(inputVM);
+            //CreateProductVM vm = utilityRepo.FilterHarmfulInput(inputVM);
 
             if (ModelState.IsValid)
             {
