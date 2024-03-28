@@ -46,6 +46,7 @@ namespace SSD_Major_Web_Project.Controllers
         {
             ProductRepo temp = new ProductRepo(_context);
             return temp.GetAllActiveWithPages(page, itemsPerPage, searchTerm);
+
         }
 
         public IActionResult Details(int id)

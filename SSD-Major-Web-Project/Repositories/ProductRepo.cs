@@ -58,6 +58,7 @@ namespace SSD_Major_Web_Project.Repositories
             .Include(p => p.Images)
             .Select(p => new ProductVM
             {
+
                 PkProductId = p.PkProductId,
                 Name = p.Name,
                 Price = p.Price,
