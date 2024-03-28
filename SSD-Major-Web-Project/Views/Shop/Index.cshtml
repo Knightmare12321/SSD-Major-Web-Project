@@ -15,7 +15,7 @@
      
                 @foreach (var item in @Model.Products)
                 {
-                    <div class="product">
+                    <div id="@(item.PkProductId)-tile" class="product">
                         @if (item.Images != null && item.Images.Count > 0)
                         {
                             <img src="data:image/jpeg;base64,@Convert.ToBase64String(item.Images.FirstOrDefault().Data)" alt="@item.Name" class="product-image" />
@@ -27,7 +27,14 @@
                             {
                                 if (cartItem.SkuId == item.ProductSkus.FirstOrDefault().PkSkuId)
                                 {
-                                    <p>Qty: @cartItem.Quantity</p>
+                                    @* <p>Qty: <span >@cartItem.Quantity</span></p> *@
+                                    <p>Qty:</p>
+                                    <div class="qty-section">
+                                    <button onclick="decrementQuantity(@cartItem.SkuId,@item.PkProductId)">-</button>
+                                        <p id="@(cartItem.SkuId)-qty">@cartItem.Quantity</p>
+                                    <button onclick="incrementQuantity(@cartItem.SkuId)">+</button>
+                                    </div>
+                                    <p id="@(cartItem.SkuId)-qty-message"></p>
                                     break;
                                 }
                             }
@@ -217,11 +224,12 @@
                             var unitPrice = parseFloat(unitPriceText.substr(1));
 
                              // Get the quantity element
-  var quantityElement = productDetails[i].querySelector('p:nth-of-type(3)');
-  var quantity = parseInt(quantityElement.textContent.replace('Qty: ', ''), 10);
-  
-  // Calculate the subtotal for the current product
-  var productSubtotal = unitPrice * quantity;
+                              var quantityElement = productDetails[i].querySelector('.qty-section p');
+                              // var quantity = parseInt(quantityElement.textContent.replace('Qty: ', ''), 10);
+                            var quantity = parseInt(quantityElement.textContent);
+
+                              // Calculate the subtotal for the current product
+                              var productSubtotal = unitPrice * quantity;
   
 
 
@@ -322,5 +330,49 @@
         });
     });
 
+    const incrementQuantity = (skuId) => {
+        const url = '@Url.Action("AddToCart", "Cookie")';
+        $.ajax({
+            type: "POST",
+            url: url,
+            data: { "id": skuId, 'quantity': 1 },
+            success: function (data) {
+                if (data.success) {
+                    //increment quantity
+                    const qty = parseInt($("#" + skuId + "-qty").html());
+                    $("#" + skuId + "-qty").html((qty + 1).toString());
+                }
+            },
+            error: function () {
+                $("#" + skuId + "-qty-message").html("An unexpected error occured")
+            }
+        });
+    }
+
+    const decrementQuantity = (skuId, productId) => {
+        const url = '@Url.Action("RemoveFromCart", "Cookie")';
+        $.ajax({
+            type: "POST",
+            url: url,
+            data: { "id": skuId },
+            success: function (data) {
+                if (data.success) {
+                    //decrement quantity
+                    const qty = parseInt($("#" + skuId + "-qty").html());
+                    $("#" + skuId + "-qty").html((qty - 1).toString());
+
+                    //remove product from view if quantity is 0 else update quantity in view
+                    if (qty-1 <= 0) {
+                        $("#" + productId + "-tile").remove();
+                    }
+                }
+            },
+            error: function () {
+                $("#" + skuId + "-qty-message").html("An unexpected error occured")
+            }
+        });
+    }
+
+    
 
 </script>
