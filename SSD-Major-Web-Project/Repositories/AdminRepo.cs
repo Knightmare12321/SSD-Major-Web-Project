@@ -336,6 +336,7 @@ namespace SSD_Major_Web_Project.Repositories
             var query = _context.Orders.Where(o => o.PkOrderId == orderId).Select(o => new OrderVM
             {
                 OrderId = o.PkOrderId,
+                CustomerId = o.FkCustomerId,
                 OrderDate = o.OrderDate,
                 OrderStatus = _context.OrderStatuses
                                    .Where(os => os.PkOrderStatusId == o.FkOrderStatusId)

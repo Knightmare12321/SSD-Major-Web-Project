@@ -27,10 +27,10 @@ namespace SSD_Major_Web_Project.Controllers
         // TODO: Search bar!
         //       Fix load efficiency.
         //       Fix load more button so it disappears as first opportunity.
-        public IActionResult Index(int? page)
+        public IActionResult Index(int? page, string searchTerm = "")
         {
             int itemsPerPage = 12; // Number of items appear at the beginning
-            var data = GetDataWithPages(page ?? 1, itemsPerPage);
+            var data = GetDataWithPages(page ?? 1, itemsPerPage, searchTerm);
             return View(data);
         }
 
@@ -42,10 +42,10 @@ namespace SSD_Major_Web_Project.Controllers
             return Content("");
         }
 
-        private IEnumerable<ProductVM> GetDataWithPages(int page, int itemsPerPage)
+        private IEnumerable<ProductVM> GetDataWithPages(int page, int itemsPerPage, string searchTerm = "")
         {
             ProductRepo temp = new ProductRepo(_context);
-            var data = temp.GetAllActive();
+            var data = temp.GetAllActive(searchTerm);
             int maxSize = data.Count();
             List<ProductVM> results = new List<ProductVM>();
             for (int i = 0; i < itemsPerPage; i++)
@@ -67,7 +67,7 @@ namespace SSD_Major_Web_Project.Controllers
 
             ViewBag.isFav =
                 favoriteCookie == null ?
-                false : 
+                false :
                 JsonConvert.DeserializeObject<List<int>>(favoriteCookie).Contains(id);
 
 
@@ -120,7 +120,7 @@ namespace SSD_Major_Web_Project.Controllers
             }
 
             return View(results);
-            
+
         }
     }
 }

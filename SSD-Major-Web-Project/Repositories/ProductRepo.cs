@@ -26,11 +26,11 @@ namespace SSD_Major_Web_Project.Repositories
             return products;
         }
 
-        public IEnumerable<ProductVM> GetAllActive()
+        public IEnumerable<ProductVM> GetAllActive(string searchTerm)
         {
             IEnumerable<ProductVM> products =
             _context.Products
-            .Where(u => u.IsActive)
+            .Where(u => u.IsActive && u.Name.Contains(searchTerm))
             .Select(u => new ProductVM
             {
                 PkProductId = u.PkProductId,

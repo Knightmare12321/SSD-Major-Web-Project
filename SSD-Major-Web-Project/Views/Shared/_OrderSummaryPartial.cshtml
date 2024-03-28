@@ -38,7 +38,7 @@
                         <td> @Html.DisplayFor(modelItem => item.OrderDetails[0].FkSku.Size)</td>
                         <td> @Html.DisplayFor(modelItem => item.OrderDetails[0].Quantity)</td>
                         <td> @Html.DisplayFor(modelItem => item.OrderTotal)</td>
-                        <td class="buyer-note"> @Html.DisplayName(item.BuyerNote != "" ? "Yes" : "No")</td>
+                        <td class="buyer-note"> @Html.DisplayName(item.BuyerNote != ""&&item.BuyerNote!=null ? "Yes" : "No")</td>
                         @{
                             if (ViewBag.OrderStatus == "Paid")
                             {

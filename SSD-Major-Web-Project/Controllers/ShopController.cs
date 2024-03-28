@@ -454,11 +454,24 @@ namespace SSD_Major_Web_Project.Controllers
             // add order details
             string errorAddOrderDetails = _shopRepo.AddOrderDetails(checkoutVM, orderId);
 
-            // get coupon code from database by order id
-            string discountCode = _context.Orders.FirstOrDefault(o => o.PkOrderId == orderId).FkDiscountCode;
+                // get coupon code from database by order id
+                Discount discountCodeDb = _context.Discounts.FirstOrDefault(d => d.PkDiscountCode == checkoutVM.Order.Discount.PkDiscountCode);
+                if (checkoutVM.Order.Discount != null)
+                {
+                        if (discountCodeDb != null)
+                    {
+                            checkoutVM.Order.Discount = discountCodeDb;
+                            checkoutVM.ShoppingCart.CouponCode = discountCodeDb.PkDiscountCode;
+                        }
+                    }
+                    else
+                {
+                        checkoutVM.Order.Discount = null;
+                        checkoutVM.ShoppingCart.CouponCode = null;
+                    }
+ 
 
 
-            Discount discountCodeDb = _context.Discounts.FirstOrDefault(d => d.PkDiscountCode == discountCode);
 
             if (discountCodeDb != null)
             {
@@ -531,11 +544,13 @@ namespace SSD_Major_Web_Project.Controllers
 
                     // if any order with order status  paid and the discount type is "Number" and coupon code is equal to the discount code
                     // update the discount code to inactive
-                    if (order.FkOrderStatusId == 2 && discount.DiscountType == "Number" && order.FkDiscountCode == discount.PkDiscountCode)
-                    {
-                        discount.IsActive = false;
+                    if (discount != null) {
+                        if (order.FkOrderStatusId == 2 && discount.DiscountType == "Number" && order.FkDiscountCode == discount.PkDiscountCode)
+                        {
+                            discount.IsActive = false;
+                        }
+                        _context.SaveChanges();
                     }
-                    _context.SaveChanges();
 
 
 

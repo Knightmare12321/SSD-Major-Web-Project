@@ -240,7 +240,7 @@ namespace SSD_Major_Web_Project.Controllers
             return RedirectToAction("AllProducts", new { message = message });
         }
 
-        public IActionResult AdminOrder(int pageIndex = 1, int pageSize = 10)
+        public IActionResult AdminOrder(int pageIndex = 1, int pageSize = 5)
         {
             AdminRepo adminRepo = new AdminRepo(_context);
             ViewData["OrderStatus"] = "Paid";
@@ -256,7 +256,7 @@ namespace SSD_Major_Web_Project.Controllers
             return View(paginatedOrders);
         }
 
-        public IActionResult GetFilteredOrders(string orderStatus = "", string searchTerm = "", int pageIndex = 1, int pageSize = 10)
+        public IActionResult GetFilteredOrders(string orderStatus = "", string searchTerm = "", int pageIndex = 1, int pageSize = 5)
         {
             ViewData["OrderStatus"] = orderStatus;
             AdminRepo adminRepo = new AdminRepo(_context);
@@ -340,7 +340,7 @@ namespace SSD_Major_Web_Project.Controllers
                     FirstName = "Nova",
                     LastName = "Clothing",
                     Subject = $"Nova Fashion Order (#{orderId}) Cancelled",
-                    Email = order.Contact.Customers.ToList()[0].PkCustomerId,
+                    Email = order.CustomerId,
                     Body = $"Your order (#{order.OrderId}) of {order.OrderTotal:C} has been " +
                     $"refunded. The credit has been added to the discount code {discountCode} and will " +
                     $"expire on {endDate}."

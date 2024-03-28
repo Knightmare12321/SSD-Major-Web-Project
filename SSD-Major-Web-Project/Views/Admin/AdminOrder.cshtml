@@ -148,7 +148,10 @@
     const getOrderDetail = (order) => {
         $("#admin-order-detail td.id").html(order.orderId);
         $("#admin-order-detail td.date").html(order.orderDate);
-        $("#admin-order-detail td.status").html(order.orderStatus);
+        //get order status from the spreadsheet which has the most up-to-date value from the
+        //async actions
+        const orderStatus = $("[id^=" + order.orderId + "] td.order-status").html();
+        $("#admin-order-detail td.status").html(orderStatus);
         $("#admin-order-detail td.buyer").html(order.contact.firstName + " " + order.contact.lastName);
         $("#admin-order-detail td.buyernote").html(order.buyerNote);
         $("#admin-order-detail td.id").html(order.orderrId);

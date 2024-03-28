@@ -10,18 +10,18 @@
     <div class="product-title"> MEN'S Clothes</div>
 
     <div class="search-bar">
-        <div class="search-icon-wrapper">
-            <img src="~/images/icon/icon-search.svg" class="search-icon"></img>
+        <div id="search-btn" class="search-icon-wrapper">
+            <img src="~/images/icon/icon-search.svg" class="search-icon" />
         </div>
         <div class="search-input-container">
             <div class="search-input-wrapper">
-                <input type="text" placeholder="Search products" class="search-input"></input>
+                <input id="search-term" type="text" placeholder="Search products" class="search-input"></input>
 
             </div>
         </div>
     </div>
 
-    <div class="product-container">
+    <div id="product-container" class="product-container">
                 @foreach (var item in Model)
                 {
                 <div class="product-items-container">
@@ -61,6 +61,22 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
     <script>
+        // function getFilteredProduct(){
+        //     const searchTerm = $("#search-term").val();
+        //     console.log(searchTerm, 'hi');
+        //     const url = '@Url.Action("Index", "Product")';
+        //     $.ajax({
+        //         type: "GET",
+        //         url: url,
+        //         data: { "searchTerm": searchTerm },
+        //         success: function (data) {
+        //             const parser = new DOMParser();
+        //             const newDoc = parser.parseFromString(data, 'text/html');
+        //             $('#product-container')[0].innerHTML = newDoc.getElementById("product-container").innerHTML;
+        //         }
+        //     });
+        // }
+
         $(document).ready(function () {
             var page = 1; // Initial page number
 
@@ -92,7 +108,25 @@
             $(".load-more").click(function () {
                 loadMoreItems();
             });
+
+            document.getElementById("search-btn").addEventListener("click", function () {
+                const searchTerm = $("#search-term").val();
+                console.log(searchTerm, 'hi');
+                const url = '@Url.Action("Index", "Product")';
+                $.ajax({
+                    type: "GET",
+                    url: url,
+                    data: { "searchTerm": searchTerm },
+                    success: function (data) {
+                        const parser = new DOMParser();
+                        const newDoc = parser.parseFromString(data, 'text/html');
+                        $('#product-container')[0].innerHTML = newDoc.getElementById("product-container").innerHTML;
+                    }
+                });
+            });
         })
+
+        
     </script>
 
 </div>
