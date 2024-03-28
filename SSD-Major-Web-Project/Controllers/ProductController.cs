@@ -27,10 +27,12 @@ namespace SSD_Major_Web_Project.Controllers
         // TODO: Search bar!
         //       Fix load efficiency.
         //       Fix load more button so it disappears as first opportunity.
-        public IActionResult Index(int? page, string searchTerm = "")
+        public IActionResult Index(int page = 1, string searchTerm = "")
         {
+            ViewData["SearchTerm"] = searchTerm;
+            ViewData["Page"] = page;
             int itemsPerPage = 12; // Number of items appear at the beginning
-            var data = GetDataWithPages(page ?? 1, itemsPerPage, searchTerm);
+            var data = GetDataWithPages(page, itemsPerPage, searchTerm);
             return View(data);
         }
 

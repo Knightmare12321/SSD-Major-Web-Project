@@ -9,19 +9,21 @@
 
     <div class="product-title"> MEN'S Clothes</div>
 
+    <form asp-action="Index">
     <div class="search-bar">
         <div class="search-icon-wrapper">
             <img src="~/images/icon/icon-search.svg" class="search-icon" />
         </div>
         <div class="search-input-container">
             <div class="search-input-wrapper">
-                <input id="search-term" type="text" placeholder="Search products" class="search-input"></input>
+                <input id="search-term" name="searchTerm" value="@ViewBag.SearchTerm" type="text" placeholder="Search products" class="search-input"></input>
             </div>
-            <button id="search-btn">Search</button>
+            @* <button id="search-btn">Search</button> *@
+            <button type="submit">Search</button>
 
         </div>
     </div>
-
+    </form>
 
     <div id="product-container" class="product-container">
                 @foreach (var item in Model)
@@ -68,7 +70,7 @@
         
 
         $(document).ready(function () {
-            var page = 1; // Initial page number
+            var page = @ViewBag.Page; // Initial page number
 
             function loadMoreItems() {
                 console.log("loading more items")
@@ -116,8 +118,6 @@
             });
 
         })
-
-
     </script>
 
 </div>
