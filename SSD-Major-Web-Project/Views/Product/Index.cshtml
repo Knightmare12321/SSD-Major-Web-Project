@@ -31,13 +31,15 @@
                             <img src="data:image/jpeg;base64,
                                     @Convert.ToBase64String(item.ImageByteArray)"
                                  alt="item.Name"
-                            class="product-thumbnail" />
+                                 class="product-thumbnail"
+                                 loading="lazy" />
                         }
                         else
                         {
                             <img src="~/images/No-Image-Placeholder.png"
                                  alt="item.Name"
-                                 class="product-thumbnail" />
+                                 class="product-thumbnail" 
+                                 loading="lazy" />
                         }
                     </div>
                     </a>

@@ -60,8 +60,6 @@ namespace SSD_Major_Web_Project.Repositories
                 PkProductId = p.PkProductId,
                 Name = p.Name,
                 Price = p.Price,
-                Description = p.Description,
-                IsActive = p.IsActive,
                 ImageByteArray = p.Images.FirstOrDefault().Data
             })
             .ToList();
