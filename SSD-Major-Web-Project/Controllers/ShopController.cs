@@ -78,7 +78,7 @@ namespace SSD_Major_Web_Project.Controllers
 
                     //Use repo helper function to calculate subtotal, taxes, shipping fee and grand total
                     ShopRepo _shopRepo = new ShopRepo(_context);
-                    shoppingcartVM.Subtotal = _shopRepo.CalculateSubtotal(products);
+                    shoppingcartVM.Subtotal = _shopRepo.CalculateSubtotal(shoppingcartItems);
                     shoppingcartVM.ShippingFee = 0; // shipping fee is 0 for now
                     shoppingcartVM.Taxes = _shopRepo.CalculateTaxes(shoppingcartVM.Subtotal);
                     shoppingcartVM.GrandTotal = _shopRepo.CalculateGrandTotal(shoppingcartVM.Subtotal, shoppingcartVM.Taxes, shoppingcartVM.ShippingFee);

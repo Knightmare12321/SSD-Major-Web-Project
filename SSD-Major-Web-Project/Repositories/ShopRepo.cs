@@ -183,14 +183,29 @@ namespace SSD_Major_Web_Project.Repositories
             return false;
         }
 
+        // get product price by skuId
+        public decimal GetProductPrice(int skuId)
+        {
+            var sku = _context.ProductSkus.FirstOrDefault(s => s.PkSkuId == skuId);
+            if (sku != null)
+            {
+                var parentProduct = _context.Products.FirstOrDefault(p => p.PkProductId == sku.FkProductId);
+                if (parentProduct != null)
+                {
+                    return parentProduct.Price;
+                }
+            }
+            return 0;
+        }
+
         // calculate taxes
-        public decimal CalculateSubtotal(List<Product> products)
+        public decimal CalculateSubtotal(List<ShoppingCartItem> shoppinCartItems)
         {
             decimal subtotal = 0;
 
-            foreach (var product in products)
+            foreach (var product in shoppinCartItems)
             {
-                subtotal += product.Price;
+                subtotal += GetProductPrice(product.SkuId) * product.Quantity;
             }
             return subtotal;
         }
