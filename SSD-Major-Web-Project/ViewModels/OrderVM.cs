@@ -11,6 +11,9 @@ namespace SSD_Major_Web_Project.ViewModels
         public int OrderId { get; set; }
 
         [Required]
+        public string CustomerId { get; set; }
+
+        [Required]
         public DateOnly OrderDate { get; set; }
 
         [Required]

@@ -11,16 +11,19 @@
 
     <div class="search-bar">
         <div class="search-icon-wrapper">
-            <img src="~/images/icon/icon-search.svg" class="search-icon"></img>
+            <img src="~/images/icon/icon-search.svg" class="search-icon" />
         </div>
         <div class="search-input-container">
             <div class="search-input-wrapper">
-                <input type="text" placeholder="Search products" class="search-input"></input>
+                <input id="search-term" type="text" placeholder="Search products" class="search-input"></input>
             </div>
+            <button id="search-btn">Search</button>
+
         </div>
     </div>
 
-    <div class="product-container">
+
+    <div id="product-container" class="product-container">
                 @foreach (var item in Model)
                 {
                 <div class="product-items-container">
@@ -62,6 +65,8 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
     <script>
+        
+
         $(document).ready(function () {
             var page = 1; // Initial page number
 
@@ -93,7 +98,26 @@
             $(".load-more").click(function () {
                 loadMoreItems();
             });
+
+            $("#search-btn").on("click", function () {
+
+                const searchTerm = $("#search-term").val();
+                const url = '@Url.Action("Index", "Product")';
+                $.ajax({
+                    type: "GET",
+                    url: url,
+                    data: { "searchTerm": searchTerm },
+                    success: function (data) {
+                        const parser = new DOMParser();
+                        const newDoc = parser.parseFromString(data, 'text/html');
+                        $('#product-container')[0].innerHTML = newDoc.getElementById("product-container").innerHTML;
+                    }
+                });
+            });
+
         })
+
+
     </script>
 
 </div>

@@ -52,7 +52,8 @@
     border-bottom: 1px #222222 solid;
     justify-content: flex-end;
     align-items: center;
-    display: inline-flex
+    display: inline-flex;
+    cursor: pointer;
 }
 
 .search-input-wrapper {
@@ -76,6 +77,9 @@
 .search-input:focus {
     border: none;
     outline: 0;
+}
+#search-btn{
+    display:inline-block;
 }
 
 .product-container {

@@ -47,16 +47,18 @@ namespace SSD_Major_Web_Project.Repositories
             return products;
         }
 
-        public IEnumerable<ProductVM> GetAllActiveWithPages(int page, int itemsPerPage) {
+        public IEnumerable<ProductVM> GetAllActiveWithPages(int page, int itemsPerPage, string searchTerm)
+        {
             int skipCount = (page - 1) * itemsPerPage;
             return _context.Products
-            .Where(p => p.IsActive)
+            .Where(p => p.IsActive && p.Name.Contains(searchTerm))
             .OrderBy(p => p.PkProductId)
             .Skip(skipCount)
             .Take(itemsPerPage)
             .Include(p => p.Images)
             .Select(p => new ProductVM
-            { 
+            {
+
                 PkProductId = p.PkProductId,
                 Name = p.Name,
                 Price = p.Price,

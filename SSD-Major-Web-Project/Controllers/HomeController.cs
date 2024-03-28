@@ -1,3 +1,4 @@
+using Microsoft.AspNet.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SSD_Major_Web_Project.Models;
@@ -23,6 +24,15 @@ namespace SSD_Major_Web_Project.Controllers
             return View(products);
         }
 
+        public string GetUserName()
+        {
+            string userId = User.Identity.Name;
+            string userName = _context.Customers
+                .Where(c => c.PkCustomerId == userId)
+                .Include(c => c.FkContact)
+                .Select(c => c.FkContact.FirstName).FirstOrDefault();
+            return userName ?? "";
+        }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
