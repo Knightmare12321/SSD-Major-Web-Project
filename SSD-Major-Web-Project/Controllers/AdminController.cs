@@ -62,7 +62,7 @@ namespace SSD_Major_Web_Project.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateProduct(CreateProductVM inputVM)
+        public async Task<IActionResult> CreateProduct(CreateProductVM vm)
         {
             UtilityRepo utilityRepo = new UtilityRepo();
             //CreateProductVM vm = utilityRepo.FilterHarmfulInput(inputVM);
@@ -102,7 +102,7 @@ namespace SSD_Major_Web_Project.Controllers
 
             }
             ViewData["Create"] = true;
-            return View(inputVM);
+            return View(vm);
         }
 
         public IActionResult EditProduct(int productId)
