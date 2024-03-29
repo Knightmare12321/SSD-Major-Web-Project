@@ -157,11 +157,16 @@ body {
     margin-top: var(--shopping-cart-font-size);
 }
 
-.shopping-cart .product img {
+.shopping-cart .product .img-container {
     min-height: 100px;
     max-height: 300px;
     max-width: 300px;
     min-width: 100px;
+    overflow:hidden;
+}
+.shopping-cart .product img {
+    width:100%;
+    object-fit:cover;
 }
 
 .shopping-cart .product {

@@ -170,29 +170,9 @@ namespace SSD_Major_Web_Project.Controllers
 
             Contact contact = new Contact();
 
-            // Assign the value from the Razor view to the Order property of the CheckoutVM object
-
-            OrderVM orderVM = new OrderVM
-            {
-                OrderDate = DateOnly.FromDateTime(DateTime.Today),
-                OrderStatus = "Pending",
-                Discount = discount,
-                Contact = contact,
-                OrderTotal = shoppingcartVM.GrandTotal
-            };
-
-            checkoutVM.Order = orderVM;
-
             // geting shopping cart data from cookies
             var shoppingCartCookie = Request.Cookies["cart"];
-            List<ShoppingCartItem> ShoppingCartItemCookiesList = JsonConvert.DeserializeObject<List<ShoppingCartItem>>(shoppingCartCookie);
-
-            List<ShoppingCartItem> shoppingcartItems = new List<ShoppingCartItem>();
-            shoppingcartItems = ShoppingCartItemCookiesList;
-            //for (int i = 0; i < IDList.Count; i++)
-            //{
-            //    shoppingcartItems.Add(new ShoppingCartItem { SkuId = IDList[i], Quantity = 1 });
-            //}
+            List<ShoppingCartItem> shoppingcartItems = JsonConvert.DeserializeObject<List<ShoppingCartItem>>(shoppingCartCookie);
 
             //productIdsFromDb list contains the ProductId values associated with the provided SkuIds from the database.
             List<int> skuIds = shoppingcartItems.Select(s => s.SkuId).ToList();
@@ -223,7 +203,26 @@ namespace SSD_Major_Web_Project.Controllers
             checkoutVM.ShoppingCart = shoppingcartVM;
             checkoutVM.ShoppingCart.ShoppingCartItems = shoppingcartVM.ShoppingCartItems;
 
+            decimal orderTotal = 0;
+            foreach (ShoppingCartItem item in shoppingcartItems)
+            {
+                decimal unitPrice = products.Where((p) => p.ProductSkus.Any(psku => psku.PkSkuId == item.SkuId))
+                        .Select((p) => p.Price)
+                        .FirstOrDefault();
+                orderTotal += unitPrice * item.Quantity;
+            }
 
+            // Assign the value from the Razor view to the Order property of the CheckoutVM object
+            OrderVM orderVM = new OrderVM
+            {
+                OrderDate = DateOnly.FromDateTime(DateTime.Today),
+                OrderStatus = "Pending",
+                Discount = discount,
+                Contact = contact,
+                OrderTotal = orderTotal
+            };
+
+            checkoutVM.Order = orderVM;
 
 
             return View("CheckoutShippingContact", checkoutVM);
@@ -414,8 +413,8 @@ namespace SSD_Major_Web_Project.Controllers
                 {
                     // Assign the retrieved unit price to orderDetail.UnitPrice
                     singleOrderDetailRecord.UnitPrice = productSku.FkProduct?.Price ?? 0;
-                     subtotal += singleOrderDetailRecord.UnitPrice * singleOrderDetailRecord.Quantity;           
-              
+                    subtotal += singleOrderDetailRecord.UnitPrice * singleOrderDetailRecord.Quantity;
+
                 }
                 else
                 {
@@ -454,22 +453,22 @@ namespace SSD_Major_Web_Project.Controllers
             // add order details
             string errorAddOrderDetails = _shopRepo.AddOrderDetails(checkoutVM, orderId);
 
-                // get coupon code from database by order id
-                Discount discountCodeDb = _context.Discounts.FirstOrDefault(d => d.PkDiscountCode == checkoutVM.Order.Discount.PkDiscountCode);
-                if (checkoutVM.Order.Discount != null)
+            // get coupon code from database by order id
+            Discount discountCodeDb = _context.Discounts.FirstOrDefault(d => d.PkDiscountCode == checkoutVM.Order.Discount.PkDiscountCode);
+            if (checkoutVM.Order.Discount != null)
+            {
+                if (discountCodeDb != null)
                 {
-                        if (discountCodeDb != null)
-                    {
-                            checkoutVM.Order.Discount = discountCodeDb;
-                            checkoutVM.ShoppingCart.CouponCode = discountCodeDb.PkDiscountCode;
-                        }
-                    }
-                    else
-                {
-                        checkoutVM.Order.Discount = null;
-                        checkoutVM.ShoppingCart.CouponCode = null;
-                    }
- 
+                    checkoutVM.Order.Discount = discountCodeDb;
+                    checkoutVM.ShoppingCart.CouponCode = discountCodeDb.PkDiscountCode;
+                }
+            }
+            else
+            {
+                checkoutVM.Order.Discount = null;
+                checkoutVM.ShoppingCart.CouponCode = null;
+            }
+
 
 
 
@@ -544,7 +543,8 @@ namespace SSD_Major_Web_Project.Controllers
 
                     // if any order with order status  paid and the discount type is "Number" and coupon code is equal to the discount code
                     // update the discount code to inactive
-                    if (discount != null) {
+                    if (discount != null)
+                    {
                         if (order.FkOrderStatusId == 2 && discount.DiscountType == "Number" && order.FkDiscountCode == discount.PkDiscountCode)
                         {
                             discount.IsActive = false;
