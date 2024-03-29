@@ -212,6 +212,11 @@ namespace SSD_Major_Web_Project.Controllers
                 orderTotal += unitPrice * item.Quantity;
             }
 
+            //recalculate shipping values
+            checkoutVM.ShoppingCart.Subtotal = orderTotal;
+            checkoutVM.ShoppingCart.Taxes = orderTotal * 0.12m;
+            checkoutVM.ShoppingCart.GrandTotal = orderTotal * 1.12m;
+
             // Assign the value from the Razor view to the Order property of the CheckoutVM object
             OrderVM orderVM = new OrderVM
             {
