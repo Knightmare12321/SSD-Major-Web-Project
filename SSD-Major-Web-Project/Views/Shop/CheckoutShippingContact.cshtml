@@ -42,7 +42,7 @@
                     <input type="hidden" name="Order.OrderId" value="@Model.Order.OrderId" />
 
 
-                    <div>
+                    <div class="address-line">
 
                     <input type="text" name="Order.Contact.FirstName" placeholder="First Name" />
                      <span asp-validation-for="Order.Contact.FirstName"></span>
@@ -51,24 +51,24 @@
                      <span asp-validation-for="Order.Contact.LastName"></span>
 
                     </div>
-                    <div>
+                    <div class="address-line">
                     <input type="text" name="Order.Contact.Address" placeholder="Address" />
                      <span asp-validation-for="Order.Contact.Address"></span>
                     <input type="text" name="Order.Contact.Address2" placeholder="Address 2" />
                     </div>
-                    <div>
+                    <div class="address-line">
                     <input type="text" name="Order.Contact.City" placeholder="City" />
                         <span asp-validation-for="Order.Contact.City"></span>
                     <input type="text" name="Order.Contact.Province" placeholder="Province" />
                         <span asp-validation-for="Order.Contact.Province"></span>
                     </div>
-                    <div>
+                    <div class="address-line">
                     <input type="text" name="Order.Contact.PostalCode" placeholder="Postal Code" />
                         <span asp-validation-for="Order.Contact.PostalCode"></span>
                     <input type="text" name="Order.Contact.Country" placeholder="Country" />
                         <span asp-validation-for="Order.Contact.Country"></span>
                     </div>
-                    <div>
+                    <div class="address-line">
 
                         @if (User.Identity.IsAuthenticated)
                         {
@@ -82,8 +82,8 @@
                     <input type="text" name="Order.Contact.PhoneNumber" placeholder="Phone Number" />
                     <span asp-validation-for="Order.Contact.PhoneNumber"></span>
                     </div>
-                    <div>
-                    <input type="text" name="Order.Contact.BuyerNote" placeholder="Special Instructions" />
+                    <div class="address-line-buyer-note">
+<textarea name="Order.Contact.BuyerNote" placeholder="Special Instructions" rows="4"></textarea>
                     </div>
 
                     @for (int i = 0; i < Model.ShoppingCart.ShoppingCartItems.Count; i++)
@@ -113,7 +113,7 @@
         </div>
 
             <div class="col-md-6 col-md-offset-2">
-                <dt class="col-sm-3">
+                <dt class="col-sm-3" style="margin-top:1rem">
                     @Html.DisplayNameFor(model => model.ShoppingCart.Subtotal)
                 </dt>
                 <dd class="col-sm-10">
