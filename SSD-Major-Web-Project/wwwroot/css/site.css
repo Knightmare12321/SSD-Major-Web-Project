@@ -243,6 +243,8 @@ textarea {
 }
 
 
+
+
 /*USER CONTROLLER*/
 /*Sign in Page*/
 .centered {
@@ -281,27 +283,49 @@ a.black-hyperlink {
     padding-left: 20px;
     .grid-item
 
-{
-    min-width: 250px;
+    {
+        min-width: 250px;
+    }
+
+    button {
+        background-color: transparent;
+        font-weight: 500;
+        border-radius: 0.2rem;
+        border: solid blue 1px;
+        padding: 0px 25px;
+        margin: 10px auto;
+        &:hover
+
+        {
+            background-color: dodgerblue;
+            border: solid black 1px;
+            color: white;
+        }
+
+    }
 }
 
-button {
-    background-color: transparent;
-    font-weight: 500;
-    border-radius: 0.2rem;
-    border: solid blue 1px;
-    padding: 0px 25px;
-    margin: 10px auto;
-    &:hover
-
-{
-    background-color: dodgerblue;
-    border: solid black 1px;
-    color: white;
-}
+#customer-profile-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:20px;
+    max-width:800px;
+    margin-bottom:1rem;
+    padding:1rem;
+    background-color:var(--bg-lightest-gray);
 
 }
+
+.profile-line {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
 }
+
+    .profile-line label {
+        font-size: calc(var(--label-font-size) * 0.7);
+    }
+
 
 /*Customer PersonalOrderHistory Styling*/
 #personal-order-section {
