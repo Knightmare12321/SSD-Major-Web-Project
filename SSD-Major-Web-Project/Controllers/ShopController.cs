@@ -213,9 +213,22 @@ namespace SSD_Major_Web_Project.Controllers
             }
 
             //recalculate shipping values
-            checkoutVM.ShoppingCart.Subtotal = orderTotal;
-            checkoutVM.ShoppingCart.Taxes = orderTotal * 0.12m;
-            checkoutVM.ShoppingCart.GrandTotal = orderTotal * 1.12m;
+            if (discount != null)
+            {
+                if (discount.DiscountType == "Percent")
+                {
+                    orderTotal = orderTotal * (1 - discount.DiscountValue / 100);
+                }
+                else
+                {
+                    orderTotal -= discount.DiscountValue;
+                }
+            }
+            decimal subtotal = Math.Round(orderTotal, 2);
+            decimal tax = Math.Round(orderTotal * 0.12m, 2);
+            checkoutVM.ShoppingCart.Subtotal = subtotal;
+            checkoutVM.ShoppingCart.Taxes = tax;
+            checkoutVM.ShoppingCart.GrandTotal = tax + subtotal;
 
             // Assign the value from the Razor view to the Order property of the CheckoutVM object
             OrderVM orderVM = new OrderVM
