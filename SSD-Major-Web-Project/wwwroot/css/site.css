@@ -127,26 +127,6 @@ body {
     color: red;
 }
 
-.checkout-container .shipping-address {
-    gap: 1rem;
-    margin-bottom: 1rem;
-}
-
-.checkout-container .shipping-address .address-line{
-    margin-bottom: 1rem;
-}
-
-.btn-primary {
-    margin-top: 2rem;
-}
-
-textarea {
-    width: 100%;
-    height: 150px; /* Adjust the height as needed */
-    font-size: 14px; /* Adjust the font size as needed */
-    /* Add any additional styling as desired */
-}
-
 
 .shoppingcart-container h2 {
     font-size: calc(var(--shopping-cart-font-size) * 1.5);
@@ -249,6 +229,44 @@ textarea {
     margin-bottom: 10px;
 }
 
+.checkout-container .btn-primary {
+    color: white;
+    background-color: black;
+    font-weight: 500;
+    font-size: var(--shopping-cart-font-size);
+    border-radius: 0;
+    border: 1px solid black;
+    padding: 0.1rem 1rem;
+    height: 2.5rem;
+}
+
+
+.checkout-container .shipping-address {
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+    .checkout-container .shipping-address .address-line {
+        margin-bottom: 1rem;
+    }
+
+.checkout-container .btn-primary {
+    margin-top: 2rem;
+}
+
+textarea {
+    width: 100%;
+    height: 150px; 
+    font-size: var(--label-font-size);
+}
+
+.remind-to-log-in{
+    font-size:calc(var(--label-font-size) * 0.7);
+}
+
+.validation-error {
+    color: red;
+    font-size: 0.8rem;
 
 
 

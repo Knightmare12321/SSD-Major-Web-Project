@@ -45,28 +45,35 @@
                     <div class="address-line">
 
                     <input type="text" name="Order.Contact.FirstName" placeholder="First Name" />
-                     <span asp-validation-for="Order.Contact.FirstName"></span>
+                    <br />
+                     <span class="validation-error" asp-validation-for="Order.Contact.FirstName"></span>
 
                     <input type="text" name="Order.Contact.LastName" placeholder="Last Name" />
-                     <span asp-validation-for="Order.Contact.LastName"></span>
+                        <br />
+                     <span class="validation-error" asp-validation-for="Order.Contact.LastName"></span>
 
                     </div>
                     <div class="address-line">
                     <input type="text" name="Order.Contact.Address" placeholder="Address" />
-                     <span asp-validation-for="Order.Contact.Address"></span>
+                        <br />
+                     <span class="validation-error" asp-validation-for="Order.Contact.Address"></span>
                     <input type="text" name="Order.Contact.Address2" placeholder="Address 2" />
                     </div>
                     <div class="address-line">
                     <input type="text" name="Order.Contact.City" placeholder="City" />
-                        <span asp-validation-for="Order.Contact.City"></span>
+                        <br />
+                        <span class="validation-error" asp-validation-for="Order.Contact.City"></span>
                     <input type="text" name="Order.Contact.Province" placeholder="Province" />
-                        <span asp-validation-for="Order.Contact.Province"></span>
+                        <br />
+                        <span class="validation-error" asp-validation-for="Order.Contact.Province"></span>
                     </div>
                     <div class="address-line">
                     <input type="text" name="Order.Contact.PostalCode" placeholder="Postal Code" />
-                        <span asp-validation-for="Order.Contact.PostalCode"></span>
+                        <br />
+                        <span class="validation-error" asp-validation-for="Order.Contact.PostalCode"></span>
                     <input type="text" name="Order.Contact.Country" placeholder="Country" />
-                        <span asp-validation-for="Order.Contact.Country"></span>
+                        <br />
+                        <span class="validation-error" asp-validation-for="Order.Contact.Country"></span>
                     </div>
                     <div class="address-line">
 
@@ -77,10 +84,12 @@
                         else
                         {
                             <input type="text" name="DeliveryContactEmail" placeholder="Email" />
-                            <span asp-validation-for="DeliveryContactEmail"></span>
+                            <br />
+                            <span class="validation-error" asp-validation-for="DeliveryContactEmail"></span>
                         }
                     <input type="text" name="Order.Contact.PhoneNumber" placeholder="Phone Number" />
-                    <span asp-validation-for="Order.Contact.PhoneNumber"></span>
+                        <br />
+                    <span class="validation-error" asp-validation-for="Order.Contact.PhoneNumber"></span>
                     </div>
                     <div class="address-line-buyer-note">
 <textarea name="Order.Contact.BuyerNote" placeholder="Special Instructions" rows="4"></textarea>
@@ -104,8 +113,19 @@
       
                     <input name="ShoppingCart.CouponCode" value="@Model.ShoppingCart.CouponCode" hidden/>
                     <input name="Order.Discount" value="@Model.Order.Discount" hidden />
-              
-     
+
+                    @if (!User.Identity.IsAuthenticated)
+                    {
+                        <div>
+                            <p class="remind-to-log-in">
+                                Already have an account?<br />
+                                <a href="/Identity/Account/Login?returnUrl=/Shop/Index">Login</a> to use your default shipping address
+                            </p>
+                        </div>
+                    }
+
+
+
                     <button type="submit" class="btn btn-primary">Proceed to Payment Page</button>
                 </form>
 
