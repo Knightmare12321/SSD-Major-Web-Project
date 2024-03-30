@@ -15,8 +15,8 @@
                 @ViewBag.Message
             </div>
         }
-        <h2>CHECKOUT</h2>
-        <div class="col-md-4">
+        <h2>Checkout</h2>
+        <div class="col-md-5">
             <div class="shipping-address-title">
                 <h3>Shipping Address</h3>
                 @if (!User.Identity.IsAuthenticated)
@@ -30,30 +30,37 @@
                 }
                 else
                 {
-@if (Model.UserAddresses != null && Model.UserAddresses.Any())
-{
-    <div>
-        <p style="">Use default profile address</p>
-        @foreach (var address in Model.UserAddresses)
-        {
-            <div>
-                <input type="radio" name="selectedAddress" value="@address.PkContactId" onchange="selectAddress(this.value)" />
-                <label>@address.FirstName @address.LastName
-                    <br />@address.Address
-
-                    @if (!string.IsNullOrEmpty(address.Address2))
+                    @if (Model.UserAddresses != null && Model.UserAddresses.Any())
                     {
-                        <br />@address.Address2
+                        <div>
+                            <p style="font-size:0.8rem;">Use default profile address below:</p>
+                            @foreach (var address in Model.UserAddresses)
+                            {
+                                <div class="d-flex" style="margin-bottom:1rem;">
+                                    <div>
+                                        <input type="radio" name="selectedAddress" value="@address.PkContactId" onchange="selectAddress('@address.PkContactId', '@address.FirstName', '@address.LastName', '@address.Address', '@address.Address2', '@address.City', '@address.Province', '@address.PostalCode', '@address.Country', '@address.PhoneNumber')" />
+                                    </div>
+                                    <div>
+                                        <label style="margin-left:1rem; font-size:0.8rem;">
+                                            @address.FirstName @address.LastName
+                                            <br />@address.Address
+                                            @if (!string.IsNullOrEmpty(address.Address2))
+                                            {
+                                                <br />
+
+                                                @address.Address2
+                                            }
+                                            <br />@address.City, @address.Province
+                                            <br />@address.PostalCode
+                                            <br />@address.Country
+                                            <br />@address.PhoneNumber
+                                        </label>
+                                    </div>
+                                </div>
+                            }
+                        </div>
                     }
-                    <br />@address.City, @address.Province
-                    <br />@address.PostalCode
-                    <br />@address.Country
-                    <br />@address.PhoneNumber
-                </label>
-            </div>
-        }
-    </div>
-}
+
                 }
 
             </div>
@@ -80,29 +87,29 @@
 
 
                     <div class="address-line">
-
-                    <input type="text" name="Order.Contact.FirstName" placeholder="First Name" />
-                    <br />
-                     <span class="validation-error" asp-validation-for="Order.Contact.FirstName"></span>
-
-                    <input type="text" name="Order.Contact.LastName" placeholder="Last Name" />
+                        <input type="text" name="Order.Contact.FirstName" placeholder="First Name" />
                         <br />
-                     <span class="validation-error" asp-validation-for="Order.Contact.LastName"></span>
+                         <span class="validation-error" asp-validation-for="Order.Contact.FirstName"></span>
+
+                        <input type="text" name="Order.Contact.LastName" placeholder="Last Name" />
+                            <br />
+                         <span class="validation-error" asp-validation-for="Order.Contact.LastName"></span>
 
                     </div>
                     <div class="address-line">
-                    <input type="text" name="Order.Contact.Address" placeholder="Address" />
+                        <input type="text" name="Order.Contact.Address" placeholder="Address" />
+                            <br />
+                         <span class="validation-error" asp-validation-for="Order.Contact.Address"></span>
+                        <input type="text" name="Order.Contact.Address2" placeholder="Address 2" />
                         <br />
-                     <span class="validation-error" asp-validation-for="Order.Contact.Address"></span>
-                    <input type="text" name="Order.Contact.Address2" placeholder="Address 2" />
                     </div>
                     <div class="address-line">
-                    <input type="text" name="Order.Contact.City" placeholder="City" />
-                        <br />
-                        <span class="validation-error" asp-validation-for="Order.Contact.City"></span>
-                    <input type="text" name="Order.Contact.Province" placeholder="Province" />
-                        <br />
-                        <span class="validation-error" asp-validation-for="Order.Contact.Province"></span>
+                        <input type="text" name="Order.Contact.City" placeholder="City" />
+                            <br />
+                            <span class="validation-error" asp-validation-for="Order.Contact.City"></span>
+                        <input type="text" name="Order.Contact.Province" placeholder="Province" />
+                            <br />
+                            <span class="validation-error" asp-validation-for="Order.Contact.Province"></span>
                     </div>
                     <div class="address-line">
                     <input type="text" name="Order.Contact.PostalCode" placeholder="Postal Code" />
@@ -124,6 +131,7 @@
                             <br />
                             <span class="validation-error" asp-validation-for="DeliveryContactEmail"></span>
                         }
+                        <br/>
                     <input type="text" name="Order.Contact.PhoneNumber" placeholder="Phone Number" />
                         <br />
                     <span class="validation-error" asp-validation-for="Order.Contact.PhoneNumber"></span>
@@ -160,7 +168,7 @@
             </div>
         </div>
 
-            <div class="col-md-6 col-md-offset-2">
+        <div class="col-md-6 col-md-offset-2">
                 <dt class="col-sm-3" style="margin-top:1rem">
                     @Html.DisplayNameFor(model => model.ShoppingCart.Subtotal)
                 </dt>
@@ -192,23 +200,17 @@
       
     </div>
 
-    <script>
- function selectAddress(selectedAddressId) {
-        // Find the selected address from the user addresses array
-        var selectedAddress = userAddresses.find(function (address) {
-            return address.PkContactId == selectedAddressId;
-        });
-            // Populate the form fields with the selected address
-            if (selectedAddress) {
-                $('input[name="Order.Contact.FirstName"]').val(selectedAddress.FirstName);
-                $('input[name="Order.Contact.LastName"]').val(selectedAddress.LastName);
-                $('input[name="Order.Contact.Address"]').val(selectedAddress.Address);
-                $('input[name="Order.Contact.Address2"]').val(selectedAddress.Address2);
-                $('input[name="Order.Contact.City"]').val(selectedAddress.City);
-                $('input[name="Order.Contact.Province"]').val(selectedAddress.Province);
-                $('input[name="Order.Contact.PostalCode"]').val(selectedAddress.PostalCode);
-                $('input[name="Order.Contact.Country"]').val(selectedAddress.Country);
-                $('input[name="Order.Contact.PhoneNumber"]').val(selectedAddress.PhoneNumber);
-            }
-        }
-    </script>
+<script>
+    function selectAddress(id, firstName, lastName, address, address2, city, province, postalCode, country, phoneNumber) {
+        // Populate the form fields with the selected address
+        $('input[name="Order.Contact.FirstName"]').val(firstName);
+        $('input[name="Order.Contact.LastName"]').val(lastName);
+        $('input[name="Order.Contact.Address"]').val(address);
+        $('input[name="Order.Contact.Address2"]').val(address2);
+        $('input[name="Order.Contact.City"]').val(city);
+        $('input[name="Order.Contact.Province"]').val(province);
+        $('input[name="Order.Contact.PostalCode"]').val(postalCode);
+        $('input[name="Order.Contact.Country"]').val(country);
+        $('input[name="Order.Contact.PhoneNumber"]').val(phoneNumber);
+    }
+</script>

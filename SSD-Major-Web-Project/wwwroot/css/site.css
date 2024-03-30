@@ -247,7 +247,9 @@ body {
 }
 
     .checkout-container .shipping-address .address-line {
-        margin-bottom: 1rem;
+
+        display: flex;
+        flex-direction: column;
     }
 
 .checkout-container .btn-primary {

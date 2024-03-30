@@ -36,6 +36,7 @@ public partial class Contact
     [Required(ErrorMessage = "Phone Number cannot be empty.")]
 
     [Display(Name = "Phone Number")]
+    [RegularExpression(@"^\(\d{3}\)-\d{3}-\d{4}$", ErrorMessage = "Please enter a valid phone number in the format (xxx)-xxx-xxxx.")]
     public string PhoneNumber { get; set; } = null!;
 
     public virtual ICollection<Customer> Customers { get; set; } = new List<Customer>();
