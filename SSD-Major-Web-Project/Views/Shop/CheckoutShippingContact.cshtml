@@ -16,6 +16,7 @@
             </div>
         }
         <h2>Checkout</h2>
+        <a href="/Shop/Index" >Back to Shopping Cart</a>
         <div class="col-md-5">
             <div class="shipping-address-title">
                 <h3>Shipping Address</h3>
@@ -25,6 +26,7 @@
                         <p class="remind-to-log-in">
                             Already have an account?<br />
                             <a href="/Identity/Account/Login?returnUrl=/Shop/Index">Login</a> to use your default shipping address
+                            <br />Or enter a new address below ↓
                         </p>
                     </div>
                 }
@@ -128,7 +130,7 @@
                         else
                         {
                             <input type="text" name="DeliveryContactEmail" placeholder="Email" />
-                            <br />
+                    
                             <span class="validation-error" asp-validation-for="DeliveryContactEmail"></span>
                         }
                         <br/>
