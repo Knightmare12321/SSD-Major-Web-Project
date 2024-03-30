@@ -2,6 +2,7 @@
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using SSD_Major_Web_Project.Data.Services;
 using SSD_Major_Web_Project.Models;
 using SSD_Major_Web_Project.Repositories;
@@ -153,6 +154,21 @@ namespace SSD_Major_Web_Project.Controllers
             CheckoutVM checkoutVM = new CheckoutVM();
 
             checkoutVM.ShoppingCart = shoppingcartVM;
+
+            //populate the UserAddresses property with the addresses of the logged-in user. 
+            //If the user is not logged in, the UserAddresses property will be null.
+            if (User.Identity.IsAuthenticated)
+            {
+                string userId = User.Identity.Name;
+                var user = _context.Customers.FirstOrDefault(u => u.PkCustomerId == userId);
+                List<Contact> userAddresses = _context.Contacts.Where(a => a.PkContactId == user.FkContactId ).ToList();
+                checkoutVM.UserAddresses = userAddresses;
+            }
+            else
+            {
+                checkoutVM.UserAddresses = null;
+            }
+
 
             // Assign Discount Code if available from the shopping cart razor view
             checkoutVM.ShoppingCart.CouponCode = shoppingcartVM.CouponCode != null ? shoppingcartVM.CouponCode : null;

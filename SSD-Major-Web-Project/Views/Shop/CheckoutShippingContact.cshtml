@@ -19,6 +19,43 @@
         <div class="col-md-4">
             <div class="shipping-address-title">
                 <h3>Shipping Address</h3>
+                @if (!User.Identity.IsAuthenticated)
+                {
+                    <div>
+                        <p class="remind-to-log-in">
+                            Already have an account?<br />
+                            <a href="/Identity/Account/Login?returnUrl=/Shop/Index">Login</a> to use your default shipping address
+                        </p>
+                    </div>
+                }
+                else
+                {
+@if (Model.UserAddresses != null && Model.UserAddresses.Any())
+{
+    <div>
+        <p style="">Use default profile address</p>
+        @foreach (var address in Model.UserAddresses)
+        {
+            <div>
+                <input type="radio" name="selectedAddress" value="@address.PkContactId" onchange="selectAddress(this.value)" />
+                <label>@address.FirstName @address.LastName
+                    <br />@address.Address
+
+                    @if (!string.IsNullOrEmpty(address.Address2))
+                    {
+                        <br />@address.Address2
+                    }
+                    <br />@address.City, @address.Province
+                    <br />@address.PostalCode
+                    <br />@address.Country
+                    <br />@address.PhoneNumber
+                </label>
+            </div>
+        }
+    </div>
+}
+                }
+
             </div>
             <div class="shipping-address">
                 <form method="post" action="/Shop/ProceedPayment">
@@ -114,16 +151,7 @@
                     <input name="ShoppingCart.CouponCode" value="@Model.ShoppingCart.CouponCode" hidden/>
                     <input name="Order.Discount" value="@Model.Order.Discount" hidden />
 
-                    @if (!User.Identity.IsAuthenticated)
-                    {
-                        <div>
-                            <p class="remind-to-log-in">
-                                Already have an account?<br />
-                                <a href="/Identity/Account/Login?returnUrl=/Shop/Index">Login</a> to use your default shipping address
-                            </p>
-                        </div>
-                    }
-
+      
 
 
                     <button type="submit" class="btn btn-primary">Proceed to Payment Page</button>
@@ -164,4 +192,23 @@
       
     </div>
 
-
+    <script>
+ function selectAddress(selectedAddressId) {
+        // Find the selected address from the user addresses array
+        var selectedAddress = userAddresses.find(function (address) {
+            return address.PkContactId == selectedAddressId;
+        });
+            // Populate the form fields with the selected address
+            if (selectedAddress) {
+                $('input[name="Order.Contact.FirstName"]').val(selectedAddress.FirstName);
+                $('input[name="Order.Contact.LastName"]').val(selectedAddress.LastName);
+                $('input[name="Order.Contact.Address"]').val(selectedAddress.Address);
+                $('input[name="Order.Contact.Address2"]').val(selectedAddress.Address2);
+                $('input[name="Order.Contact.City"]').val(selectedAddress.City);
+                $('input[name="Order.Contact.Province"]').val(selectedAddress.Province);
+                $('input[name="Order.Contact.PostalCode"]').val(selectedAddress.PostalCode);
+                $('input[name="Order.Contact.Country"]').val(selectedAddress.Country);
+                $('input[name="Order.Contact.PhoneNumber"]').val(selectedAddress.PhoneNumber);
+            }
+        }
+    </script>

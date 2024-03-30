@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.Owin.BuilderProperties;
+using SSD_Major_Web_Project.Models;
+using System.ComponentModel.DataAnnotations;
 
 namespace SSD_Major_Web_Project.ViewModels
 {
@@ -14,7 +16,7 @@ namespace SSD_Major_Web_Project.ViewModels
 
         public string TransactionId { get; set; }
 
-   
+        public List<Contact> UserAddresses { get; set; }
 
     }
 }
