@@ -36,14 +36,17 @@
                                         {
                                             if (cartItem.SkuId == productSku.PkSkuId)
                                             {
+                                                <div id="@(cartItem.SkuId)-tile" class="sku-tile">
                                                 <p>Size: @productSku.Size</p>
                                                 <p>Qty:</p>
                                                 <div class="qty-section">
                                                     <button onclick="decrementQuantity(@cartItem.SkuId,@item.PkProductId)">-</button>
                                                     <p id="@(cartItem.SkuId)-qty" class="@(item.PkProductId) qty">@cartItem.Quantity</p>
                                                     <button onclick="incrementQuantity(@cartItem.SkuId)">+</button>
+                                                        <button onclick="removeItem(@cartItem.SkuId,@item.PkProductId)" class="delete-btn"><img class="trash-can" src="~/images/icon/trash-can.png" /></button>
                                                 </div>
                                                 <p id="@(cartItem.SkuId)-qty-message"></p>
+                                                </div>
                                                 break;
                                             }
                                         }
@@ -430,5 +433,34 @@
             }
         });
     };
+
+    const removeItem = (skuId, productId) => {
+        const url = '@Url.Action("RemoveFromCart", "Cookie")';
+        $.ajax({
+            type: "POST",
+            url: url,
+            data: { "id": skuId,"allQuantity":true },
+            success: function (data) {
+                if (data.success) {
+                    const numSkuTiles = $("#" + productId + "-tile .sku-tile").length;
+
+                    if (numSkuTiles == 1) {
+                        //remove listing completely from view if only one sku is in there
+                        $("#" + productId + "-tile").remove();
+                    } else {
+                        //else remove that sku from view
+                        $("#" + skuId + "-tile").remove();
+                    }
+
+                    //update shopping cart values
+                    resetValues();
+                    applyDiscount();
+                }
+            },
+            error: function () {
+                $("#" + skuId + "-qty-message").html("An unexpected error occured")
+            }
+        });
+    }
 
 </script>

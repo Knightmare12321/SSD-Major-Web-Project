@@ -39,7 +39,9 @@
                 var data = _context.Images?.FirstOrDefault(p => p.FkProductId == productSku.FkProductId)?.Data;
                 <tr>
                     <td>
-                        <img src="data:image;base64,@Convert.ToBase64String(data)" alt="Product Image" style="width: 100px; height: 100px;" />
+                        <div class="img-container" style="width:100px;height:100px;overflow:hidden;">
+                            <img src="data:image;base64,@Convert.ToBase64String(data)" alt="Product Image" style="width:100%;object-fit:cover;" />
+                        </div>
                         <p>@product.Name</p>
                     </td>
                     <td>

@@ -51,7 +51,7 @@ namespace SSD_Major_Web_Project.Controllers
         }
 
         [HttpPost]
-        public JsonResult RemoveFromCart(int id)
+        public JsonResult RemoveFromCart(int id, bool allQuantity = false)
         {
             var cartCookie = Request.Cookies["cart"];
             CookieOptions option = new CookieOptions();
@@ -64,7 +64,7 @@ namespace SSD_Major_Web_Project.Controllers
             {
                 if (item.SkuId == id)
                 {
-                    if (item.Quantity == 1)
+                    if (item.Quantity == 1 || allQuantity == true)
                     {
                         carts.Remove(item);
                     }
