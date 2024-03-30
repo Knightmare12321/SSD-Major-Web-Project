@@ -38,7 +38,7 @@ namespace SSD_Major_Web_Project.Controllers
         {
             var userId = User.Identity.Name;
             CustomerRepo customerRepo = new CustomerRepo(_context);
-            List<PersonalOrderHistoryVM> vm = customerRepo.GetOrders("lotte.tfins@gmail.com").ToList();
+            List<PersonalOrderHistoryVM> vm = customerRepo.GetOrders(userId).ToList();
             if (vm.Count == 0)
             {
                 ViewBag.Message = "You have no order history yet";
@@ -177,9 +177,9 @@ namespace SSD_Major_Web_Project.Controllers
             // get current user by contactId
             var userId = User.Identity.Name;
             // Get user detail from database
-                var customer = _context.Customers.Find(userId);
-                customerVM.Customer = customer;
-                customerVM.DefaultContact = _context.Contacts.Find(customer.FkContactId);
+            var customer = _context.Customers.Find(userId);
+            customerVM.Customer = customer;
+            customerVM.DefaultContact = _context.Contacts.Find(customer.FkContactId);
 
             return View(customerVM);
 

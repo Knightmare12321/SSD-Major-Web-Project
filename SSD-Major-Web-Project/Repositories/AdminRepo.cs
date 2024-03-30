@@ -45,6 +45,7 @@ namespace SSD_Major_Web_Project.Repositories
             {
                 query = query.Where(p => p.IsActive == true);
             }
+
             return query;
         }
 
@@ -476,6 +477,9 @@ namespace SSD_Major_Web_Project.Repositories
             {
                 query = query.Where(p => p.IsActive == true);
             }
+
+            //sort by start date
+            query = query.OrderBy(d => d.StartDate);
 
             return query;
         }
