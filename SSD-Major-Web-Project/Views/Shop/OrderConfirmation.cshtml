@@ -21,7 +21,7 @@
         <thead>
             <tr>
                 <th>Product</th>
-                <th>Product ID</th>
+                <th>Product Id</th>
                 <th>Quantity</th>
                 <th>Unit Price</th>
                 <th>Subtotal</th>
@@ -36,13 +36,11 @@
                 var product = _context.Products.FirstOrDefault(p => p.PkProductId == productSkuId);
                 var unitPrice = product?.Price;
                 // Retrieve imageId by product id and display the image
-                var data = _context.Images?.FirstOrDefault(p => p.FkProductId == productSku.FkProductId).Data;
+                var data = _context.Images?.FirstOrDefault(p => p.FkProductId == productSku.FkProductId)?.Data;
                 <tr>
                     <td>
-
                         <img src="data:image;base64,@Convert.ToBase64String(data)" alt="Product Image" style="width: 100px; height: 100px;" />
                         <p>@product.Name</p>
-
                     </td>
                     <td>
                         @item.SkuId

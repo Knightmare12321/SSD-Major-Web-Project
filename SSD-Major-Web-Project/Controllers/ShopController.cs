@@ -590,22 +590,25 @@ namespace SSD_Major_Web_Project.Controllers
                 ShoppingCartItem orderConfirmationCheckoutItemlist = new ShoppingCartItem();
                 if (orderBytransactionId != null)
                 {
-                    ShoppingCartItem shoppingCartItem = new ShoppingCartItem();
+                   
                     // using the orderId to get all the cart item from db ( get the order id then use the order id to get the cart item)
 
                     List<OrderDetail> orderDetails = _context.OrderDetails.Where(o => o.FkOrderId == orderBytransactionId.PkOrderId).ToList();
                     List<ShoppingCartItem> shoppingCartItemList = new List<ShoppingCartItem>();
                     foreach (var orderDetail in orderDetails)
                     {
+                        // Create a new instance for each item
+                        var shoppingCartItem = new ShoppingCartItem();
                         shoppingCartItem.SkuId = orderDetail.FkSkuId;
                         shoppingCartItem.Quantity = orderDetail.Quantity;
                         shoppingCartItemList.Add(shoppingCartItem);
                     }
 
-
                     checkoutVM.ShoppingCart.ShoppingCartItems = shoppingCartItemList;
 
+
                 }
+                orderConfirmationVM.CheckoutVM = checkoutVM;
 
                 //
 
