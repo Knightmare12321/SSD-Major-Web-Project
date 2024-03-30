@@ -12,48 +12,60 @@
         <h2>My Shopping Bag</h2>
         <div class="col-md-5">
             <div class="shopping-cart">
-     
-                @foreach (var item in @Model.Products)
+                @if (Model.Products.Count > 0)
                 {
-                    <div id="@(item.PkProductId)-tile" class="product">
-                        @if (item.Images != null && item.Images.Count > 0)
-                        {
-                            <div class="img-container">
-                            <img src="data:image/jpeg;base64,@Convert.ToBase64String(item.Images.FirstOrDefault().Data)" alt="@item.Name" class="product-image" />
-                            </div>
-                        } 
-                        <div class="product-details">
-                            <p>@item.Name</p>
-                            <p>$@item.Price</p>
-                            @foreach (var cartItem in Model.ShoppingCartItems)
+   
+              
+                        @foreach (var item in @Model.Products)
+                    {
+                        <div id="@(item.PkProductId)-tile" class="product">
+                            @if (item.Images != null && item.Images.Count > 0)
                             {
-                                if (@cartItem.Quantity > 0)
+                                <div class="img-container">
+                                <img src="data:image/jpeg;base64,@Convert.ToBase64String(item.Images.FirstOrDefault().Data)" alt="@item.Name" class="product-image" />
+                                </div>
+                            } 
+                            <div class="product-details">
+                                <p>@item.Name</p>
+                                <p>$@item.Price</p>
+                                @foreach (var cartItem in Model.ShoppingCartItems)
                                 {
-                                    foreach (var productSku in item.ProductSkus)
+                                    if (@cartItem.Quantity > 0)
                                     {
-                                        if (cartItem.SkuId == productSku.PkSkuId)
+                                        foreach (var productSku in item.ProductSkus)
                                         {
-                                            <p>Size: @productSku.Size</p>
-                                            <p>Qty:</p>
-                                            <div class="qty-section">
-                                                <button onclick="decrementQuantity(@cartItem.SkuId,@item.PkProductId)">-</button>
-                                                <p id="@(cartItem.SkuId)-qty" class="@(item.PkProductId) qty">@cartItem.Quantity</p>
-                                                <button onclick="incrementQuantity(@cartItem.SkuId)">+</button>
-                                            </div>
-                                            <p id="@(cartItem.SkuId)-qty-message"></p>
-                                            break;
+                                            if (cartItem.SkuId == productSku.PkSkuId)
+                                            {
+                                                <p>Size: @productSku.Size</p>
+                                                <p>Qty:</p>
+                                                <div class="qty-section">
+                                                    <button onclick="decrementQuantity(@cartItem.SkuId,@item.PkProductId)">-</button>
+                                                    <p id="@(cartItem.SkuId)-qty" class="@(item.PkProductId) qty">@cartItem.Quantity</p>
+                                                    <button onclick="incrementQuantity(@cartItem.SkuId)">+</button>
+                                                </div>
+                                                <p id="@(cartItem.SkuId)-qty-message"></p>
+                                                break;
+                                            }
                                         }
-                                    }
                                     
+                                    }
                                 }
-                            }
 
-                        </div>
-                    </div> 
+                            </div>
+                        </div> 
+                    }
                 }
+                else
+                {
+                    
+                    <p>Your shopping cart is empty.</p>
+                    <a href="/Product/Index"> Shop Now</a>
+                    
+                }
+
             </div>
             <div class="my-wishlist">
-                <h2>My Favourites</h2>
+                <h2 style="margin-top:2rem;">My Favourites</h2>
             </div>
         </div>
 

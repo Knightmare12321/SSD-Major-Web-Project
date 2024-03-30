@@ -39,67 +39,60 @@ namespace SSD_Major_Web_Project.Controllers
                 List<ShoppingCartItem> ShoppingCartItemCookiesList = JsonConvert.DeserializeObject<List<ShoppingCartItem>>(shoppingCartCookie);
 
 
-                //Catch error, if shopping cart is empty(no products found), show a message"
-                if (ShoppingCartItemCookiesList.Count() == 0)
-                {
-                    return View("Error", new ErrorViewModel { RequestId = "Your shopping cart is empty. Shop now" });
-                }
-                else
-                {
 
 
-                    List<ShoppingCartItem> shoppingcartItems = new List<ShoppingCartItem>();
-                    //for (int i = 0; i < ShoppingCartItem.Count; i++)
-                    //{
-                    //    shoppingcartItems.Add(new ShoppingCartItem { SkuId = IDList[i], Quantity = 1 });
-                    //}
+                List<ShoppingCartItem> shoppingcartItems = new List<ShoppingCartItem>();
+                //for (int i = 0; i < ShoppingCartItem.Count; i++)
+                //{
+                //    shoppingcartItems.Add(new ShoppingCartItem { SkuId = IDList[i], Quantity = 1 });
+                //}
 
-                    shoppingcartItems = ShoppingCartItemCookiesList;
+                shoppingcartItems = ShoppingCartItemCookiesList;
 
-                    //productIdsFromDb list contains the ProductId values associated with the provided SkuIds from the database.
-                    List<int> skuIds = shoppingcartItems.Select(s => s.SkuId).ToList();
+                //productIdsFromDb list contains the ProductId values associated with the provided SkuIds from the database.
+                List<int> skuIds = shoppingcartItems.Select(s => s.SkuId).ToList();
 
-                    List<ProductSku> productSkus = _context.ProductSkus
-                        .Where(p => skuIds.Contains(p.PkSkuId))
-                        .ToList();
+                List<ProductSku> productSkus = _context.ProductSkus
+                    .Where(p => skuIds.Contains(p.PkSkuId))
+                    .ToList();
 
-                    List<int> productIds = productSkus.Select(p => p.FkProductId ?? 0).ToList();
+                List<int> productIds = productSkus.Select(p => p.FkProductId ?? 0).ToList();
 
-                    List<Product> products = _context.Products
-                     .Include(p => p.Images)
-                     .Where(p => productIds.Contains(p.PkProductId))
-                     .ToList();
+                List<Product> products = _context.Products
+                 .Include(p => p.Images)
+                 .Where(p => productIds.Contains(p.PkProductId))
+                 .ToList();
 
-                    //populates the Product(s) by skuId include Images property in shopping cart for shopping cart view
+                //populates the Product(s) by skuId include Images property in shopping cart for shopping cart view
 
 
-                    ShoppingCartVM shoppingcartVM = new ShoppingCartVM();
+                ShoppingCartVM shoppingcartVM = new ShoppingCartVM();
 
-                    shoppingcartVM.ShoppingCartItems = shoppingcartItems;
+                shoppingcartVM.ShoppingCartItems = shoppingcartItems;
 
 
 
 
-                    //////////////////////Logic for validate if customer logged in
-                    //if (User.Identity.IsAuthenticated)
-                    //{
-                    //    shoppingcart.UserId = User.Identity.Name;
-                    //}
+                //////////////////////Logic for validate if customer logged in
+                //if (User.Identity.IsAuthenticated)
+                //{
+                //    shoppingcart.UserId = User.Identity.Name;
+                //}
 
-                    //Use repo helper function to calculate subtotal, taxes, shipping fee and grand total
-                    ShopRepo _shopRepo = new ShopRepo(_context);
-                    shoppingcartVM.Subtotal = _shopRepo.CalculateSubtotal(shoppingcartItems);
-                    shoppingcartVM.ShippingFee = 0; // shipping fee is 0 for now
-                    shoppingcartVM.Taxes = _shopRepo.CalculateTaxes(shoppingcartVM.Subtotal);
-                    shoppingcartVM.GrandTotal = _shopRepo.CalculateGrandTotal(shoppingcartVM.Subtotal, shoppingcartVM.Taxes, shoppingcartVM.ShippingFee);
+                //Use repo helper function to calculate subtotal, taxes, shipping fee and grand total
+                ShopRepo _shopRepo = new ShopRepo(_context);
+                shoppingcartVM.Subtotal = _shopRepo.CalculateSubtotal(shoppingcartItems);
+                shoppingcartVM.ShippingFee = 0; // shipping fee is 0 for now
+                shoppingcartVM.Taxes = _shopRepo.CalculateTaxes(shoppingcartVM.Subtotal);
+                shoppingcartVM.GrandTotal = _shopRepo.CalculateGrandTotal(shoppingcartVM.Subtotal, shoppingcartVM.Taxes, shoppingcartVM.ShippingFee);
 
 
 
-                    //////////////////////Assign shopping cart products to shopping cart view model
-                    shoppingcartVM.Products = products;
+                //////////////////////Assign shopping cart products to shopping cart view model
+                shoppingcartVM.Products = products;
 
-                    return View(shoppingcartVM);
-                }
+                return View(shoppingcartVM);
+
             }
             catch (Exception ex)
             {
@@ -107,6 +100,7 @@ namespace SSD_Major_Web_Project.Controllers
                 return View("Error", new ErrorViewModel { RequestId = "Error in ShopController" });
             }
         }
+        
 
 
         [HttpPost]

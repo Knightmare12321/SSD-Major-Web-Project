@@ -169,28 +169,47 @@ namespace SSD_Major_Web_Project.Controllers
             return View(customerVM);
         }
 
+        [Authorize]
         // GET: CustomerController/Profile
         public ActionResult EditProfile()
         {
             CustomerVM customerVM = new CustomerVM();
             // get current user by contactId
             var userId = User.Identity.Name;
-            // Get the user details
-            var customer = _context.Customers.Find(userId);
-            customerVM.Customer = customer;
-            customerVM.DefaultContact = _context.Contacts.Find(customer.FkContactId);
+            // Get user detail from database
+                var customer = _context.Customers.Find(userId);
+                customerVM.Customer = customer;
+                customerVM.DefaultContact = _context.Contacts.Find(customer.FkContactId);
 
             return View(customerVM);
 
         }
 
         // POST: CustomerController/Profile
+        [Authorize]
         [HttpPost]
         public ActionResult EditProfile(CustomerVM customerVM)
         {
             // use customer repo to update user contact
             CustomerRepo customerRepo = new CustomerRepo(_context);
-            customerRepo.UpdateUserContact(User.Identity.Name, customerVM.DefaultContact);
+
+            // get current user by contactId
+            var userId = User.Identity.Name;
+            // Get user detail from database
+            var customer = _context.Customers.Find(userId);
+            customerVM.Customer = customer;
+            // if contact Id is not null, update the contact
+            if (customer.FkContactId != null)
+            {
+                customerRepo.UpdateUserContact(userId, customerVM.DefaultContact);
+            }
+            else
+            {
+                // if contact Id is null, create new contact
+                customerRepo.CreateUserContact(userId, customerVM.DefaultContact);
+            }
+
+
             return View("Profile", customerVM);
 
         }
