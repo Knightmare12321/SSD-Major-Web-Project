@@ -1,0 +1,119 @@
+﻿@model IEnumerable<SSD_Major_Web_Project.ViewModels.ProductVM>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="product-page-wrapper">
+
+    <div class="product-title"> Favorite</div>
+
+@*     <form asp-action="Index">
+        <div class="search-bar">
+            <div class="search-icon-wrapper">
+                <img src="~/images/icon/icon-search.svg" class="search-icon" />
+            </div>
+            <div class="search-input-container">
+                <div class="search-input-wrapper">
+                    <input id="search-term" name="searchTerm" value="@ViewBag.SearchTerm" type="text" placeholder="Search products" class="search-input"></input>
+                </div>
+                <button id="search-btn">Search</button>
+                <button type="submit">Search</button>
+
+            </div>
+        </div>
+    </form> *@
+
+    <div id="product-container" class="product-container">
+        @foreach (var item in Model)
+        {
+            <div class="product-items-container">
+                <a asp-controller="Product" asp-action="Details" asp-route-id="@item.PkProductId">
+                    <div class="product-thumbnail-wrapper">
+                        @if (item.ImageByteArray != null)
+                        {
+                            <img src="data:image/jpeg;base64,
+                                    @Convert.ToBase64String(item.ImageByteArray)"
+                                 alt="item.Name"
+                                 class="product-thumbnail"
+                                 loading="lazy" />
+                        }
+                        else
+                        {
+                            <img src="~/images/No-Image-Placeholder.png"
+                                 alt="item.Name"
+                                 class="product-thumbnail"
+                                 loading="lazy" />
+                        }
+                    </div>
+                </a>
+                <div class="product-info">
+                    <div class="product-name"> @Html.DisplayFor(modelItem => item.Name) </div>
+                    <div class="product-price"> $@Html.DisplayFor(modelItem => item.Price) </div>
+                </div>
+            </div>
+        }
+    </div>
+
+@*     <button class="load-more">
+        Load more products
+    </button>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    <script>
+
+
+        $(document).ready(function () {
+            var page = @ViewBag.Page; // Initial page number
+
+            function loadMoreItems() {
+                console.log("loading more items")
+                $(".load-more").prop("disabled", true); // Disable the button
+                $(".load-more").text("Loading..."); // Change button text to "Loading..."
+                const searchTerm = $("#search-term").val();
+                $.ajax({
+                    url: '@Url.Action("LoadMoreItems", "Product")',
+                    type: 'GET',
+                    data: { "page": page + 1, "searchTerm": searchTerm },
+                    success: function (data) {
+                        if (data.length > 0) {
+                            $('.product-container').append(data);
+                            page++; // Increment page number
+                        } else {
+                            console.log("hiding load-more button now");
+                            $('.load-more').hide(); // Hide button if no more items
+                        }
+                    },
+                    complete: function () {
+                        $(".load-more").prop("disabled", false);
+                        $(".load-more").text("Load more products");
+                    }
+                });
+            }
+
+            $(".load-more").click(function () {
+                loadMoreItems();
+            });
+
+            $("#search-btn").on("click", function () {
+
+                const searchTerm = $("#search-term").val();
+                const url = '@Url.Action("Index", "Product")';
+                $.ajax({
+                    type: "GET",
+                    url: url,
+                    data: { "searchTerm": searchTerm },
+                    success: function (data) {
+                        const parser = new DOMParser();
+                        const newDoc = parser.parseFromString(data, 'text/html');
+                        $('#product-container')[0].innerHTML = newDoc.getElementById("product-container").innerHTML;
+                    }
+                });
+            });
+
+        })
+    </script> *@
+
+</div>
