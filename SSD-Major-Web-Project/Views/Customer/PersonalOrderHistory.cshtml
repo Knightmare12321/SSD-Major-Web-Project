@@ -8,6 +8,14 @@
 
 <h2>Order History</h2>
 <div id="personal-order-section" class="active">
+    @if (ViewBag.Message != null)
+    {
+        <div class="alert alert-success" role="alert">
+            @ViewBag.Message
+            <br />
+            <a href="/Product">Order Now</a>
+        </div>
+    }
     <div id="personal-order-history">
         @{
             foreach (var order in Model)

@@ -39,67 +39,60 @@ namespace SSD_Major_Web_Project.Controllers
                 List<ShoppingCartItem> ShoppingCartItemCookiesList = JsonConvert.DeserializeObject<List<ShoppingCartItem>>(shoppingCartCookie);
 
 
-                //Catch error, if shopping cart is empty(no products found), show a message"
-                if (ShoppingCartItemCookiesList.Count() == 0)
-                {
-                    return View("Error", new ErrorViewModel { RequestId = "Your shopping cart is empty. Shop now" });
-                }
-                else
-                {
 
 
-                    List<ShoppingCartItem> shoppingcartItems = new List<ShoppingCartItem>();
-                    //for (int i = 0; i < ShoppingCartItem.Count; i++)
-                    //{
-                    //    shoppingcartItems.Add(new ShoppingCartItem { SkuId = IDList[i], Quantity = 1 });
-                    //}
+                List<ShoppingCartItem> shoppingcartItems = new List<ShoppingCartItem>();
+                //for (int i = 0; i < ShoppingCartItem.Count; i++)
+                //{
+                //    shoppingcartItems.Add(new ShoppingCartItem { SkuId = IDList[i], Quantity = 1 });
+                //}
 
-                    shoppingcartItems = ShoppingCartItemCookiesList;
+                shoppingcartItems = ShoppingCartItemCookiesList;
 
-                    //productIdsFromDb list contains the ProductId values associated with the provided SkuIds from the database.
-                    List<int> skuIds = shoppingcartItems.Select(s => s.SkuId).ToList();
+                //productIdsFromDb list contains the ProductId values associated with the provided SkuIds from the database.
+                List<int> skuIds = shoppingcartItems.Select(s => s.SkuId).ToList();
 
-                    List<ProductSku> productSkus = _context.ProductSkus
-                        .Where(p => skuIds.Contains(p.PkSkuId))
-                        .ToList();
+                List<ProductSku> productSkus = _context.ProductSkus
+                    .Where(p => skuIds.Contains(p.PkSkuId))
+                    .ToList();
 
-                    List<int> productIds = productSkus.Select(p => p.FkProductId ?? 0).ToList();
+                List<int> productIds = productSkus.Select(p => p.FkProductId ?? 0).ToList();
 
-                    List<Product> products = _context.Products
-                     .Include(p => p.Images)
-                     .Where(p => productIds.Contains(p.PkProductId))
-                     .ToList();
+                List<Product> products = _context.Products
+                 .Include(p => p.Images)
+                 .Where(p => productIds.Contains(p.PkProductId))
+                 .ToList();
 
-                    //populates the Product(s) by skuId include Images property in shopping cart for shopping cart view
+                //populates the Product(s) by skuId include Images property in shopping cart for shopping cart view
 
 
-                    ShoppingCartVM shoppingcartVM = new ShoppingCartVM();
+                ShoppingCartVM shoppingcartVM = new ShoppingCartVM();
 
-                    shoppingcartVM.ShoppingCartItems = shoppingcartItems;
+                shoppingcartVM.ShoppingCartItems = shoppingcartItems;
 
 
 
 
-                    //////////////////////Logic for validate if customer logged in
-                    //if (User.Identity.IsAuthenticated)
-                    //{
-                    //    shoppingcart.UserId = User.Identity.Name;
-                    //}
+                //////////////////////Logic for validate if customer logged in
+                //if (User.Identity.IsAuthenticated)
+                //{
+                //    shoppingcart.UserId = User.Identity.Name;
+                //}
 
-                    //Use repo helper function to calculate subtotal, taxes, shipping fee and grand total
-                    ShopRepo _shopRepo = new ShopRepo(_context);
-                    shoppingcartVM.Subtotal = _shopRepo.CalculateSubtotal(shoppingcartItems);
-                    shoppingcartVM.ShippingFee = 0; // shipping fee is 0 for now
-                    shoppingcartVM.Taxes = _shopRepo.CalculateTaxes(shoppingcartVM.Subtotal);
-                    shoppingcartVM.GrandTotal = _shopRepo.CalculateGrandTotal(shoppingcartVM.Subtotal, shoppingcartVM.Taxes, shoppingcartVM.ShippingFee);
+                //Use repo helper function to calculate subtotal, taxes, shipping fee and grand total
+                ShopRepo _shopRepo = new ShopRepo(_context);
+                shoppingcartVM.Subtotal = _shopRepo.CalculateSubtotal(shoppingcartItems);
+                shoppingcartVM.ShippingFee = 0; // shipping fee is 0 for now
+                shoppingcartVM.Taxes = _shopRepo.CalculateTaxes(shoppingcartVM.Subtotal);
+                shoppingcartVM.GrandTotal = _shopRepo.CalculateGrandTotal(shoppingcartVM.Subtotal, shoppingcartVM.Taxes, shoppingcartVM.ShippingFee);
 
 
 
-                    //////////////////////Assign shopping cart products to shopping cart view model
-                    shoppingcartVM.Products = products;
+                //////////////////////Assign shopping cart products to shopping cart view model
+                shoppingcartVM.Products = products;
 
-                    return View(shoppingcartVM);
-                }
+                return View(shoppingcartVM);
+
             }
             catch (Exception ex)
             {
@@ -107,6 +100,7 @@ namespace SSD_Major_Web_Project.Controllers
                 return View("Error", new ErrorViewModel { RequestId = "Error in ShopController" });
             }
         }
+        
 
 
         [HttpPost]
@@ -170,29 +164,9 @@ namespace SSD_Major_Web_Project.Controllers
 
             Contact contact = new Contact();
 
-            // Assign the value from the Razor view to the Order property of the CheckoutVM object
-
-            OrderVM orderVM = new OrderVM
-            {
-                OrderDate = DateOnly.FromDateTime(DateTime.Today),
-                OrderStatus = "Pending",
-                Discount = discount,
-                Contact = contact,
-                OrderTotal = shoppingcartVM.GrandTotal
-            };
-
-            checkoutVM.Order = orderVM;
-
             // geting shopping cart data from cookies
             var shoppingCartCookie = Request.Cookies["cart"];
-            List<ShoppingCartItem> ShoppingCartItemCookiesList = JsonConvert.DeserializeObject<List<ShoppingCartItem>>(shoppingCartCookie);
-
-            List<ShoppingCartItem> shoppingcartItems = new List<ShoppingCartItem>();
-            shoppingcartItems = ShoppingCartItemCookiesList;
-            //for (int i = 0; i < IDList.Count; i++)
-            //{
-            //    shoppingcartItems.Add(new ShoppingCartItem { SkuId = IDList[i], Quantity = 1 });
-            //}
+            List<ShoppingCartItem> shoppingcartItems = JsonConvert.DeserializeObject<List<ShoppingCartItem>>(shoppingCartCookie);
 
             //productIdsFromDb list contains the ProductId values associated with the provided SkuIds from the database.
             List<int> skuIds = shoppingcartItems.Select(s => s.SkuId).ToList();
@@ -223,7 +197,44 @@ namespace SSD_Major_Web_Project.Controllers
             checkoutVM.ShoppingCart = shoppingcartVM;
             checkoutVM.ShoppingCart.ShoppingCartItems = shoppingcartVM.ShoppingCartItems;
 
+            decimal orderTotal = 0;
+            foreach (ShoppingCartItem item in shoppingcartItems)
+            {
+                decimal unitPrice = products.Where((p) => p.ProductSkus.Any(psku => psku.PkSkuId == item.SkuId))
+                        .Select((p) => p.Price)
+                        .FirstOrDefault();
+                orderTotal += unitPrice * item.Quantity;
+            }
 
+            //recalculate shipping values
+            if (discount != null)
+            {
+                if (discount.DiscountType == "Percent")
+                {
+                    orderTotal = orderTotal * (1 - discount.DiscountValue / 100);
+                }
+                else
+                {
+                    orderTotal -= discount.DiscountValue;
+                }
+            }
+            decimal subtotal = Math.Round(orderTotal, 2);
+            decimal tax = Math.Round(orderTotal * 0.12m, 2);
+            checkoutVM.ShoppingCart.Subtotal = subtotal;
+            checkoutVM.ShoppingCart.Taxes = tax;
+            checkoutVM.ShoppingCart.GrandTotal = tax + subtotal;
+
+            // Assign the value from the Razor view to the Order property of the CheckoutVM object
+            OrderVM orderVM = new OrderVM
+            {
+                OrderDate = DateOnly.FromDateTime(DateTime.Today),
+                OrderStatus = "Pending",
+                Discount = discount,
+                Contact = contact,
+                OrderTotal = orderTotal
+            };
+
+            checkoutVM.Order = orderVM;
 
 
             return View("CheckoutShippingContact", checkoutVM);
@@ -414,8 +425,8 @@ namespace SSD_Major_Web_Project.Controllers
                 {
                     // Assign the retrieved unit price to orderDetail.UnitPrice
                     singleOrderDetailRecord.UnitPrice = productSku.FkProduct?.Price ?? 0;
-                     subtotal += singleOrderDetailRecord.UnitPrice * singleOrderDetailRecord.Quantity;           
-              
+                    subtotal += singleOrderDetailRecord.UnitPrice * singleOrderDetailRecord.Quantity;
+
                 }
                 else
                 {
@@ -454,22 +465,22 @@ namespace SSD_Major_Web_Project.Controllers
             // add order details
             string errorAddOrderDetails = _shopRepo.AddOrderDetails(checkoutVM, orderId);
 
-                // get coupon code from database by order id
-                Discount discountCodeDb = _context.Discounts.FirstOrDefault(d => d.PkDiscountCode == checkoutVM.Order.Discount.PkDiscountCode);
-                if (checkoutVM.Order.Discount != null)
+            // get coupon code from database by order id
+            Discount discountCodeDb = _context.Discounts.FirstOrDefault(d => d.PkDiscountCode == checkoutVM.Order.Discount.PkDiscountCode);
+            if (checkoutVM.Order.Discount != null)
+            {
+                if (discountCodeDb != null)
                 {
-                        if (discountCodeDb != null)
-                    {
-                            checkoutVM.Order.Discount = discountCodeDb;
-                            checkoutVM.ShoppingCart.CouponCode = discountCodeDb.PkDiscountCode;
-                        }
-                    }
-                    else
-                {
-                        checkoutVM.Order.Discount = null;
-                        checkoutVM.ShoppingCart.CouponCode = null;
-                    }
- 
+                    checkoutVM.Order.Discount = discountCodeDb;
+                    checkoutVM.ShoppingCart.CouponCode = discountCodeDb.PkDiscountCode;
+                }
+            }
+            else
+            {
+                checkoutVM.Order.Discount = null;
+                checkoutVM.ShoppingCart.CouponCode = null;
+            }
+
 
 
 
@@ -544,7 +555,8 @@ namespace SSD_Major_Web_Project.Controllers
 
                     // if any order with order status  paid and the discount type is "Number" and coupon code is equal to the discount code
                     // update the discount code to inactive
-                    if (discount != null) {
+                    if (discount != null)
+                    {
                         if (order.FkOrderStatusId == 2 && discount.DiscountType == "Number" && order.FkDiscountCode == discount.PkDiscountCode)
                         {
                             discount.IsActive = false;

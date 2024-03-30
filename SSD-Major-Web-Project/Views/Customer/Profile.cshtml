@@ -1,6 +1,4 @@
 ﻿@model SSD_Major_Web_Project.ViewModels.CustomerVM
-// user identity
-
 
 @{
     ViewData["Title"] = "Profile";
@@ -8,6 +6,49 @@
 }
 
 <h1>Contact Details</h1>
+
+<div id="customer-profile-grid">
+    <div class="profile-line flex-column">
+        <label for="firstName">First Name</label>
+        <p>@Model.DefaultContact.FirstName</p>
+    </div>
+    <div class="profile-line flex-column">
+        <label for="lastName">Last Name</label>
+        <p>@Model.DefaultContact.LastName</p>
+    </div>
+    <div class="profile-line flex-column">
+        <label for="address">Address</label>
+        <p>@Model.DefaultContact.Address</p>
+    </div>
+    <div class="profile-line flex-column">
+        <label for="unitNumber">Unit Number (Optional)</label>
+        <p>@Model.DefaultContact.Address2</p>
+    </div>
+    <div class="profile-line flex-column">
+        <label for="city">City</label>
+        <p>@Model.DefaultContact.City</p>
+    </div>
+    <div class="profile-line flex-column">
+        <label for="province">Province</label>
+        <p>@Model.DefaultContact.Province</p>
+    </div>
+    <div class="profile-line flex-column">
+        <label for="postalCode">Postal Code</label>
+        <p>@Model.DefaultContact.PostalCode</p>
+    </div>
+    <div class="profile-line flex-column">
+        <label for="country">Country</label>
+        <p>@Model.DefaultContact.Country</p>
+    </div>
+    <div class="profile-line flex-column">
+        <label for="email">Email</label>
+        <p>@User.Identity.Name</p>
+    </div>
+    <div class="profile-line flex-column">
+        <label for="phoneNumber">Phone Number</label>
+        <p>@Model.DefaultContact.PhoneNumber</p>
+    </div>
+</div>
 
 
 @if (Model.DefaultContact == null)
@@ -20,49 +61,4 @@ else {
     <a asp-action="EditProfile" asp-route-contactId="@Model.DefaultContact.PkContactId">
     <button class="btn btn-secondary">Edit</button>
     </a>
-
-<div id="customer-profile-grid">
-    <div class="grid-item">
-        <p>First Name</p>
-        <p>@Model.DefaultContact.FirstName</p>
-    </div>
-    <div class="grid-item">
-        <p>Last Name</p>
-        <p>@Model.DefaultContact.LastName</p>
-    </div>
-    <div class="grid-item">
-        <p>Address</p>
-        <p>@Model.DefaultContact.Address</p>
-    </div>
-    <div class="grid-item">
-        <p>Unit No.</p>
-        <p>@Model.DefaultContact.Address2</p>
-    </div>
-    <div class="grid-item">
-        <p>City</p>
-        <p>@Model.DefaultContact.City</p>
-    </div>
-    <div class="grid-item">
-        <p>Province</p>
-        <p>@Model.DefaultContact.Province</p>
-    </div>
-    <div class="grid-item">
-        <p>Postal Code</p>
-        <p>@Model.DefaultContact.PostalCode</p>
-    </div>
-    <div class="grid-item">
-        <p>Country</p>
-        <p>@Model.DefaultContact.Country</p>
-    </div>
-    <div class="grid-item">
-        <p>Email</p>
-        <p>@User.Identity.Name</p>
-    </div>
-    <div class="grid-item">
-        <p>Phone Number</p>
-        <p>@Model.DefaultContact.PhoneNumber</p>
-    </div>
-</div>
 }
-
-

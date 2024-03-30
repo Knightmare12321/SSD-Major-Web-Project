@@ -88,7 +88,7 @@ namespace SSD_Major_Web_Project.Repositories
             return contact;
         }
 
-        // update user contact, create new if not exists
+        // update user contact if contact Id exists
         public void UpdateUserContact(string email, Contact contact)
         {
             Customer customer = _db.Customers.Find(email);
@@ -115,6 +115,16 @@ namespace SSD_Major_Web_Project.Repositories
 
                 _db.SaveChanges();
             }
+        }
+
+        // create new user contact and link to customer id if default contact is null
+        public void CreateUserContact(string email, Contact contact)
+        {
+            Customer customer = _db.Customers.Find(email);
+            _db.Contacts.Add(contact);
+            _db.SaveChanges();
+            customer.FkContactId = contact.PkContactId;
+            _db.SaveChanges();
         }
 
         public IQueryable<PersonalOrderHistoryVM> GetOrders(string customerId)

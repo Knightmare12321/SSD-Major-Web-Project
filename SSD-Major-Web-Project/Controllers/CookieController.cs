@@ -58,18 +58,25 @@ namespace SSD_Major_Web_Project.Controllers
             option.Expires = DateTime.Now.AddDays(365);
             var carts = cartCookie == null ?
                 new List<ShoppingCartItem>() :
-                JsonConvert.DeserializeObject<List<ShoppingCartItem>>(cartCookie);       
+                JsonConvert.DeserializeObject<List<ShoppingCartItem>>(cartCookie);
             bool inShoppingCart = false;
             foreach (var item in carts)
             {
                 if (item.SkuId == id)
                 {
-                    carts.Remove(item);
+                    if (item.Quantity == 1)
+                    {
+                        carts.Remove(item);
+                    }
+                    else
+                    {
+                        item.Quantity -= 1;
+                    }
                     inShoppingCart = true;
                     break;
                 }
             }
-            if (!inShoppingCart) return Json(new { success = false, message = "No such item in the cart!" }) ;
+            if (!inShoppingCart) return Json(new { success = false, message = "No such item in the cart!" });
             Response.Cookies.Append("cart", JsonConvert.SerializeObject(carts), option);
             return Json(new { success = true, message = "Item removed from cart successfully!" });
         }
