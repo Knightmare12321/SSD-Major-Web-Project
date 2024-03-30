@@ -28,20 +28,27 @@ html {
     box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
 }
 
-
+footer {
+    /*position: fixed;*/
+    /*bottom: 0;*/
+    /*width: 100%;*/
+    margin-top: auto;
+}
 
 body {
     margin: 0;
     padding: 0;
     height: 100%;
     display: flex;
-    flex-direction: column
+    flex-direction: column;
+    min-height: 100vh;
+      
 }
 
 .main-wrapper {
     padding: var(--page-padding);
-    margin: 0;
-    flex: 1;
+    /*margin: 0;*/
+    flex-grow: 1;
 }
 
 
