@@ -39,6 +39,10 @@ namespace SSD_Major_Web_Project.Controllers
             var userId = User.Identity.Name;
             CustomerRepo customerRepo = new CustomerRepo(_context);
             List<PersonalOrderHistoryVM> vm = customerRepo.GetOrders("lotte.tfins@gmail.com").ToList();
+            if (vm.Count == 0)
+            {
+                ViewBag.Message = "You have no order history yet";
+            }
             return View(vm);
         }
 

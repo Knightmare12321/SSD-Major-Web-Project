@@ -294,9 +294,7 @@ a.black-hyperlink {
         border: solid blue 1px;
         padding: 0px 25px;
         margin: 10px auto;
-        &:hover
-
-        {
+        &:hover{
             background-color: dodgerblue;
             border: solid black 1px;
             color: white;
@@ -304,6 +302,9 @@ a.black-hyperlink {
 
     }
 }
+
+
+/*Customer profile styling*/
 
 #customer-profile-grid{
     display:grid;
@@ -322,12 +323,27 @@ a.black-hyperlink {
     align-items: flex-start;
 }
 
-    .profile-line label {
-        font-size: calc(var(--label-font-size) * 0.7);
-    }
+.profile-line label {
+    font-size: calc(var(--label-font-size) * 0.7);
+}
 
+#contact-detail-form{
+    padding:1rem;
+    background-color:var(--bg-lightest-gray);
 
-/*Customer PersonalOrderHistory Styling*/
+}
+
+#contact-detail-form button {
+    margin: 1rem;
+    width: 100px;
+}
+
+.control-label{
+    font-size: calc(var(--label-font-size) * 0.7);
+}
+
+/*Customer Order History Styling*/
+/*Customer Personal Order History Styling*/
 #personal-order-section {
     display: none;
 }
