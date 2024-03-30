@@ -58,7 +58,6 @@ namespace SSD_Major_Web_Project.Repositories
             .Include(p => p.Images)
             .Select(p => new ProductVM
             {
-
                 PkProductId = p.PkProductId,
                 Name = p.Name,
                 Price = p.Price,
@@ -66,6 +65,21 @@ namespace SSD_Major_Web_Project.Repositories
             })
             .ToList();
         }
+
+        public IEnumerable<ProductVM> GetProductByIdList(IEnumerable<int> idList)
+            {
+                return _context.Products
+                .Where(p => idList.Contains(p.PkProductId))
+                .OrderBy(p => p.PkProductId)
+                .Select(p => new ProductVM
+                {
+                    PkProductId = p.PkProductId,
+                    Name = p.Name,
+                    Price = p.Price,
+                    ImageByteArray = p.Images.FirstOrDefault().Data
+                })
+                .ToList();
+            }
 
         // This method is for testing only. Delete this after project completes!
         public Product? GetById(int pkProductId)
