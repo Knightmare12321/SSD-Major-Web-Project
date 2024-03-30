@@ -2,6 +2,7 @@
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using SSD_Major_Web_Project.Data.Services;
 using SSD_Major_Web_Project.Models;
 using SSD_Major_Web_Project.Repositories;
@@ -153,6 +154,21 @@ namespace SSD_Major_Web_Project.Controllers
             CheckoutVM checkoutVM = new CheckoutVM();
 
             checkoutVM.ShoppingCart = shoppingcartVM;
+
+            //populate the UserAddresses property with the addresses of the logged-in user. 
+            //If the user is not logged in, the UserAddresses property will be null.
+            if (User.Identity.IsAuthenticated)
+            {
+                string userId = User.Identity.Name;
+                var user = _context.Customers.FirstOrDefault(u => u.PkCustomerId == userId);
+                List<Contact> userAddresses = _context.Contacts.Where(a => a.PkContactId == user.FkContactId ).ToList();
+                checkoutVM.UserAddresses = userAddresses;
+            }
+            else
+            {
+                checkoutVM.UserAddresses = null;
+            }
+
 
             // Assign Discount Code if available from the shopping cart razor view
             checkoutVM.ShoppingCart.CouponCode = shoppingcartVM.CouponCode != null ? shoppingcartVM.CouponCode : null;
@@ -574,22 +590,25 @@ namespace SSD_Major_Web_Project.Controllers
                 ShoppingCartItem orderConfirmationCheckoutItemlist = new ShoppingCartItem();
                 if (orderBytransactionId != null)
                 {
-                    ShoppingCartItem shoppingCartItem = new ShoppingCartItem();
+                   
                     // using the orderId to get all the cart item from db ( get the order id then use the order id to get the cart item)
 
                     List<OrderDetail> orderDetails = _context.OrderDetails.Where(o => o.FkOrderId == orderBytransactionId.PkOrderId).ToList();
                     List<ShoppingCartItem> shoppingCartItemList = new List<ShoppingCartItem>();
                     foreach (var orderDetail in orderDetails)
                     {
+                        // Create a new instance for each item
+                        var shoppingCartItem = new ShoppingCartItem();
                         shoppingCartItem.SkuId = orderDetail.FkSkuId;
                         shoppingCartItem.Quantity = orderDetail.Quantity;
                         shoppingCartItemList.Add(shoppingCartItem);
                     }
 
-
                     checkoutVM.ShoppingCart.ShoppingCartItems = shoppingCartItemList;
 
+
                 }
+                orderConfirmationVM.CheckoutVM = checkoutVM;
 
                 //
 
