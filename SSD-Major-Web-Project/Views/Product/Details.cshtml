@@ -119,18 +119,18 @@
         </div>
         <div class="reviews-container">
             <h4>Reviews</h4>
-            @if (SignInManager.IsSignedIn(User))
+            @if (ViewBag.hasPurchased == true && ViewBag.hasReviewed == false)
             {
                 <p>
                     <a asp-action="CreateReview" asp-route-id="@Model.PkProductId">Rate this Product</a>
                 </p>
-            } else
+            } @* else
             {
                 <a class="nav-link text-dark" href="~/Identity/Account/Login">
                     <img src="~/images/icon/icon-login.png" alt="login" />
                     Sign in to create a Review
                 </a>
-            }
+            } *@
             <div class="reviews-list">
 
                     @if (Model.Reviews.Count == 0)
@@ -152,7 +152,7 @@
                                 @foreach (var review in Model.Reviews)
                                 {
                                     <tr>
-                                        <td>@review.FkCustomerId</td>
+                                    <td>@review.FkCustomerId</td>
                                         <td>@GenerateStarRating(review.Rating)</td>
                                         <td>@review.Comment</td>
                                         <td>@review.PkReviewDate</td>

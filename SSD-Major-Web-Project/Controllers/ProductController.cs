@@ -10,6 +10,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using System;
+using System.Threading.Tasks.Dataflow;
 
 namespace SSD_Major_Web_Project.Controllers
 {
@@ -64,6 +65,23 @@ namespace SSD_Major_Web_Project.Controllers
                 false :
                 JsonConvert.DeserializeObject<List<int>>(favoriteCookie).Contains(id);
 
+            // Check if the currently signed-in user has bought the item
+            string currentUserID = User.Identity.Name;
+            // Check if the user has purchased the item
+            bool hasPurchased = _context.Customers
+                .Join(_context.Orders, customer => customer.PkCustomerId, order => order.FkCustomerId,
+                    (customer, order) => new { customer, order })
+                .Join(_context.OrderDetails, c => c.order.PkOrderId, orderDetail => orderDetail.FkOrderId,
+                    (c, orderDetail) => new { c.customer, c.order, orderDetail })
+                .Join(_context.ProductSkus, o => o.orderDetail.FkSkuId, productSku => productSku.PkSkuId,
+                    (o, productSku) => new { o.customer, o.order, o.orderDetail, productSku })
+                .Join(_context.Products, p => p.productSku.FkProductId, product => product.PkProductId,
+                    (p, product) => new { p.customer, p.order, p.orderDetail, p.productSku, product })
+                .Any(joined => joined.customer.PkCustomerId == currentUserID && joined.product.PkProductId == id);
+
+            // Check if the user has reviewed the item
+            bool hasReviewed = reviews.Any(r => r.FkCustomerId == currentUserID);
+
 
             List<ReviewVM> reviewList = reviews
                 .Select(r => new ReviewVM
@@ -74,14 +92,43 @@ namespace SSD_Major_Web_Project.Controllers
                     Comment = r.Comment
                 }).ToList();
             ProductDetailVM? vm = products.GetByIdAndReviewVM(id, reviewList);
+
+            ViewBag.hasPurchased = hasPurchased;
+            ViewBag.hasReviewed = hasReviewed;
             return View(vm);
         }
 
         public IActionResult CreateReview(int id)
         {
+/*            var result = (from customer in _context.Customers
+                          join order in _context.Orders on customer.PkCustomerId equals order.FkCustomerId
+                          join orderDetail in _context.OrderDetails on order.PkOrderId equals orderDetail.FkOrderId
+                          join productSku in _context.ProductSkus on orderDetail.FkSkuId equals productSku.PkSkuId
+                          join product in _context.Products on productSku.FkProductId equals product.PkProductId
+                          select new
+                          {
+                              CustomerId = customer.PkCustomerId,
+                              OrderId = order.PkOrderId,
+                              ProductName = product.Name,
+                              HasReview = _context.Reviews.Any(r => r.FkCustomerId == customer.PkCustomerId && r.FkProductId == product.PkProductId)
+                          }).FirstOrDefault();
+
+            if (result != null)
+            {
+                if (!result.HasReview)
+                {
+                    ReviewVM reviewVM = new ReviewVM { FkCustomerId = User.Identity.Name, PkReviewDate = DateOnly.FromDateTime(DateTime.Now), Rating = 5, FkProductId = id };
+
+                    return View(reviewVM);
+                }
+                
+            }
+            return View();*/
+
             ReviewVM reviewVM = new ReviewVM { FkCustomerId = User.Identity.Name, PkReviewDate = DateOnly.FromDateTime(DateTime.Now), Rating = 5, FkProductId = id };
 
             return View(reviewVM);
+
         }
 
         [HttpPost]
