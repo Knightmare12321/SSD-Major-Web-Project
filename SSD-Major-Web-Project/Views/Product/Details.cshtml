@@ -117,52 +117,53 @@
                 }
             </div>
         </div>
-        <div class="reviews-container">
-            <h4>Reviews</h4>
-            @if (ViewBag.hasPurchased == true && ViewBag.hasReviewed == false)
-            {
-                <p>
-                    <a asp-action="CreateReview" asp-route-id="@Model.PkProductId">Rate this Product</a>
-                </p>
-            } @* else
-            {
-                <a class="nav-link text-dark" href="~/Identity/Account/Login">
-                    <img src="~/images/icon/icon-login.png" alt="login" />
-                    Sign in to create a Review
-                </a>
-            } *@
-            <div class="reviews-list">
 
-                    @if (Model.Reviews.Count == 0)
+    </div>
+</div>
+<div class="reviews-container">
+    <h4>Reviews</h4>
+    @if (ViewBag.hasPurchased == true && ViewBag.hasReviewed == false)
+    {
+        <p>
+            <a asp-action="CreateReview" asp-route-id="@Model.PkProductId">Rate this Product</a>
+        </p>
+    } @* else
+    {
+    <a class="nav-link text-dark" href="~/Identity/Account/Login">
+    <img src="~/images/icon/icon-login.png" alt="login" />
+    Sign in to create a Review
+    </a>
+    } *@
+    <div class="reviews-list">
+
+        @if (Model.Reviews.Count == 0)
+        {
+            <p>This product has not yet been reviewed.</p>
+        }
+        else
+        {
+            <table class="reviews-table">
+                <thead>
+                    <tr>
+                        <th class="rating-header">User</th>
+                        <th class="rating-header">Rating</th>
+                        <th class="rating-header">Comment</th>
+                        <th class="rating-header">Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var review in Model.Reviews)
                     {
-                        <p>This product has not yet been reviewed.</p>
+                        <tr>
+                            <td class="rating-review">@review.FkCustomerId</td>
+                            <td class="rating-review">@GenerateStarRating(review.Rating)</td>
+                            <td class="rating-review">@review.Comment</td>
+                            <td class="rating-review">@review.PkReviewDate</td>
+                        </tr>
                     }
-                    else
-                    {
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>User</th>
-                                    <th>Rating</th>
-                                    <th>Comment</th>
-                                    <th>Date</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach (var review in Model.Reviews)
-                                {
-                                    <tr>
-                                    <td>@review.FkCustomerId</td>
-                                        <td>@GenerateStarRating(review.Rating)</td>
-                                        <td>@review.Comment</td>
-                                        <td>@review.PkReviewDate</td>
-                                    </tr>
-                                }
-                            </tbody>
-                        </table>
-                    }
-            </div>
-        </div>
+                </tbody>
+            </table>
+        }
     </div>
 </div>
 
