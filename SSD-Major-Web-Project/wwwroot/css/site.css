@@ -687,17 +687,46 @@ button {
 /*Admin AdminOrder*/
 #admin-orders {
     display: none;
+    position: relative;
+    min-height:340px;
 }
-    #admin-orders.active {
-        display: flex;
-        grid-column-gap: 10px;
-        overflow-x: auto;
 
-        .side-bar ul{
-        padding: 0;
-        width: 150px;
+    #admin-orders .side-bar {
+        display: block;
+        position: absolute;
+        width:150px;
+        height:100%;
+        transform: translateX(-150%);
+        transition: all 0.5s ease-in-out;
+
     }
+    #admin-orders .side-bar.active {
+        transform:translateX(0%);
+        left: 0px;
+        top: 0px;
+        z-index:10;
+        background-color:lightsteelblue;
 
+        ul{
+            padding: 0;
+            width: 150px;
+        }
+}
+
+#admin-orders img.filter-icon{
+        width:30px !important;
+        height:30px !important;
+}
+
+#admin-orders.active {
+    display: flex;
+    grid-column-gap: 10px;
+    overflow-x: auto;
+
+    .side-bar h4{
+        padding-left:10px;
+        padding-right:10px;
+      }
     .side-bar li {
         list-style: none;
         padding: 10px;
@@ -739,12 +768,12 @@ button {
         /*max-width:100px;*/
     }
     th.buyer, td.buyer {
-        max-width: 150px !important;
+        max-width: 100px !important;
     }
-    th.product, td.product {
-        max-width: 150px !important;
-       
-    }
+        th.product, td.product {
+            max-width: 135px !important;
+        }
+
     th.buyer-note, td.buyer-note{
         max-width:70px ;
     }

@@ -6,7 +6,8 @@
 }
 
 <div id="admin-orders" class="active">
-    <div class="side-bar">
+        <img id="filter-icon" class="filter-icon" src="~/images/icon/filter-icon.png" />
+    <div id="side-bar" class="side-bar">
         <h4>Order Status</h4>
         <ul>
             <li onClick="toggleSummary(this,'','All Orders')">All</li>
@@ -76,6 +77,28 @@
 </div>
 
 <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        //add onhover event listener to side bar icon and side bar menu to open it up or
+        //keep it opened up
+        $("#filter-icon").hover(
+            function () {
+                $('#side-bar').addClass('active');
+            }, 
+            function () {
+                $('#side-bar').removeClass('active') 
+            }
+        );
+
+        $("#side-bar").hover(
+            function () {
+                $('#side-bar').addClass('active')
+            }, 
+            function () { 
+                $('#side-bar').removeClass('active') 
+            }
+        );
+    });
+
     const toggleSummary = (tabClicked, sheetType, sheetTitle) => {
         //reset message element
         $("#message").html("");
