@@ -768,12 +768,12 @@ button {
         /*max-width:100px;*/
     }
     th.buyer, td.buyer {
-        max-width: 150px !important;
+        max-width: 100px !important;
     }
-    th.product, td.product {
-        max-width: 150px !important;
-       
-    }
+        th.product, td.product {
+            max-width: 135px !important;
+        }
+
     th.buyer-note, td.buyer-note{
         max-width:70px ;
     }
