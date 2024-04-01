@@ -423,6 +423,11 @@
                     if (!hasQuantity) {
                         $("#" + productId + "-tile").remove();
                     }
+
+                    //if no items is in cart, display default message
+                    if ($(".product").length == 0) {
+                        $(".shopping-cart").html("<p>Your shopping cart is empty.</p><a href='/Product/Index'> Shop Now </a>");
+                    }
                     //update shopping cart values
                     resetValues();
                     applyDiscount();
@@ -450,6 +455,11 @@
                     } else {
                         //else remove that sku from view
                         $("#" + skuId + "-tile").remove();
+                    }
+
+                    //if no items is in cart, display default message
+                    if ($(".product").length == 0) {
+                        $(".shopping-cart").html("<p>Your shopping cart is empty.</p><a href='/Product/Index'> Shop Now </a>");
                     }
 
                     //update shopping cart values
