@@ -5,7 +5,7 @@
 .product-details-container {
     display: flex;
     justify-content: space-around;
-    width: 100vw
+    width: 100%
 }
 
 .product-details-left {
@@ -73,3 +73,36 @@
 }
 
 /* Review Styling */
+.rating-header, .rating-review {
+    padding: 8px;
+}
+
+.rating-header {
+    /*text-align: center;*/
+}
+
+.reviews-container {
+    padding-top: 20px;
+}
+
+.reviews-table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+    .reviews-table tr {
+        border-bottom: 1pt solid black;
+    }
+
+@media (max-width: 576px) {
+    .product-details-container {
+        display: flex;
+        justify-content: space-around;
+        width: 100%;
+        flex-direction: column;
+        align-items: center;
+    }
+    .rating-header, .rating-review {
+        padding: 5px;
+    }
+}
