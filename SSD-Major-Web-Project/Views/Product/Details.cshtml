@@ -121,7 +121,7 @@
     </div>
 </div>
 <div class="reviews-container">
-    <h4>Reviews</h4>
+    <h4 class="reviews-title">Reviews</h4>
     @if (ViewBag.hasPurchased == true && ViewBag.hasReviewed == false)
     {
         <p>
@@ -142,27 +142,19 @@
         }
         else
         {
-            <table class="reviews-table">
-                <thead>
-                    <tr>
-                        <th class="rating-header">User</th>
-                        <th class="rating-header">Rating</th>
-                        <th class="rating-header">Comment</th>
-                        <th class="rating-header">Date</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var review in Model.Reviews)
-                    {
-                        <tr>
-                            <td class="rating-review">@review.FkCustomerId</td>
-                            <td class="rating-review">@GenerateStarRating(review.Rating)</td>
-                            <td class="rating-review">@review.Comment</td>
-                            <td class="rating-review">@review.PkReviewDate</td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
+            <div>
+                @foreach (var review in Model.Reviews)
+                {
+                    <div class="review-row">
+                        <div>
+                            <div class="rating-review">@GenerateStarRating(review.Rating)</div>
+                            <div class="rating-review">@review.FkCustomerId</div>
+                        </div>                      
+                        <p class="rating-review" id="review-comment">@review.Comment</p>
+                        <p class="rating-review" id="review-date">@review.PkReviewDate</p>
+                    </div>
+                }
+            </div>
         }
     </div>
 </div>
