@@ -9,6 +9,9 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 var connectionString = builder.Configuration["ConnectionStrings:DefaultConnection"];
+var apiKey = builder.Configuration["SendGrid:ApiKey"];
+var siteKey = builder.Configuration["Recaptcha:SiteKey"];
+var secretKey = builder.Configuration["Recaptcha:SecretKey"];
 
 builder.Services.AddDbContext<NovaDbContext>(options => 
     options.UseSqlServer(connectionString));
