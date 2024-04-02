@@ -311,6 +311,28 @@ textarea {
 a.black-hyperlink {
     margin-top: 0;
 }
+
+@media (min-width: 768px) {
+    .product-name.fav-product-name {
+        font-size: 10px;
+    }
+    .product-items-container.fav-product-items-container {
+        flex: 0 0 calc(33.33% - 1px);
+    }
+}
+
+@media (min-width: 820px) {
+    .product-items-container.fav-product-items-container {
+        flex: 0 0 calc(25% - 1px);
+    }
+}
+
+@media (min-width: 1200px) {
+    .product-items-container.fav-product-items-container {
+        flex: 0 0 calc(16.66% - 1px);
+    }
+}
+
 /*ROLE CONTROLLER*/
 
 /*CUSTOMER CONTROLLER*/

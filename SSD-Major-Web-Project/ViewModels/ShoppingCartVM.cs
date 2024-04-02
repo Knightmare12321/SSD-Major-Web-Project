@@ -11,6 +11,7 @@ namespace SSD_Major_Web_Project.ViewModels
         //public List<Product> Products { get; set; }
         public List<ShoppingCartItem> ShoppingCartItems { get; set; }
         public List<Product> Products { get; set; }
+        public List<ProductVM> ProductVMs { get; set; }
         public string? CouponCode { get; set; }
         [DisplayFormat(DataFormatString = "{0:C}")]
         public decimal Subtotal { get; set; }
