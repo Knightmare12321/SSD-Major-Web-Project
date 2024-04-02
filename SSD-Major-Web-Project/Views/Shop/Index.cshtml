@@ -68,7 +68,38 @@
 
             </div>
             <div class="my-wishlist">
+                @* Kenny's section *@
                 <h2 style="margin-top:2rem;">My Favourites</h2>
+                <div id="product-container" class="product-container">
+                    @foreach (var item in Model.ProductVMs)
+                    {
+                        <div class="product-items-container fav-product-items-container">
+                            <a asp-action="Details" asp-route-id="@item.PkProductId">
+                                <div class="product-thumbnail-wrapper">
+                                    @if (item.ImageByteArray != null)
+                                    {
+                                        <img src="data:image/jpeg;base64,
+                                    @Convert.ToBase64String(item.ImageByteArray)"
+                                             alt="item.Name"
+                                             class="product-thumbnail"
+                                             loading="lazy" />
+                                    }
+                                    else
+                                    {
+                                        <img src="~/images/No-Image-Placeholder.png"
+                                             alt="item.Name"
+                                             class="product-thumbnail"
+                                             loading="lazy" />
+                                    }
+                                </div>
+                            </a>
+                            <div class="product-info">
+                                <div class="product-name fav-product-name"> @Html.DisplayFor(modelItem => item.Name) </div>
+                                <div class="product-price"> $@Html.DisplayFor(modelItem => item.Price) </div>
+                            </div>
+                        </div>
+                    }
+                </div>
             </div>
         </div>
 

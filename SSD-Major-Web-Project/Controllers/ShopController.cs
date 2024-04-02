@@ -38,6 +38,10 @@ namespace SSD_Major_Web_Project.Controllers
             {
                 var shoppingCartCookie = Request.Cookies["cart"];
                 List<ShoppingCartItem> ShoppingCartItemCookiesList = JsonConvert.DeserializeObject<List<ShoppingCartItem>>(shoppingCartCookie);
+                var favoriteCookie = Request.Cookies["favorite"];
+                var favoriteIDs = favoriteCookie == null ?
+                    new List<int>() :
+                    JsonConvert.DeserializeObject<List<int>>(favoriteCookie);
 
 
 
@@ -91,6 +95,10 @@ namespace SSD_Major_Web_Project.Controllers
 
                 //////////////////////Assign shopping cart products to shopping cart view model
                 shoppingcartVM.Products = products;
+
+                // Kenny's code:
+                ProductRepo productRepo = new ProductRepo(_context);
+                shoppingcartVM.ProductVMs = productRepo.GetProductByIdList(favoriteIDs).ToList();
 
                 return View(shoppingcartVM);
 

@@ -18,7 +18,9 @@ namespace SSD_Major_Web_Project.Controllers
         public IActionResult Index()
         {
             var favoriteCookie = Request.Cookies["favorite"];
-            var favoriteIDs = JsonConvert.DeserializeObject<List<int>>(favoriteCookie);
+            var favoriteIDs = favoriteCookie == null ?
+                new List<int>() :
+                JsonConvert.DeserializeObject<List<int>>(favoriteCookie);
             ProductRepo products = new ProductRepo(_context);
             return View(products.GetProductByIdList(favoriteIDs));
         }

@@ -5,7 +5,7 @@
 }
 
 .product-title {
-    width: 761.04px;
+    width: 100%;
     height: 48px; color: #222222;
     font-size: 39.84px;
     font-family: Inter;
@@ -147,4 +147,20 @@
 
 .load-more:disabled:hover {
     background-color: black;
+}
+
+@media (max-width: 600px) {
+    .product-items-container {
+        flex: 0 0 calc(25% - 1px);
+        height: auto;
+        margin-left: 1px;
+    }
+}
+
+@media (max-width: 420px) {
+    .product-items-container {
+        flex: 0 0 calc(33.33% - 1px);
+        height: auto;
+        margin-left: 1px;
+    }
 }
