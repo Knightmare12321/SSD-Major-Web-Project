@@ -109,7 +109,7 @@ namespace SSD_Major_Web_Project.Controllers
                 return View("Error", new ErrorViewModel { RequestId = "Error in ShopController" });
             }
         }
-        
+
 
 
         [HttpPost]
@@ -169,7 +169,7 @@ namespace SSD_Major_Web_Project.Controllers
             {
                 string userId = User.Identity.Name;
                 var user = _context.Customers.FirstOrDefault(u => u.PkCustomerId == userId);
-                List<Contact> userAddresses = _context.Contacts.Where(a => a.PkContactId == user.FkContactId ).ToList();
+                List<Contact> userAddresses = _context.Contacts.Where(a => a.PkContactId == user.FkContactId).ToList();
                 checkoutVM.UserAddresses = userAddresses;
             }
             else
@@ -533,7 +533,7 @@ namespace SSD_Major_Web_Project.Controllers
         }
 
         // GET: ShopController//orderConfirmation
-        public IActionResult OrderConfirmation(string transactionId, decimal amount, string payerName, CheckoutVM checkoutVM)
+        public async Task<IActionResult> OrderConfirmationAsync(string transactionId, decimal amount, string payerName, CheckoutVM checkoutVM)
         {
 
 
@@ -550,6 +550,8 @@ namespace SSD_Major_Web_Project.Controllers
             // make a request to PayPal using the transaction ID to get order details from PayPal,
             // and compare them with the order details we received in this method
             // compare amount and payername
+
+
 
 
             OrderConfirmationVM orderConfirmationVM = new OrderConfirmationVM();
@@ -588,7 +590,15 @@ namespace SSD_Major_Web_Project.Controllers
                         _context.SaveChanges();
                     }
 
-
+                    //send an order confirmationemail to the customer
+                    var response = await _emailService.SendSingleEmail(new Models.ComposeEmailModel
+                    {
+                        FirstName = "Nova",
+                        LastName = "Clothing",
+                        Subject = $"Nova Fashion Order (#{checkoutVM.Order.OrderId}) is confirmed!",
+                        Email = checkoutVM.DeliveryContactEmail,
+                        Body = $"Your order (#{checkoutVM.Order.OrderId}) is confirmed. We will send you another email when we dispatch it"
+                    });
 
                 }
 
@@ -598,7 +608,7 @@ namespace SSD_Major_Web_Project.Controllers
                 ShoppingCartItem orderConfirmationCheckoutItemlist = new ShoppingCartItem();
                 if (orderBytransactionId != null)
                 {
-                   
+
                     // using the orderId to get all the cart item from db ( get the order id then use the order id to get the cart item)
 
                     List<OrderDetail> orderDetails = _context.OrderDetails.Where(o => o.FkOrderId == orderBytransactionId.PkOrderId).ToList();

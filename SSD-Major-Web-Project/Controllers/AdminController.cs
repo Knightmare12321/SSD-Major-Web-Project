@@ -275,13 +275,17 @@ namespace SSD_Major_Web_Project.Controllers
         }
 
         [HttpPost]
-        public JsonResult DispatchOrder(int orderId)
+        public async Task<JsonResult> DispatchOrderAsync(int orderId)
         {
             AdminRepo adminRepo = new AdminRepo(_context);
             string errorString = adminRepo.dispatchOrder(orderId);
+            OrderVM order = adminRepo.GetOrderById(orderId);
 
             if (errorString != "")
             {
+
+
+
                 return Json(
                    new
                    {
@@ -289,6 +293,17 @@ namespace SSD_Major_Web_Project.Controllers
                        error = errorString
                    });
             }
+
+
+            //send an email to let customer know order has been dispatched
+            var response = await _emailService.SendSingleEmail(new Models.ComposeEmailModel
+            {
+                FirstName = "Nova",
+                LastName = "Clothing",
+                Subject = $"Nova Fashion Order (#{order.OrderId}) has been dispatched!",
+                Email = order.CustomerId,
+                Body = $"Your order (#{order.OrderId}) has been dispatched. The tracking is {order.Tracking}"
+            });
 
             return Json(new
             {
