@@ -23,6 +23,9 @@ namespace SSD_Major_Web_Project.ViewModels
 
         public Discount? Discount { get; set; }
 
+        public DateOnly? ShipDate { get; set; }
+        public int? Tracking { get; set; }
+
         [Required]
         public Contact Contact { get; set; }
 

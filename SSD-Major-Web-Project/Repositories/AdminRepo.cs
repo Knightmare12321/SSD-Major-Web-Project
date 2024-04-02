@@ -344,6 +344,8 @@ namespace SSD_Major_Web_Project.Repositories
                                    .Select(os => os.Status)
                                    .FirstOrDefault()
                                    .ToString(),
+                ShipDate = o.ShipDate,
+                Tracking = o.Tracking,
                 BuyerNote = o.BuyerNote,
                 OrderDetails = _context.OrderDetails
                                    .Where(od => od.FkOrderId == o.PkOrderId)
